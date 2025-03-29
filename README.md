@@ -37,28 +37,28 @@ cd Ecommerce
 ```
 
 ### **Configurar el archivo .env:**
----
+```
 cd backend
 npm install
----
+```
 
 ### **Configuración del Backend**
----
+```
 -PORT=5000
 -DB_USER=tu_usuario
 -DB_PASSWORD=tu_password
 -DB_HOST=localhost
 -DB_DATABASE=tu_basededatos
 -JWT_SECRET=tu_secreto
----
+```
 
 ### **Iniciar el servidor**
----
+```
 -npm run dev
----
+```
 ### **Configuración del Frontend**
----
+```
 -npm run dev
 -cd ../frontend
 -npm install
----
+```
