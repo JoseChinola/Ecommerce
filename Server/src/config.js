@@ -1,0 +1,14 @@
+export const {
+    FRONTEND_URL = "http://localhost:5173",
+    PORT = 3000,
+    SECRETE_KEY_ACCESS_TOKEN = "batallandocontralagueradenarnialyestonocuentaporquepoppopoo",
+    SECRETE_KEY_REFRESH_TOKEN = "whileBatallandoContraLaGuerraDeNarnialyEstoNoCuentaPorquePopPopoo",
+    DB_USER = "rmateo",
+    DB_PASSWORD = "Esmerali-12345",
+    DB_NAME = "ShopMix",
+    EMAIL_USER = "ttestmateo@gmail.com",
+    CLODINARY_CLOUD_NAME = "dg0wzl8i2",
+    CLODINARY_API_KEY = "739648333859378",
+    CLODINARY_API_SECRET_KEY = "JqKlEnVIMwInMheDjGGpGfWErsE",
+    NODE_TLS_REJECT_UNAUTHORIZED = "0"
+} = process.env;

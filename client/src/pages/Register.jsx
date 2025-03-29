@@ -1,0 +1,223 @@
+import React, { useState } from 'react'
+import logomv from '../assets/shopmix.png'
+import { FaRegUser } from "react-icons/fa";
+import { MdOutlineMail } from "react-icons/md";
+import { RiLockPasswordLine } from "react-icons/ri";
+import { FaRegEyeSlash } from "react-icons/fa6";
+import { FaRegEye } from "react-icons/fa6";
+import { FaArrowLeft } from "react-icons/fa";
+import { Link, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import Axios from '../utils/Axios';
+import SummaryApi from '../cammon/SummaryApi';
+import AxiosToastError from '../utils/AxiosToastError';
+
+
+
+const Register = () => {
+    const [data, setData] = useState({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: ""
+    })
+    const navigate = useNavigate()
+
+    const [showPassword, setShowPassword] = useState(false)
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false)
+
+
+    const handleChange = (e) => {
+        const { name, value } = e.target
+
+        setData((prev) => {
+            return {
+                ...prev,
+                [name]: value
+            }
+        })
+    }
+
+    const valideValue = Object.values(data).every(el => el)
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        if (data.password !== data.confirmPassword) {
+            toast.error(
+                "Password and confirm password must be same"
+            )
+
+            return
+        }
+
+        try {
+            const res = await Axios({
+                ...SummaryApi.register,
+                data: data
+            })
+
+            if (res.data.error) {
+                toast.error(res.data.message)
+            }
+
+            if (res.data.success) {
+                toast.success(res.data.message)
+                setData({
+                    name: "",
+                    email: "",
+                    password: "",
+                    confirmPassword: ""
+                })
+
+                navigate("/login")
+            }
+
+        } catch (error) {
+            AxiosToastError(error)
+        }
+
+
+    }
+
+    const redirectToHomePage = () => {
+        navigate("/")
+    }
+
+    return (
+        <section className='w-full container mx-auto px-4 xl:mb-4'>
+            <div className='bg-white w-full max-w-lg mx-auto rounded p-6'>
+                <button onClick={redirectToHomePage} className='flex bg-neutral-400  text-neutral-300 p-1 rounded hover:text-white hover:bg-blue-700'>
+                    <FaArrowLeft size={18} />
+                    <span className='pl-1 text-xs lg:text-sm'>
+                        Back home
+                    </span>
+                </button>
+
+
+                <div className='flex justify-center items-center flex-col'>
+                    <img
+                        src={logomv}
+                        width={90}
+                        height={40}
+                        alt='logo'
+                        className='lg:block'
+                    />
+                    <p className='text-center text-xl'>
+                        Welcome to
+                        <span className='text-primary-green font-bold pl-1 text-2xl'>
+                            ShopMix
+                        </span>
+                    </p>
+                </div>
+
+                <form action="" className='grid gap-2 mt-1' onSubmit={handleSubmit}>
+                    {/* name input */}
+                    <div className='grid gap-1'>
+                        <label htmlFor="name" className='font-semibold'>Name: </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                dir='name'
+                                autoFocus
+                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                name='name'
+                                value={data.name}
+                                onChange={handleChange}
+                                placeholder='Enter your name'
+                            />
+                            <FaRegUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        </div>
+
+                    </div>
+
+                    {/* email input */}
+                    <div className='grid gap-1'>
+                        <label htmlFor="email" className='font-semibold'>Email: </label>
+                        <div className="relative">
+                            <input
+                                type="email"
+                                dir='email'
+                                autoFocus
+                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                name='email'
+                                value={data.email}
+                                onChange={handleChange}
+                                placeholder='Enter your email'
+                            />
+                            <MdOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        </div>
+
+                    </div>
+
+                    {/* password input */}
+                    <div className='grid gap-1'>
+                        <label htmlFor="password" className='font-semibold'>Password: </label>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                dir='password'
+                                autoFocus
+                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                name='password'
+                                value={data.password}
+                                onChange={handleChange}
+                                placeholder='Enter your password'
+                            />
+                            <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            <div onClick={() => setShowPassword(preve => !preve)} className='cursor-pointer'>
+                                {
+                                    showPassword ? (
+                                        <FaRegEye className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                    ) : (
+                                        <FaRegEyeSlash className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                    )
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {/* Confirm Password input */}
+                    <div className='grid gap-1'>
+                        <label htmlFor="confirmPassword" className='font-semibold'>Confirm Password: </label>
+                        <div className="relative">
+                            <input
+                                type={showPasswordConfirm ? "text" : "password"}
+                                id='confirmPassword'
+                                autoFocus
+                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                name='confirmPassword'
+                                value={data.confirmPassword}
+                                onChange={handleChange}
+                                placeholder='Enter your password'
+                            />
+                            <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            <div onClick={() => setShowPasswordConfirm(preve => !preve)} className='cursor-pointer'>
+                                {
+                                    showPasswordConfirm ? (
+                                        <FaRegEye className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                    ) : (
+                                        <FaRegEyeSlash className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                    )
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"}  text-white py-2 rounded font-semibold mt-1 tracking-wide`}>
+                        Register
+                    </button>
+                </form>
+
+                <p className="text-sm font-medium tracking-wide text-black mt-1">
+                    Already have account? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
+                </p>
+            </div>
+        </section>
+
+    )
+}
+
+export default Register

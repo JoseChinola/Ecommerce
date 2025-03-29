@@ -1,0 +1,611 @@
+import sendEmail from "../config/sendEmail.js";
+import userSchema from "../models/user.model.js";
+import bcrypt from "bcryptjs";
+import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
+import { FRONTEND_URL, SECRETE_KEY_REFRESH_TOKEN } from "../config.js";
+import generateAccessToken from "../utils/generateAccessToken.js";
+import generateRefreshToken from "../utils/generateRefreshToken.js";
+import uploadImageClodinary from "../utils/uploadImageClodinary.js";
+import generatedOtp from "../utils/generatedOtp.js";
+import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
+import jwt from 'jsonwebtoken'
+
+
+export async function registerUserController(req, res) {
+    try {
+        const { name, email, password } = req.body;
+
+        // Validar que todos los campos estén presentes
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: "Provide name, email, and password",
+                error: true,
+                success: false
+            });
+        }
+
+        // Verificar si el usuario ya está registrado
+        const existingUser = await userSchema.findOne({ where: { email } });
+
+        if (existingUser) {
+            return res.status(400).json({
+                message: "Email is already registered",
+                error: true,
+                success: false
+            });
+        }
+
+        // Hashear la contraseña
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+
+        // Crear nuevo usuario
+        const newUser = await userSchema.create({
+            name,
+            email,
+            password: hashPassword,
+            verifyEmail: false
+        });
+
+        // URL de verificación de email
+        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${newUser.id}`;
+
+        try {
+            // Enviar email de verificación
+            await sendEmail({
+                sendTo: email,
+                subject: "Verify your email - ShopMix",
+                html: verifyEmailTemplate({
+                    name,
+                    url: verifyEmailUrl
+                })
+            });
+        } catch (emailError) {
+            console.error("Error sending verification email:", emailError);
+            return res.status(500).json({
+                message: "User registered, but email verification failed",
+                error: true,
+                success: false
+            });
+        }
+
+        return res.status(201).json({
+            message: "User registered successfully. Check your email to verify your account.",
+            error: false,
+            success: true,
+            data: newUser
+        });
+
+    } catch (error) {
+        console.error("Registration Error:", error);
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+}
+
+export async function verifyEmailController(req, res) {
+    try {
+        const { code } = req.body
+
+        // Verificar si se envió el código
+        if (!code) {
+            return res.status(400).json({
+                message: "Verification code is required",
+                error: true,
+                success: false
+            });
+        }
+
+        // Buscar usuario por código
+        const user = await userSchema.findOne({ where: { _id: code } });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Invalid verification code",
+                error: true,
+                success: false
+            });
+        }
+
+        // Actualizar el estado de verificación del email
+        await userSchema.update({ verifyEmail: true }, { where: { _id: code } });
+
+        return res.json({
+            message: "Email verified successfully",
+            success: true,
+            error: false
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+}
+
+//Login controller 
+export async function loginController(req, res) {
+    try {
+        const { email, password } = req.body;
+
+        // Verificar si se envió email y password
+        if (!email || !password) {
+            return res.status(400).json({
+                message: "Email and password are required",
+                error: true,
+                success: false
+            });
+        }
+
+        // Buscar usuario en la base de datos
+        const user = await userSchema.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "User not registered",
+                error: true,
+                success: false
+            });
+        }
+
+        // Verificar si el usuario está activo
+        if (user.status !== "Active") {
+            return res.status(400).json({
+                message: "Contact to Admin",
+                error: true,
+                success: false
+            });
+        }
+
+        // Comparar contraseña
+        const checkPassword = await bcrypt.compare(password, user.password);
+        if (!checkPassword) {
+            return res.status(400).json({
+                message: "Check your password",
+                error: true,
+                success: false
+            });
+        }
+
+        // Generar tokens
+        const accessToken = await generateAccessToken(user._id);
+        const refreshToken = await generateRefreshToken(user._id);
+
+        const update = await userSchema.update(
+            {
+                last_login_date: new Date()
+            },
+            {
+                where: { _id: user?._id }
+            })
+
+
+        // Configuración de cookies
+        const cookiesOption = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        };
+
+        res.cookie("accessToken", accessToken, cookiesOption);
+        res.cookie("refreshToken", refreshToken, cookiesOption);
+
+        return res.json({
+            message: "Login successfully",
+            error: false,
+            success: true,
+            data: {
+                accessToken,
+                refreshToken
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+}
+
+//logout controller
+export async function logoutController(req, res) {
+    try {
+        const userid = req.userId //middleware 
+
+
+        // Configuración de cookies
+        const cookiesOption = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        };
+
+        res.clearCookie("accessToken", cookiesOption)
+        res.clearCookie("refreshToken", cookiesOption)
+
+        const removeRefreshToken = await userSchema.update({ refresh_token: "" }, { where: { _id: userid } })
+        
+        
+        return res.json({
+            message: "Logout success",
+            error: false,
+            success: true
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+//Upload user avatar 
+export async function uploadAvatar(req, res) {
+    try {
+        const userId = req.userId
+        const image = req.file;
+           
+        if (!image) {
+            return res.status(400).json({
+                message: "No image file provided.",
+                error: true,
+                success: false
+            });
+        }
+
+        const upload = await uploadImageClodinary(image);
+
+        await userSchema.update({ avatar: upload.url }, { where: { _id: userId } })
+
+        return res.json({
+            message: "upload profile",
+            success: true,
+            error: false,
+            data: {
+                _id: userId,
+                avatar: upload.url
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+
+// udate user details 
+export async function updateUserDetails(req, res) {
+    try {
+        const userId = req.userId // auth middleware
+
+        const { name, email, mobile, password } = req.body
+
+        let hashPassword = "";
+
+        if (password) {
+            // Hashear la contraseña
+            const salt = await bcrypt.genSalt(10);
+            hashPassword = await bcrypt.hash(password, salt);
+        }
+        const updateUser = await userSchema.update(
+            {
+                ...(name && { name: name }),
+                ...(email && { email: email }),
+                ...(mobile && { mobile: mobile }),
+                ...(mobile && { mobile: mobile }),
+                ...(password && { password: hashPassword })
+
+            },
+            { where: { _id: userId } })
+
+        // Después de la actualización, obtenemos los datos actualizados
+        const updatedUser = await userSchema.findOne({ where: { _id: userId } });
+
+        return res.json({
+            message: "Update successfully",
+            error: false,
+            success: true,
+            data: updatedUser
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+
+//forgot password not login
+export async function forgotPasswordController(req, res) {
+    try {
+        const { email } = req.body
+
+
+        const user = await userSchema.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Email not available",
+                error: true,
+                success: false,
+            });
+        }
+
+
+
+        const otp = generatedOtp()
+        const expireTime = new Date(Date.now() + 60 * 60 * 1000).toISOString()
+
+        const updated = await userSchema.update(
+            {
+                forgot_password_otp: otp,
+                forgot_password_expiry: expireTime
+            },
+            { where: { _id: user._id } })
+
+
+
+        const emailll = await sendEmail({
+            sendTo: email,
+            subject: "Forgot password from ShopMix",
+            html: forgotPasswordTemplate({
+                name: user.name,
+                otp: otp
+            })
+        })
+
+        if (!emailll) {
+            return res.status(400).json({
+                message: "Unsent mail",
+                error: true,
+                success: false,
+            });
+        }
+
+        return res.json({
+            message: "Check your email",
+            error: false,
+            success: true
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+//forgot password not login
+export async function verifyForgotPasswordOtp(req, res) {
+    try {
+        const { email, otp } = req.body
+
+        if (!email || !otp) {
+            return res.status(400).json({
+                message: "Provide required field email, otp.",
+                error: true,
+                success: false,
+            });
+        }
+
+        const user = await userSchema.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Email not available",
+                error: true,
+                success: false,
+            });
+        }
+
+        const expireTime = new Date(Date.now() + 60 * 60 * 1000).toISOString()
+
+        const updated = await userSchema.update(
+            {
+                forgot_password_otp: otp,
+                forgot_password_expiry: expireTime
+            },
+            {
+                where: { _id: user._id }
+            })
+
+
+        const currentTime = new Date()
+
+        if (user.forgot_password_expiry < currentTime) {
+            return res.status(400).json({
+                message: "Otp is expired",
+                error: true,
+                success: false
+            })
+        }
+
+        if (otp !== user.forgot_password_otp) {
+            return res.status(400).json({
+                message: "Invalid otp",
+                error: true,
+                success: false
+            })
+        }
+
+        const updateUser = await userSchema.update(
+            {
+                forgot_password_otp: "",
+                forgot_password_expiry: ""
+            },
+            {
+                where: { _id: user?._id }
+            })
+
+        return res.json({
+            message: "verify otp successfully",
+            error: false,
+            success: true,
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+// reset the password
+export async function resetPassord(req, res) {
+    try {
+        const { email, newPassword, confirmPassword } = req.body
+
+        if (!email || !newPassword || !confirmPassword) {
+            return res.status(500).json({
+                message: "Provide requeried fields email, new password, confirm passowrd",
+                error: true,
+                success: false,
+            });
+        }
+
+        const user = await userSchema.findOne({ where: { email } });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Email not available",
+                error: true,
+                success: false,
+            });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return res.status(400).json({
+                message: "passowrd and confirm password must be same",
+                error: true,
+                success: false
+            })
+        }
+
+        // Hashear la contraseña
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+
+
+        const update = await userSchema.update(
+            {
+                password: hashPassword
+            },
+            { where: { _id: user._id } })
+
+        return res.json({
+            message: "Password update successfully",
+            error: false,
+            success: true
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+// refresh token controller 
+export async function refreshTokenController(req, res) {
+    try {
+        const refreshToken = req.cookies.refreshToken || req.headers?.authorization?.split(" ")[1]
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                message: "Invalid token",
+                error: true,
+                success: false,
+            });
+        }
+
+        const verifyToken = await jwt.verify(refreshToken, SECRETE_KEY_REFRESH_TOKEN);
+
+
+
+        if (!verifyToken) {
+            return res.status(401).json({
+                message: "Token is expired",
+                error: true,
+                success: false,
+            });
+        }
+
+        const userId = verifyToken?._id
+        const newAccessToken = await generateAccessToken(userId)
+
+        // Configuración de cookies
+        const cookiesOption = {
+            httpOnly: true,
+            secure: true,
+            sameSite: "None"
+        };
+
+        res.cookie('accessToken', newAccessToken, cookiesOption)
+
+
+        return res.json({
+            message: "New Access token generated",
+            error: false,
+            success: true,
+            data: {
+                accessToken: newAccessToken
+            }
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+
+// get login user details 
+export async function userDetailsController(req, res) {
+    try {
+        const userId = req.userId
+
+        const user = await userSchema.findOne(
+            {
+                where: { _id: userId },
+                attributes: { exclude: ['password', 'refresh_token'] }
+            });
+
+        return res.json({
+            message: "User details",
+            data: user,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
