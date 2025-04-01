@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import logomv from '../assets/shopmix.png'
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -9,6 +9,9 @@ import { GiShoppingCart } from "react-icons/gi"
 import { useSelector } from 'react-redux';
 import { FaRegUserCircle } from "react-icons/fa";
 import UserMenu from './UserMenu';
+import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
+import { useGlobalContext } from '../provider/GlobalProvider';
+import DisplayCartItem from './DisplayCartItem';
 
 
 const Header = () => {
@@ -17,7 +20,13 @@ const Header = () => {
     const navigate = useNavigate()
     const user = useSelector((state) => state?.user)
     const [openUserMenu, setOpenUserMenu] = useState(false)
+    const cartItem = useSelector((state) => state?.cartItem.cart)
+    // const [totalPrice, setTotalPrice] = useState(0)
+    // const [totalQty, setTotalQty] = useState(0)
+    const { totalPrice, totalQty } = useGlobalContext()
+    const [openCartSection, setOpenCartSection] = useState(false)
 
+    //console.log("cart data ", cartItem)
     const isSearchPage = location.pathname === "/search"
 
     // Rutas en las que el header no debe mostrarse
@@ -38,9 +47,22 @@ const Header = () => {
             return
         }
 
-        
+
         navigate("/user")
     }
+
+    // total items and total price 
+    // useEffect(() => {
+    //     const qty = cartItem.reduce((preve, curr) => {
+    //         return preve + curr.quantity
+    //     }, 0)
+    //     setTotalQty(qty)
+
+    //     const tPrice = cartItem.reduce((preve, curr) => {
+    //         return preve + curr.productData.price * curr.quantity
+    //     }, 0)
+    //     setTotalPrice(tPrice)
+    // }, [cartItem])
 
 
     if (isHidden) return <div className='xl:h-20 h-5'></div>;
@@ -114,7 +136,7 @@ const Header = () => {
                                             </div>
                                         </>
                                     ) : (
-                                        <FaRegCircleUser size={28} /> 
+                                        <FaRegCircleUser size={28} />
                                     )
                                 }
                             </button>
@@ -160,16 +182,38 @@ const Header = () => {
 
                                             </div>
 
-                                            <button className="relative group">
+
+                                            {/** Cart  */}
+                                            <button onClick={() => setOpenCartSection(true)} className="relative group flex">
                                                 {/* Carrito con icono */}
-                                                <div className="relative animate-pulse">
+                                                <div className={`relative ${totalQty ? "" : "animate-pulse"}`}>
                                                     <GiShoppingCart size={35} color='green' />
                                                     {/* Notificación del carrito */}
-                                                    <span className="bg-green-600 text-white group-hover:bg-green-500 w-6 h-6 flex items-center justify-center 
+                                                    {
+                                                        cartItem[0] ? (
+                                                            <span className="bg-green-600 text-white group-hover:bg-green-500 w-6 h-6 flex items-center justify-center 
                                                         text-sm font-semibold absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 rounded-full 
                                                         transition-colors duration-300">
-                                                        0
-                                                    </span>
+                                                                {totalQty}
+                                                            </span>
+                                                        ) : (
+                                                            <span className=''>
+                                                            </span>
+                                                        )
+                                                    }
+
+                                                </div>
+                                                <div className='flex items-end justify-center'>
+                                                    {
+                                                        totalPrice === 0 ? (
+                                                            <span className=''>
+                                                            </span>
+                                                        ) : (
+                                                            <span className='bg-green-600 text-sm w-fit text-white p-[1px] rounded-md text-center'>
+                                                                {DisplayPriceDOP(totalPrice)}
+                                                            </span>
+                                                        )
+                                                    }
                                                 </div>
                                             </button>
                                         </>
@@ -189,7 +233,13 @@ const Header = () => {
             <div className='container mx-auto px-2 lg:hidden'>
                 <Search />
             </div>
-        </header>
+
+            {
+                openCartSection && (
+                    <DisplayCartItem close={() => setOpenCartSection(false)} />
+                )
+            }
+        </header >
     )
 }
 

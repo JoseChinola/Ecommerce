@@ -20,6 +20,7 @@ import AdminPermissions from "../layouts/AdminPermissions";
 import { LoginRedirect, RegisterRedirect } from "../components/AuthRedirect";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
+import CartMobile from "../pages/CartMobile";
 
 
 
@@ -106,6 +107,10 @@ const Router = createBrowserRouter([
             {
                 path: "product/:product",
                 element: <ProductDisplayPage />
+            },
+            {
+                path: "cart",
+                element: <CartMobile />
             }
         ]
     }

@@ -11,11 +11,13 @@ import { useDispatch } from 'react-redux'
 import AxiosToastError from './utils/AxiosToastError';
 import SummaryApi from './cammon/SummaryApi';
 import Axios from './utils/Axios';
-
+import GlobalProvider from './provider/GlobalProvider';
+import CartMobileLink from './components/CartMobile';
 
 
 function App() {
   const dispatch = useDispatch()
+
 
   const fetchUser = async () => {
     const userData = await fetchUserDetails()
@@ -59,21 +61,24 @@ function App() {
   }
 
 
+
   useEffect(() => {
     fetchUser()
     fetchCategory()
     fetchSubCategory()
+    // fetchCartItem()
   }, [])
 
   return (
-    <>
+    <GlobalProvider>
       <Header />
       <main className="min-h-[78vh] px-4">
         <Outlet />
       </main>
       <Footer />
       <Toaster />
-    </>
+      <CartMobileLink />
+    </GlobalProvider>
   )
 }
 

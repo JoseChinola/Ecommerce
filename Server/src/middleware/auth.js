@@ -7,7 +7,9 @@ const auth = async (req, res, next) => {
 
         if (!token) {
             return res.status(401).json({
-                message: "Provide token"
+                message: "You have not login",
+                error: true,
+                success: false
             })
         }
 
@@ -24,10 +26,10 @@ const auth = async (req, res, next) => {
         req.userId = decode.id
 
         next()
-       
+
     } catch (error) {
         return res.status(500).json({
-            message: error.message || error,
+            message: "You have not login" || error,
             error: true,
             success: false
         })

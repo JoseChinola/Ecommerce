@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
-
+import userSchema from "./user.model.js";
+import productSchema from "./product.model.js";
 
 const cartProductSchema = sequelize.define('cartProduct', {
     _id: {
@@ -11,10 +12,10 @@ const cartProductSchema = sequelize.define('cartProduct', {
     productId: {
         type: DataTypes.UUID,
         references: {
-            model: 'product', // Relación con el modelo de Product
+            model: 'product', // Relación con el modelo de productos
             key: "_id",
         },
-        allowNull: false, // No permitir valores nulos en productId
+        allowNull: false,
     },
     quantity: {
         type: DataTypes.INTEGER,
@@ -24,25 +25,28 @@ const cartProductSchema = sequelize.define('cartProduct', {
         type: DataTypes.UUID,
         allowNull: false,
         references: {
-          model: 'users',
-          key: '_id', // ✅ CORREGIDO: Ahora hace referencia a `_id`
+            model: 'users',
+            key: '_id',
         }
-      }
-      ,
+    },
     createdAt: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW, // Sequelize manejará este campo automáticamente
+        defaultValue: DataTypes.NOW,
     },
     updatedAt: {
         type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW, // Sequelize manejará este campo automáticamente
+        defaultValue: DataTypes.NOW,
     }
 }, {
     tableName: 'cartProduct',
-    timestamps: true, // Activar los timestamps automáticos
+    timestamps: true,
 });
 
-// Sincronizar la tabla
 
+// Sincronizar el modelo con la base de datos
+cartProductSchema.belongsTo(productSchema, {
+    foreignKey: "productId",
+    as: "productData",
+});
 
 export default cartProductSchema;

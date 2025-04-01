@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
 import addressSchema from "./address.model.js";
-import cartProducSchema from "./cartProduct.model.js"
 import orderSchema from "./order.model.js";
+import cartProductSchema from "./cartProduct.model.js";
 
 
 // Definir el modelo de usuario
@@ -57,14 +57,6 @@ const userSchema = sequelize.define('users', {
             key: "_id"
         }
     },
-    shopping_cart: {
-        type: DataTypes.UUID,
-        defaultValue: null,
-        references: {
-            model: "cartProduct",
-            key: "_id"
-        }
-    },
     orderHistory: {
         type: DataTypes.UUID,
         defaultValue: null,
@@ -92,9 +84,7 @@ const userSchema = sequelize.define('users', {
 
 // Establecer relaciones con los otros modelos
 userSchema.belongsTo(addressSchema, { foreignKey: 'address_details' });
-userSchema.belongsTo(cartProducSchema, { foreignKey: 'shopping_cart' });
 userSchema.belongsTo(orderSchema, { foreignKey: 'orderHistory' });
-
 
 
 export default userSchema;

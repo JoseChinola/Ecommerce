@@ -70,11 +70,11 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
     return (
         <div className='shadow-md'>
             <div className='container mx-auto p-3 flex items-center justify-between gap-4'>
-                <h3 className='font-semibold text-lg md:text-xl'>{name}</h3>
+                <h3 className='font-semibold text-sm md:text-xl'>{name}</h3>
                 <Link to={handleRedirectProductListpage()} className='text-green-600 hover:text-primary-Green'>See All</Link>
             </div>
             <div className='relative flex items-center'>
-                <div className='flex items-center gap-4 md:gap-6 lg:m-7 container mx-auto px-4 overflow-x-scroll scrollbar-none overflow-hidden scroll-smooth' ref={containerRef}>
+                <div className='flex items-center gap-4 md:gap-6 lg:m-7 container mx-auto px-4 overflow-x-scroll scrollbar-none overflow-hidden scroll-smooth ' ref={containerRef}>
                     {loading &&
                         loadingCardNumer.map((_, index) => {
                             return (
@@ -91,7 +91,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
                     }
 
                 </div>
-                <div className='w-full left-0 right-0 container mx-auto px-2 absolute hidden lg:flex justify-between'>
+                <div className='w-full left-0 right-0 container mx-auto px-2 absolute hidden xs:lex sm:flex md:flex lg:flex justify-between'>
                     <button onClick={handleScrollLeft} className='z-10 relative bg-white hover:bg-gray-200 hover:text-primary-Green shadow-lg p-2 rounded-full text-lg '>
                         <FaAngleLeft size={20} />
                     </button>

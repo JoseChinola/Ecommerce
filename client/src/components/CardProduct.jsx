@@ -1,9 +1,9 @@
 import React from 'react'
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
-import { LiaCartPlusSolid } from "react-icons/lia";
 import { Link } from 'react-router-dom'
 import { validaURLConvert } from '../utils/validaURLConvert';
 import { pricewithDiscount } from '../utils/PriceWithDiscount';
+import AddToCartButton from './AddToCartButton';
 
 
 const CardProduct = ({ data }) => {
@@ -13,15 +13,14 @@ const CardProduct = ({ data }) => {
 
 
     return (
-        <Link to={url} className='border p-4 mb-2 grid gap-2 min-w-36 lg:min-w-48 rounded shadow-md cursor-pointer bg-white select-none'>
-            <div className="min-h-20 max-h-24 lg:max-h-32 rounded flex items-center justify-center overflow-hidden">
+        <div className='border p-4 mb-2 grid gap-2 min-w-36 lg:min-w-48 rounded shadow-md  bg-white select-none'>
+            <Link to={url} className="min-h-20 max-h-24 lg:max-h-32 cursor-pointer rounded flex items-center justify-center overflow-hidden">
                 <img
                     src={images[0]}
                     alt="Product"
                     className="w-full h-full object-contain"
                 />
-            </div>
-
+            </Link>
 
 
             <div className='flex items-center justify-between'>
@@ -58,16 +57,18 @@ const CardProduct = ({ data }) => {
                         data.stock == 0 ? (
                             <p className='text-red-500 text-sm text-center'>Out of stock</p>
                         ) : (
-                            <button className=' bg-slate-100 text-black hover:bg-green-500 px-4     q py-1 hover:text-white rounded-full'>
-                                <LiaCartPlusSolid size={23} />
-                            </button>
+                            // <button onClick={handleAddToCart} className=' bg-slate-100 text-black hover:bg-green-500 px-4     q py-1 hover:text-white rounded-full'>
+                            //     <LiaCartPlusSolid size={23} />
+                            // </button>
+
+                            <AddToCartButton data={data} />
                         )
                     }
 
                 </div>
 
             </div>
-        </Link>
+        </div>
     )
 }
 

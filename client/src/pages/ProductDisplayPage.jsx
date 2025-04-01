@@ -11,6 +11,7 @@ import image2 from '../assets/bestPrice.png'
 import image3 from '../assets/wiseAssortmen.png'
 import ProductSkeleton from '../components/ProductSkeleton'
 import { pricewithDiscount } from '../utils/PriceWithDiscount'
+import AddToCartButton from '../components/AddToCartButton'
 
 
 const ProductDisplayPage = () => {
@@ -102,7 +103,7 @@ const ProductDisplayPage = () => {
                     </div>
                 </div>
 
-                <div className='my-4 grid gap-3'>
+                <div className='my-4 lg:grid gap-3 hidden'>
                     <div>
                         <p className='font-semibold'>Description</p>
                         <p className='text-sm'>{data.description}</p>
@@ -128,7 +129,7 @@ const ProductDisplayPage = () => {
             <div className='p-1 lg:pl-8 text-base'>
                 <p className='bg-green-300 w-fit rounded-full px-2 mb-1'>10 Min</p>
                 <div className='flex gap-4 items-center'>
-                    <h2 className='text-3xl font-semibold capitalize'>{data.name}</h2>
+                    <h2 className='lg:text-3xl font-semibold capitalize'>{data.name}</h2>
                     <p className='bg-green-300 w-fit px-2 rounded-full text-center text-nowrap'>{data.unit}</p>
                 </div>
                 <Divider />
@@ -158,9 +159,12 @@ const ProductDisplayPage = () => {
                                 <p className='text-lg text-red-500'>Out  of Stock</p>
                             </div>
                         ) : (
-                            <button className='my-4 lg:ml-4 px-8 py-1 bg-primary-Green hover:bg-green-700 text-white rounded-2xl'>
-                                <LiaCartPlusSolid size={23} />
-                            </button>
+                            // <button className='my-4 lg:ml-4 px-8 py-1 bg-primary-Green hover:bg-green-700 text-white rounded-2xl'>
+                            //     <LiaCartPlusSolid size={23} />
+                            // </button>
+                            <div className='my-4 w-36 bg-white text-xl'>
+                                <AddToCartButton data={data} />
+                            </div>
                         )
                     }
                 </div>
@@ -208,6 +212,29 @@ const ProductDisplayPage = () => {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/**only mobile */}
+                <div className='my-4 grid gap-3 lg:hidden'>
+                    <div>
+                        <p className='font-semibold'>Description</p>
+                        <p className='text-sm'>{data.description}</p>
+                    </div>
+
+                    <div>
+                        <p className='font-semibold'>Unit</p>
+                        <p className='text-sm'>{data.unit}</p>
+                    </div>
+                    {
+                        data?.more_details && Object.keys(data?.more_details).map((element, index) => {
+                            return (
+                                <div key={index + "moreDetails"}>
+                                    <p className='font-semibold'>{element}</p>
+                                    <p className='text-sm'>{data?.more_details[element]}</p>
+                                </div>
+                            )
+                        })
+                    }
                 </div>
             </div>
         </section>
