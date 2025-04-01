@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import { validaURLConvert } from '../utils/validaURLConvert'
 import { Link, useNavigate } from 'react-router-dom'
 import CategoryWiseProductDisplay from '../components/CategoryWiseProductDisplay'
+import Carousel from '../components/CarouselImg'
 
 
 
@@ -14,9 +15,9 @@ const Home = () => {
   const subCategoryData = useSelector(state => state.product.allSubCategory)
   const navigate = useNavigate()
 
+  console.log("data ", categoryData)
 
   const handleRedirectProductListpage = (id, cat) => {
-    console.log(id, cat)
     const subcategory = subCategoryData.find(sub => {
       return sub.categoryData && sub.categoryData._id === id;
     })
@@ -24,24 +25,12 @@ const Home = () => {
     navigate(url)
   }
 
-
-
   return (
     <section className='bg-white rounded'>
       <div className='container mx-auto rounded my-4 px-3'>
         {/* Banner container */}
-        <div className={`w-full h-56 min-h-48 bg-white rounded-md ${!bannerDesktp && "animate-pulse my-2"} p-2`}>
-          <img
-            src={bannerDesktp}
-            alt="banner"
-            className='w-full h-full object-cover rounded hidden lg:block'
-          />
-
-          <img
-            src={bannerMobie}
-            alt="banner"
-            className='w-full h-full object-cover rounded lg:hidden'
-          />
+        <div className={`w-full h-full bg-white rounded-md ${!bannerDesktp && "animate-pulse my-2"} p-2`}>
+          <Carousel bannerDesktp={bannerDesktp} bannerMobile={bannerMobie}/>
         </div>
 
 
