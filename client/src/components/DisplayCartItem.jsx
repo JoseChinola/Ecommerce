@@ -1,18 +1,27 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { IoClose } from 'react-icons/io5'
 import { Link } from 'react-router-dom'
-import { useGlobalContext } from '../provider/GlobalProvider'
+import { useGlobalContext } from '../provider/useGlobalContext'
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP'
 import { FaCaretRight } from "react-icons/fa";
+import { LuDelete } from "react-icons/lu";
 import { useSelector } from 'react-redux'
 import AddToCartButton from './AddToCartButton'
 import { pricewithDiscount } from '../utils/PriceWithDiscount'
 import emptyCart from '../assets/cartEmpty.png'
+import ConfirmBox from './ConfirmBox'
 
 
 const DisplayCartItem = ({ close }) => {
-    const { notDiscountTotalPrice, totalPrice, totalQty, } = useGlobalContext()
+    const { notDiscountTotalPrice, totalPrice, totalQty, deleteCartItems } = useGlobalContext()
+    const [openDeleteConfirmBox, setOpenDeleteConfirmBox] = useState(false)
     const cartItem = useSelector(state => state.cartItem.cart)
+
+    const handleClearCart = () => {
+        deleteCartItems()
+        setOpenDeleteConfirmBox(false)
+        close()
+    }
 
 
     return (
@@ -20,7 +29,7 @@ const DisplayCartItem = ({ close }) => {
             <div className='bg-white w-full max-w-sm min-h-screen max-h-screen ml-auto rounded-md'>
 
                 <div className='flex items-center justify-between p-3 rounded-md shadow-md'>
-                    <h1 className='font-semibold'>Cart </h1>
+                    <h1 className='font-semibold uppercase italic'>Cart </h1>
                     <Link to={"/"} className='lg:hidden'>
                         <IoClose size={30} />
                     </Link>
@@ -67,8 +76,20 @@ const DisplayCartItem = ({ close }) => {
                                         )
                                     }
                                 </div>
-                                <div className='bg-white p-4 rounded-lg flex flex-col gap-1 border'>
-                                    <h3 className='font-semibold'>Bill Details</h3>
+                                <div className='bg-white p-2 rounded-lg flex flex-col gap-1.5 border'>
+                                    <div className="flex justify-between items-center relative group">
+                                        <h3 className="font-semibold">Bill Details</h3>
+
+                                        {/* Botón con Tooltip */}
+                                        <button onClick={() => setOpenDeleteConfirmBox(true)} className="text-lg sm:text-2xl relative flex gap-1 justify-center items-center text-red-500 bg-white hover:bg-red-500 hover:text-white border rounded-full px-2">
+                                            <LuDelete /> <span className='text-sm font-semibold '>Clear cart</span>
+
+                                            {/* Tooltip */}
+                                            <span className="absolute hidden lg:block -top-8 right-0 translate-x-1 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 whitespace-nowrap">
+                                                Clear cart
+                                            </span>
+                                        </button>
+                                    </div>
                                     <div className='flex px-2 gap-4 justify-between items-center bg-blue-100 text-blue-500 rounded-lg py-1'>
                                         <p>Items total </p>
                                         <p className='flex items-center gap-2 font-medium'><span className='line-through text-neutral-400'>{DisplayPriceDOP(notDiscountTotalPrice)}</span><span>{DisplayPriceDOP(totalPrice)}</span></p>
@@ -109,7 +130,7 @@ const DisplayCartItem = ({ close }) => {
                         <div className='px-2'>
                             <div className='text-blue-500 border px-4 py-1 font-bold text-base lg:text-lg static bottom-3 rounded-md flex items-center gap-4 justify-between'>
                                 <div>
-                                  Pay  {DisplayPriceDOP(totalPrice)}
+                                    Pay  {DisplayPriceDOP(totalPrice)}
                                 </div>
                                 <button className='flex items-center gap-1 bg-green-700 px-2 rounded-lg text-white'>
                                     Proceed
@@ -123,6 +144,16 @@ const DisplayCartItem = ({ close }) => {
                 }
 
             </div>
+
+            {
+                openDeleteConfirmBox && (
+                    <ConfirmBox
+                        cancel={() => setOpenDeleteConfirmBox(false)}
+                        close={() => setOpenDeleteConfirmBox(false)}
+                        confirm={handleClearCart}
+                    />
+                )
+            }
         </section>
     )
 }

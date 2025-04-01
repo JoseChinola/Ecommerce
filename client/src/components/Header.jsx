@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import logomv from '../assets/shopmix.png'
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import { FaRegUserCircle } from "react-icons/fa";
 import UserMenu from './UserMenu';
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
-import { useGlobalContext } from '../provider/GlobalProvider';
+import { useGlobalContext } from '../provider/useGlobalContext'
 import DisplayCartItem from './DisplayCartItem';
 
 
@@ -132,6 +132,39 @@ const Header = () => {
                                                             )
                                                         }
                                                     </div>
+
+                                                    <button onClick={() => setOpenCartSection(true)} className="relative group flex max-[430px]:hidden">
+                                                        {/* Carrito con icono */}
+                                                        <div className={`relative ${totalQty ? "" : "animate-pulse"}`}>
+                                                            <GiShoppingCart size={35} color='green' />
+                                                            {/* Notificación del carrito */}
+                                                            {
+                                                                cartItem[0] ? (
+                                                                    <span className="bg-green-600 text-white group-hover:bg-green-500 w-6 h-6 flex items-center justify-center 
+                                                        text-sm font-semibold absolute top-0 right-0 translate-x-1/2 -translate-y-1/2 rounded-full 
+                                                        transition-colors duration-300">
+                                                                        {totalQty}
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className=''>
+                                                                    </span>
+                                                                )
+                                                            }
+
+                                                        </div>
+                                                        <div className='flex items-end justify-center'>
+                                                            {
+                                                                totalPrice === 0 ? (
+                                                                    <span className=''>
+                                                                    </span>
+                                                                ) : (
+                                                                    <span className='bg-green-600 text-sm w-fit text-white p-[1px] rounded-md text-center'>
+                                                                        {DisplayPriceDOP(totalPrice)}
+                                                                    </span>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </>

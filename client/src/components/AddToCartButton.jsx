@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useGlobalContext } from '../provider/GlobalProvider'
 import SummaryApi from '../cammon/SummaryApi'
 import Axios from '../utils/Axios'
 import AxiosToastError from '../utils/AxiosToastError'
@@ -8,6 +7,7 @@ import { LiaCartPlusSolid } from 'react-icons/lia'
 import Loading from './Loading'
 import { useSelector } from 'react-redux'
 import { FaMinus, FaPlus } from "react-icons/fa6";
+import { useGlobalContext } from '../provider/useGlobalContext'
 
 const AddToCartButton = ({ data }) => {
     const { fetchCartItem, updateCartItem, deleteCartItem } = useGlobalContext()
@@ -81,7 +81,7 @@ const AddToCartButton = ({ data }) => {
         <div className='w-full'>
             {
                 isAvailableCart ? (
-                    <div className='flex items-center justify-between gap-1 md:gap-2 bg-slate-100 lg:px-2 py-[0.7px] rounded-lg'>
+                    <div className='flex items-center justify-between gap-1 md:gap-2 bg-slate-200 lg:px-2 py-[0.7px] rounded-lg'>
                         <button onClick={decreaseQty} className='bg-green-500 text-white  hover:text-red-500 hover:bg-white rounded-full'>
                             <FaMinus />
                         </button>
@@ -91,7 +91,7 @@ const AddToCartButton = ({ data }) => {
                         </button>
                     </div>
                 ) : (
-                    <button onClick={handleAddToCart} className=' bg-slate-100 text-black hover:bg-green-500 px-4 py-1 hover:text-white rounded-full'>
+                    <button onClick={handleAddToCart} className=' bg-slate-200 text-slate-500 hover:bg-green-500 px-4 py-1 hover:text-white rounded-full'>
                         {
                             loanding ? <Loading /> : <LiaCartPlusSolid size={23} />
                         }

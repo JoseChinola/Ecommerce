@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGlobalContext } from '../provider/GlobalProvider'
+import { useGlobalContext } from '../provider/useGlobalContext'
 import { FaCartShopping } from 'react-icons/fa6';
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 import { Link } from 'react-router-dom';
@@ -14,7 +14,7 @@ const CartMobileLink = () => {
         <>
             {
                 cartItem[0] && (
-                    <div className='p-2 sticky bottom-4 hidden max-[400px]:block'>
+                    <div className='p-2 sticky bottom-4 hidden max-[425px]:block'>
                         <div className='bg-green-600 px-2 py-1 rounded-md text-neutral-100 text-sm flex items-center justify-between '>
                             <div className='flex items-center gap-2'>
                                 <div className='p-2 bg-green-500 rounded w-fit'>

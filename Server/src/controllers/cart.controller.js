@@ -162,3 +162,38 @@ export const deleteCartItemQtyController = async (req, res) => {
         });
     }
 };
+
+export const deleteCartItemsController = async (req, res) => {
+    try {
+        const userId = req.userId;
+
+
+        // Eliminamos todos los productos del carrito de ese usuario
+        const deleteCartItems = await cartProductSchema.destroy({
+            where: { userId: userId }
+        });
+
+        if (deleteCartItems === 0) {
+            return res.status(404).json({
+                message: "No products found in cart",
+                error: true,
+                success: false
+            });
+        }
+
+
+        return res.json({
+            message: "All products removed from cart successfully",
+            success: true,
+            error: false,
+            data: deleteCartItems
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+};

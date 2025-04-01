@@ -162,7 +162,7 @@ const ProductDisplayPage = () => {
                             // <button className='my-4 lg:ml-4 px-8 py-1 bg-primary-Green hover:bg-green-700 text-white rounded-2xl'>
                             //     <LiaCartPlusSolid size={23} />
                             // </button>
-                            <div className='my-4 w-36 bg-white text-xl'>
+                            <div className='my-4 w-36 text-xl'>
                                 <AddToCartButton data={data} />
                             </div>
                         )

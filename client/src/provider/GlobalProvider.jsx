@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Axios from "../utils/Axios";
 import SummaryApi from "../cammon/SummaryApi";
 import { handleAddItemCart } from "../store/cartProduct";
@@ -6,12 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import AxiosToastError from "../utils/AxiosToastError";
 import toast from "react-hot-toast";
 import { pricewithDiscount } from "../utils/PriceWithDiscount";
-
-export const GlobalContext = createContext(null)
-
-export const useGlobalContext = () => useContext(GlobalContext)
-
-
+import { GlobalContext } from './useGlobalContext'
 
 const GlobalProvider = ({ children }) => {
     const dispatch = useDispatch()
@@ -77,6 +72,23 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+    const deleteCartItems = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.deleteCartItems
+            });
+
+            const { data: responseData } = response;
+
+            if (responseData.success) {
+                toast.success(responseData.message);
+                fetchCartItem();
+            }
+
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
 
     useEffect(() => {
         fetchCartItem()
@@ -109,6 +121,7 @@ const GlobalProvider = ({ children }) => {
             fetchCartItem,
             updateCartItem,
             deleteCartItem,
+            deleteCartItems,
             totalPrice,
             totalQty,
             notDiscountTotalPrice
