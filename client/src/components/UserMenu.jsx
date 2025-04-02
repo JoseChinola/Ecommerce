@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { CiUser } from "react-icons/ci";
 import { HiOutlineExternalLink } from "react-icons/hi";
@@ -50,6 +50,7 @@ const UserMenu = ({ close }) => {
             close()
         }
     }
+
 
     return (
         <div>

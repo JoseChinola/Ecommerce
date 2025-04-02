@@ -1,6 +1,4 @@
 import React from 'react'
-import bannerDesktp from '../assets/banner-desk.jpg'
-import bannerMobie from '../assets/banner-mobile.png'
 import { useSelector } from 'react-redux'
 import { validaURLConvert } from '../utils/validaURLConvert'
 import { Link, useNavigate } from 'react-router-dom'
@@ -15,7 +13,6 @@ const Home = () => {
   const subCategoryData = useSelector(state => state.product.allSubCategory)
   const navigate = useNavigate()
 
-  console.log("data ", categoryData)
 
   const handleRedirectProductListpage = (id, cat) => {
     const subcategory = subCategoryData.find(sub => {
@@ -27,10 +24,11 @@ const Home = () => {
 
   return (
     <section className='bg-white rounded'>
-      <div className='container mx-auto rounded my-4 px-3'>
+      <div className='container mx-auto rounded my-4 px-3 p-2'>
         {/* Banner container */}
-        <div className={`w-full h-full bg-white rounded-md ${!bannerDesktp && "animate-pulse my-2"} p-2`}>
-          <Carousel bannerDesktp={bannerDesktp} bannerMobile={bannerMobie}/>
+        <div className={`w-full h-full grid items-center border bg-white gap-2 p-2 rounded-md`}>
+          <p className='font-semibold lg:text-xl italic px-4 py-2'>Offers up to <span className='text-white bg-red-500 rounded-full w-fit py-[2px] text-center px-2'>5%</span></p>
+          <Carousel handleRedirectDisplay={handleRedirectProductListpage} />
         </div>
 
 

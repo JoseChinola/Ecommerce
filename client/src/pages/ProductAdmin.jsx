@@ -30,7 +30,7 @@ const ProductAdmin = () => {
             })
 
             const { data: resData } = resp
-            console.log("Data product admin", resData.data)
+           
             if (resData.success) {
                 setProductData(resData.data)
             }
