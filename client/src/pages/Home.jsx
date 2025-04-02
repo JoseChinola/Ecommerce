@@ -27,12 +27,13 @@ const Home = () => {
       <div className='container mx-auto rounded my-4 px-3 p-2'>
         {/* Banner container */}
         <div className={`w-full h-full grid items-center border bg-white gap-2 p-2 rounded-md`}>
-          <p className='font-semibold lg:text-xl italic px-4 py-2'>Offers up to <span className='text-white bg-red-500 rounded-full w-fit py-[2px] text-center px-2'>5%</span></p>
+          <p className='font-semibold lg:text-xl italic px-4 py-2'>Offers up to <span className='text-white bg-red-500 rounded-full w-fit text-center px-2'>-5%</span></p>
           <Carousel handleRedirectDisplay={handleRedirectProductListpage} />
         </div>
 
 
-        <div className='container mx-auto px-4 py-4 my-4 grid grid-cols-4 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-4'>
+        <div className='container mx-auto px-2 py-4 my-4 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-7 lg:grid-cols-8 gap-4'>
+
           {
             loadingCategory ? (
               new Array(12).fill(null).map((c, index) => {
@@ -51,7 +52,7 @@ const Home = () => {
                     className="w-full h-full flex justify-center items-center cursor-pointer"
                     onClick={() => handleRedirectProductListpage(cat._id, cat.name)}
                   >
-                    <div className=" md:w-[200px] md:h-[175px] w-full h-full border border-neutral-300 bg-transparent flex flex-col items-center rounded-lg shadow-md">
+                    <div className=" md:w-[180px] md:h-[100px] w-full h-full border border-neutral-300 bg-transparent flex flex-col items-center rounded-lg shadow-md">
                       {/* Contenedor de la imagen */}
                       <div className="w-full h-full overflow-hidden">
                         <img
@@ -62,21 +63,16 @@ const Home = () => {
                       </div>
 
                       {/* Contenedor del texto */}
-                      <div className="bg-blue-100 h-8 w-full my-2 hidden lg:flex justify-center items-center">
-                        <h6 className="text-sm text-center text-blue-500 font-bold w-full container 
-                                     overflow-hidden text-ellipsis whitespace-nowrap ">
-                          {cat?.name}
-                        </h6>
-                      </div>
+                      <h6 className="text-xs text-center bg-blue-100 py-1 px-1 hidden sm:block text-blue-500 font-bold w-full container 
+              overflow-hidden text-ellipsis whitespace-nowrap">
+                        {cat?.name || "Categoría sin nombre"}
+                      </h6>
                     </div>
                   </Link>
 
                 )
               })
-
-            )
-
-          }
+            )}
         </div>
       </div>
 

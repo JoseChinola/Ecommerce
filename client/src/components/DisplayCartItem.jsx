@@ -28,12 +28,12 @@ const DisplayCartItem = ({ close }) => {
         <section className='bg-neutral-900 fixed top-0 bottom-0 left-0 right-0 bg-opacity-70 z-50'>
             <div className='bg-white w-full max-w-sm min-h-screen max-h-screen ml-auto rounded-md'>
 
-                <div className='flex items-center justify-between p-3 rounded-md shadow-md'>
-                    <h1 className='font-semibold uppercase italic'>Cart </h1>
-                    <Link to={"/"} className='lg:hidden'>
+                <div className="flex items-center justify-between p-3 rounded-md shadow-md">
+                    <h1 className="font-semibold uppercase italic">Cart</h1>
+                    <Link to={"/"} onClick={close} className="sm:hidden block">
                         <IoClose size={30} />
                     </Link>
-                    <button onClick={close} className='w-fit ml-auto hover:text-red-600 hidden lg:block'>
+                    <button onClick={close} className="w-fit ml-auto hover:text-red-600 hidden sm:block">
                         <IoClose size={30} />
                     </button>
                 </div>

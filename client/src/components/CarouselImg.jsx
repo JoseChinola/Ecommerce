@@ -81,7 +81,7 @@ const Carousel = () => {
     };
 
     return (
-        <div className="relative flex items-center w-full p-4 overflow-hidden">
+        <div className="relative flex items-center w-full p-4 overflow-hidden  rounded-xl">
             {/* 🔹 Botón "Anterior" */}
             <button
                 onClick={goToPrevious}
