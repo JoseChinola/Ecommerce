@@ -214,6 +214,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
                 offset,
                 limit,
                 order: [['createdAt', 'DESC']]
+
             }),
             productSchema.count({ where: query })
         ]);
@@ -352,7 +353,47 @@ export const deleteProductDetails = async (req, res) => {
 //search product 
 export const searchProduct = async (req, res) => {
     try {
-        const { search, page, limit } = req.body
+        let { search, page, limit } = req.body
+
+        if (!page) {
+            page = 1
+        }
+        if (!limit) {
+            limit = 10
+        }
+        
+        const query = search 
+            ? {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { description: { [Op.like]: `%${search}%` } }
+                ]
+            }
+            : {};
+
+        const offset = (page - 1) * limit;
+        const [data, dataCount] = await Promise.all([
+            productSchema.findAll({
+                limit,
+                offset,
+                where: query,
+                order: [['createdAt', 'DESC']],
+                include: ['categoryData', 'subcategoryData']
+
+            }),
+            productSchema.count({ where: query })
+        ])
+
+        return res.json({
+            message: "Product data",
+            error: false,
+            success: true,
+            data: data,
+            totalCount: dataCount,
+            totalPage: Math.ceil(dataCount / limit),
+            page: page,
+            limit: limit
+        })
     } catch (error) {
         return res.status(500).json({
             message: error.message || "Internal server error",

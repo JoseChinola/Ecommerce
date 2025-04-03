@@ -31,49 +31,55 @@ const Home = () => {
           <Carousel handleRedirectDisplay={handleRedirectProductListpage} />
         </div>
 
+        <div className='mt-4'>
+          <h2 className='font-extrabold uppercase italic px-4 text-blue-500 bg-blue-100 py-2 rounded-md'>Category</h2>
+          
+          <div className='container mx-auto px-2 py-4  grid grid-cols-5 sm:grid-cols-8 md:grid-cols-8 lg:grid-cols-7 xl:grid-cols-8 gap-4'>
 
-        <div className='container mx-auto px-2 py-4 my-4 grid grid-cols-5 sm:grid-cols-8 md:grid-cols-7 lg:grid-cols-8 gap-4'>
-
-          {
-            loadingCategory ? (
-              new Array(12).fill(null).map((c, index) => {
-                return (
-                  <div key={index + "loadingcategory"} className='bg-white rounded p-4 min-h-36 grid gap-2 shadow animate-pulse'>
-                    <div className='bg-blue-100 min-h-24 rounded'></div>
-                    <div className='bg-blue-100 h-8 rounded'></div>
-                  </div>
-                )
-              })
-            ) : (
-              categoryData.map((cat, index) => {
-                return (
-                  <Link
-                    key={cat._id + "displayCategory" + index}
-                    className="w-full h-full flex justify-center items-center cursor-pointer"
-                    onClick={() => handleRedirectProductListpage(cat._id, cat.name)}
-                  >
-                    <div className=" md:w-[180px] md:h-[100px] w-full h-full border border-neutral-300 bg-transparent flex flex-col items-center rounded-lg shadow-md">
-                      {/* Contenedor de la imagen */}
-                      <div className="w-full h-full overflow-hidden">
-                        <img
-                          src={cat?.image}
-                          className="w-full h-full object-cover rounded"
-                          alt={cat?.name}
-                        />
-                      </div>
-
-                      {/* Contenedor del texto */}
-                      <h6 className="text-xs text-center bg-blue-100 py-1 px-1 hidden sm:block text-blue-500 font-bold w-full container 
-              overflow-hidden text-ellipsis whitespace-nowrap">
-                        {cat?.name || "Categoría sin nombre"}
-                      </h6>
+            {
+              loadingCategory ? (
+                new Array(12).fill(null).map((c, index) => {
+                  return (
+                    <div key={index + "loadingcategory"} className='bg-white rounded p-4 min-h-36 grid gap-2 shadow animate-pulse'>
+                      <div className='bg-blue-100 min-h-24 rounded'></div>
+                      <div className='bg-blue-100 h-8 rounded'></div>
                     </div>
-                  </Link>
+                  )
+                })
+              ) : (
+                categoryData.map((cat, index) => {
+                  return (
+                    <Link
+                      key={cat._id + "displayCategory" + index}
+                      className="w-full h-full flex justify-center items-center cursor-pointer"
+                      onClick={() => handleRedirectProductListpage(cat._id, cat.name)}
+                    >
+                      <div className=" md:w-[180px] md:h-[100px] w-full h-full border border-neutral-300 bg-transparent flex flex-col items-center rounded-lg shadow-md">
+                        {/* Contenedor de la imagen */}
+                        <div className="w-full h-full overflow-hidden">
+                          <img
+                            src={cat?.image}
+                            className="w-full h-full object-cover rounded"
+                            alt={cat?.name}
+                          />
+                        </div>
 
-                )
-              })
-            )}
+                        {/* Contenedor del texto */}
+                        <h6 className="text-xs text-center bg-blue-100 py-1 px-1 hidden sm:block text-blue-500 font-bold w-full container 
+    overflow-hidden text-ellipsis whitespace-nowrap">
+                          {cat?.name || "Categoría sin nombre"}
+                        </h6>
+                      </div>
+                    </Link>
+
+                  )
+                })
+              )}
+          </div>
+
         </div>
+
+
       </div>
 
 

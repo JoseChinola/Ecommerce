@@ -21,6 +21,7 @@ import { LoginRedirect, RegisterRedirect } from "../components/AuthRedirect";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
 import CartMobile from "../pages/CartMobile";
+import CheckoutPage from "../pages/CheckoutPage";
 
 
 
@@ -111,6 +112,10 @@ const Router = createBrowserRouter([
             {
                 path: "cart",
                 element: <CartMobile />
+            },
+            {
+                path: "checkout",
+                element: <CheckoutPage />
             }
         ]
     }

@@ -21,18 +21,15 @@ const Header = () => {
     const user = useSelector((state) => state?.user)
     const [openUserMenu, setOpenUserMenu] = useState(false)
     const cartItem = useSelector((state) => state?.cartItem.cart)
-    // const [totalPrice, setTotalPrice] = useState(0)
-    // const [totalQty, setTotalQty] = useState(0)
     const { totalPrice, totalQty } = useGlobalContext()
     const [openCartSection, setOpenCartSection] = useState(false)
+    
 
-    //console.log("cart data ", cartItem)
+
     const isSearchPage = location.pathname === "/search"
 
     // Rutas en las que el header no debe mostrarse
     const isHidden = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot-password" || location.pathname === "/verification-otp" || location.pathname === "/reset-password";
-
-
 
     const redirectToLoginPage = () => {
         navigate("/login")
@@ -50,20 +47,6 @@ const Header = () => {
 
         navigate("/user")
     }
-
-    // total items and total price 
-    // useEffect(() => {
-    //     const qty = cartItem.reduce((preve, curr) => {
-    //         return preve + curr.quantity
-    //     }, 0)
-    //     setTotalQty(qty)
-
-    //     const tPrice = cartItem.reduce((preve, curr) => {
-    //         return preve + curr.productData.price * curr.quantity
-    //     }, 0)
-    //     setTotalPrice(tPrice)
-    // }, [cartItem])
-
 
     if (isHidden) return <div className='xl:h-20 h-5'></div>;
 
@@ -113,7 +96,7 @@ const Header = () => {
                         {/* login and cart */}
                         <div>
                             {/* user icons display in only mobile version  */}
-                            <button className='text-neutral-600 lg:hidden' onClick={handleMobileUser}>
+                            <div className='text-neutral-600 lg:hidden' onClick={handleMobileUser}>
 
                                 {
                                     user?._id ? (
@@ -172,7 +155,7 @@ const Header = () => {
                                         <FaRegCircleUser size={28} />
                                     )
                                 }
-                            </button>
+                            </div>
 
                             {/* desktop */}
                             <div className='hidden lg:flex items-center gap-4 p-10'>

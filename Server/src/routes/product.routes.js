@@ -4,6 +4,7 @@ import {
     createProductController, deleteProductDetails,
     getProductByCategory, getProductByCategoryAndSubCategory,
     getProductController, getProductDetails,
+    searchProduct,
     updateProductDetails
 } from '../controllers/product.controller.js';
 
@@ -22,5 +23,9 @@ productRouter.put("/update-product-details", auth, admin, updateProductDetails)
 
 //delete product 
 productRouter.delete('/delete-product', auth, admin, deleteProductDetails)
+
+//seach product 
+productRouter.post('/search-product', searchProduct)
+
 
 export default productRouter

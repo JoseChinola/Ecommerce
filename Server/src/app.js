@@ -9,9 +9,8 @@ import uploadRouter from './routes/upload.routes.js';
 import subCategoryRouter from './routes/subCategory.routes.js';
 import productRouter from './routes/product.routes.js';
 import cartRouter from './routes/cart.routes.js';
-
-// importe de rutas 
 import "./models/associations.js";
+import addressRouter from './routes/address.routes.js';
 
 const app = express();
 app.use(cors({
@@ -33,6 +32,7 @@ app.use('/api/file', uploadRouter)
 app.use("/api/subcategory", subCategoryRouter)
 app.use("/api/product", productRouter)
 app.use("/api/cart", cartRouter)
+app.use("/api/address",addressRouter)
 
 
 

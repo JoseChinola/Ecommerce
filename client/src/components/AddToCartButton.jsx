@@ -10,7 +10,6 @@ import { FaMinus, FaPlus } from "react-icons/fa6";
 import { useGlobalContext } from '../provider/useGlobalContext'
 
 const AddToCartButton = ({ data }) => {
-    console.log("button ",data)
     const { fetchCartItem, updateCartItem, deleteCartItem } = useGlobalContext()
     const [loanding, setLoanding] = useState(false)
     const cartItem = useSelector(state => state.cartItem.cart)
