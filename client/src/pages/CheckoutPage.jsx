@@ -4,12 +4,74 @@ import { DisplayPriceDOP } from '../utils/DisplayPriceDOP'
 import { useGlobalContext } from '../provider/useGlobalContext'
 import AddAddress from '../components/AddAddress'
 import { useSelector } from 'react-redux'
+import AxiosToastError from '../utils/AxiosToastError'
+import Axios from '../utils/Axios'
+import SummaryApi from '../cammon/SummaryApi'
+import toast from 'react-hot-toast'
+import { useNavigate } from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js'
+
 
 const CheckoutPage = () => {
-    const { notDiscountTotalPrice, totalPrice, totalQty } = useGlobalContext()
+    const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem } = useGlobalContext()
     const [openAddress, setOpenAddress] = useState(false)
     const addressList = useSelector(state => state.addresses.addressList)
+    const cartItemsList = useSelector(state => state.cartItem.cart)
     const [selectAddress, setSelectAddress] = useState(0)
+    const navigate = useNavigate()
+
+    const handleCashOndelivery = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.cashOnDeleveryOrder,
+                data: {
+                    list_items: cartItemsList,
+                    addressId: addressList[selectAddress]?._id,
+                    subTotalAmt: totalPrice,
+                    totalAmt: totalPrice,
+                }
+            })
+
+            const { data: resData } = response
+            if (resData.success) {
+                toast.success(resData.message)
+                if (fetchCartItem) {
+                    fetchCartItem()
+                }
+                navigate('/success', {
+                    state: {
+                        text: "Order"
+                    }
+                })
+            }
+
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
+
+    const handleOnlinePayment = async () => {
+        try {
+            const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY
+
+            const stripePromise = await loadStripe(stripePublicKey)
+
+            const response = await Axios({
+                ...SummaryApi.payment_url,
+                data: {
+                    list_items: cartItemsList,
+                    addressId: addressList[selectAddress]?._id,
+                    subTotalAmt: totalPrice,
+                    totalAmt: totalPrice,
+                }
+            })
+
+            const { data: resData } = response
+            stripePromise.redirectToCheckout({ sessionId: resData.id })
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
 
     return (
         <section className="bg-blue-50 rounded">
@@ -30,7 +92,7 @@ const CheckoutPage = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-center p-1">
                         {addressList.map((address, index) => (
-                            <label htmlFor={"address" + index} key={index} className="w-full h-full">
+                            <label htmlFor={"address" + index} key={index} className={`w-full h-full ${!address.status && "hidden"}`} >
                                 <div
                                     className={` border rounded-xl shadow-md p-5 hover:shadow-xl 
                                         transition-all duration-300 cursor-pointer w-full h-full flex flex-col 
@@ -100,10 +162,12 @@ const CheckoutPage = () => {
                     </div>
 
                     <div className="w-full flex flex-col sm:justify-between items-center gap-3 my-2 p-1 rounded-lg">
-                        <button className="py-2 px-4 w-full bg-primary-Green hover:bg-green-600 text-white font-semibold rounded-md">
+                        <button onClick={handleOnlinePayment} className="py-2 px-4 w-full bg-primary-Green hover:bg-green-600 text-white font-semibold rounded-md">
                             Online Payment
                         </button>
-                        <button className="py-2 px-4 w-full border-2 border-primary-Green hover:bg-green-600 text-green-500 font-semibold rounded-md hover:text-white">
+
+                        <button onClick={handleCashOndelivery}
+                            className="py-2 px-4 w-full border-2 border-primary-Green hover:bg-green-600 text-green-500 font-semibold rounded-md hover:text-white">
                             Cash on Delivery
                         </button>
                     </div>

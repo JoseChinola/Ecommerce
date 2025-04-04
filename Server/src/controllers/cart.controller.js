@@ -96,8 +96,6 @@ export const updateCartItemQtyController = async (req, res) => {
         const userId = req.userId
         const { _id, qty } = req.body
 
-        console.log("req.body ", req.body)
-
         if (!_id || !qty) {
             return res.status(400).json({
                 message: "Provide Product, Qty",

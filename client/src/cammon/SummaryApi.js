@@ -140,6 +140,22 @@ const SummaryApi = {
     getAddress: {
         url: '/api/address/get',
         method: 'get'
+    },
+    updateAddress: {
+        url: '/api/address/update',
+        method: 'put'
+    },
+    disableAddress: {
+        url: '/api/address/disable',
+        method: 'delete'
+    },
+    cashOnDeleveryOrder: {
+        url: '/api/order/cash-on-delivery',
+        method: "post"
+    },
+    payment_url: {
+        url: "/api/order/checkout",
+        method: "post"
     }
 }
 

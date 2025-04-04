@@ -57,8 +57,7 @@ const AddToCartButton = ({ data }) => {
     }, [data, cartItem])
 
 
-    const increaseQty = (e) => {
-        console.log(cartItemDetails)
+    const increaseQty = (e) => {        
         e.preventDefault()
         e.stopPropagation()
         toast.success("Add product")
