@@ -68,8 +68,8 @@ export const getCartItemController = async (req, res) => {
             order: [['productId', 'DESC']],
             include: [
                 {
-                    model: productSchema, // Relación con categoría
-                    as: 'productData'  // El alias definido en la asociación
+                    model: productSchema,
+                    as: 'productData'
                 },
 
             ]
