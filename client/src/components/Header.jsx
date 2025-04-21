@@ -3,27 +3,24 @@ import logomv from '../assets/shopmix.png'
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaRegCircleUser } from "react-icons/fa6";
-import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
 import useMobile from '../hooks/useMobile'
 import { GiShoppingCart } from "react-icons/gi"
 import { useSelector } from 'react-redux';
 import { FaRegUserCircle } from "react-icons/fa";
-import UserMenu from './UserMenu';
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 import { useGlobalContext } from '../provider/useGlobalContext'
 import DisplayCartItem from './DisplayCartItem';
 
 
-const Header = () => {
+const Header = ({ toggleAside }) => {
     const [isMobile] = useMobile()
     const location = useLocation()
     const navigate = useNavigate()
     const user = useSelector((state) => state?.user)
-    const [openUserMenu, setOpenUserMenu] = useState(false)
     const cartItem = useSelector((state) => state?.cartItem.cart)
     const { totalPrice, totalQty } = useGlobalContext()
     const [openCartSection, setOpenCartSection] = useState(false)
-    
+
 
 
     const isSearchPage = location.pathname === "/search"
@@ -35,28 +32,27 @@ const Header = () => {
         navigate("/login")
     }
 
-    const handleCloseUserMenu = () => {
-        setOpenUserMenu(false)
-    }
-    const handleMobileUser = () => {
-        if (!user._id) {
-            navigate("/login")
-            return
-        }
-
-
-        navigate("/user")
-    }
 
     if (isHidden) return <div className='xl:h-20 h-5'></div>;
 
 
     return (
-        <header className='h-28 lg:h-20 lg:shadow-md w-full sticky z-40 top-0 flex items-center flex-col justify-center lg:gap-10 bg-white'>
+        <header className='h-28 lg:h-20 lg:shadow-md flex px-2 md:items-center justify-center flex-col bg-white rounded-md mx-3 mt-2'>
+
             {
                 !(isSearchPage && isMobile) && (
-                    <div className='container mx-auto flex items-center  px-2 justify-between'>
+                    <div className='container mx-auto flex items-center justify-between'>
+                        {/* Botón hamburguesa solo en móviles */}
+                        <button
+                            onClick={toggleAside}
 
+                            className='md:hidden text-2xl text-gray-700'>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
+                                <path strokeLinecap="round" strokeLinejoin="round"
+                                    d="M3.75 5.25h16.5m-16.5 6.75h16.5m-16.5 6.75h16.5" />
+                            </svg>
+                        </button>
                         {/* logo */}
                         <div className='h-full'>
                             <Link to={"/"} className='h-full flex items-center'>
@@ -77,7 +73,7 @@ const Header = () => {
                                 />
 
 
-                                <h2 className='text-2xl lg:italic lg:text-lg lg:flex flex-col lg:text-left text-primary-Green text-center uppercase font-extrabold'>
+                                <h2 className='text-lg lg:italic lg:text-lg lg:flex flex-col lg:text-left text-primary-Green text-center uppercase font-extrabold'>
                                     ShopMix
                                     <span className='hidden lg:flex text-sm italic font-medium animate-bounce'>
                                         Your world, in one place
@@ -96,13 +92,13 @@ const Header = () => {
                         {/* login and cart */}
                         <div>
                             {/* user icons display in only mobile version  */}
-                            <div className='text-neutral-600 lg:hidden' onClick={handleMobileUser}>
+                            <div className='text-neutral-600 lg:hidden'>
 
                                 {
                                     user?._id ? (
                                         <>
                                             <div className='relative'>
-                                                <div onClick={() => setOpenUserMenu(preve => !preve)} className='flex select-none justify-center items-center cursor-pointer gap-1'>
+                                                <div className='flex select-none justify-center items-center cursor-pointer gap-1'>
                                                     {/* Contenedor de la imagen con tamaño fijo y centrado */}
                                                     <div className='w-10 h-10 lg:w-20 lg:h-20 rounded-full outline-none flex justify-center items-center overflow-hidden'>
                                                         {
@@ -163,7 +159,7 @@ const Header = () => {
                                     user?._id ? (
                                         <>
                                             <div className='relative'>
-                                                <div onClick={() => setOpenUserMenu(preve => !preve)} className='flex select-none justify-center items-center cursor-pointer gap-1'>
+                                                <div className='flex select-none justify-center items-center cursor-pointer gap-1'>
                                                     {/* Contenedor de la imagen con tamaño fijo y centrado */}
                                                     <div className='w-14 h-14 rounded-full outline-none flex justify-center items-center overflow-hidden'>
                                                         {
@@ -177,25 +173,9 @@ const Header = () => {
                                                         }
 
                                                     </div>
-                                                    {/* Íconos */}
-                                                    {
-                                                        openUserMenu ? (
-                                                            <GoTriangleUp size={23} />
-                                                        ) : (
-                                                            <GoTriangleDown size={23} />
-                                                        )
-                                                    }
 
 
                                                 </div>
-                                                {openUserMenu && (
-                                                    <div className='absolute right-0 top-16'>
-                                                        <div className={`bg-white border rounded-tl-3xl  rounded-br-3xl rounded p-4  ${openUserMenu ? "min-w-60" : "min-w-52"} lg:shadow-lg`}>
-                                                            <UserMenu close={handleCloseUserMenu} />
-                                                        </div>
-                                                    </div>
-                                                )}
-
                                             </div>
 
 
@@ -246,7 +226,7 @@ const Header = () => {
                 )
             }
 
-            <div className='container mx-auto px-2 lg:hidden'>
+            <div className='container lg:hidden w-full'>
                 <Search />
             </div>
 
@@ -255,6 +235,7 @@ const Header = () => {
                     <DisplayCartItem close={() => setOpenCartSection(false)} />
                 )
             }
+
         </header >
     )
 }

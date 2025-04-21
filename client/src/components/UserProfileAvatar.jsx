@@ -49,7 +49,7 @@ const UserProfileAvatar = ({ close }) => {
 
     return (
         <section className='fixed top-0 bottom-0 left-0 right-0 bg-neutral-900 
-        bg-opacity-65 p-4 flex items-center justify-center'>
+        bg-opacity-65 p-4 flex items-center justify-center z-50'>
             <div className='bg-white max-w-sm border w-full rounded-lg p-4 flex flex-col items-center justify-center'>
 
                 <button onClick={close} className='text-neutral-800 w-fit block ml-auto hover:text-red-700 hover:font-semibold '>

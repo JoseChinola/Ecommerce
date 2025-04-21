@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { IoIosAddCircleOutline } from 'react-icons/io'
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import UploadImage from '../utils/UploadImage';
@@ -11,7 +10,6 @@ import AddFieldComponent from '../components/AddFieldComponent';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
 import AxiosToastError from '../utils/AxiosToastError'
-import toast from 'react-hot-toast'
 import successAlert from '../utils/SuccessAlert';
 
 
@@ -142,7 +140,7 @@ const UploadProductPage = () => {
 
   return (
     <section className='p-3'>
-      <div className='p-4 bg-white border rounded-lg max-w-4xl grid m-auto'>
+      <div className='p-4 bg-white border rounded-lg max-w-4xl grid m-auto shadow-lg'>
         <div className='py-3 max-w-3xl w-full rounded-md font-semibold bg-blue-50 shadow-md flex items-center justify-center m-auto'>
           <h2 className='font-extrabold uppercase text-primary-Green'>Upload Product</h2>
         </div>

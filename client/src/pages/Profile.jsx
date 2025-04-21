@@ -68,7 +68,7 @@ const Profile = () => {
 
     return (
         <div className='flex items-center justify-center rounded w-full bg-blue-50 p-2'>
-            <div className='flex items-center justify-center border w-full max-w-lg flex-col bg-white p-6 rounded-md'>
+            <div className='flex items-center justify-center border w-full max-w-lg flex-col bg-white p-6 rounded-xl shadow-lg'>
 
                 {/** Profile upload and display img */}
                 <div className='relative w-24 h-24 border flex items-center justify-center rounded-full overflow-hidden drop-shadow-sm'>

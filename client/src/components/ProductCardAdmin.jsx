@@ -37,7 +37,7 @@ const ProductCardAdmin = ({ data, fetchData }) => {
     }
 
     return (
-        <div className='border mb-1 grid gap-2 min-w-24 lg:min-w-36 rounded-lg shadow-md bg-white'>
+        <div className='border mb-1 grid gap-2 min-w-24 lg:min-w-36 rounded-lg shadow-lg bg-white'>
             <div className='min-h-20 max-h-20 lg:max-h-32 rounded flex items-center justify-center overflow-hidden'>
                 <img
                     src={images[0]}
