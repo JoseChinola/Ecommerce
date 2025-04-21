@@ -13,7 +13,7 @@ const CardProduct = ({ data }) => {
 
 
     return (
-        <div className='border p-4 mb-2 grid gap-2 min-w-36 lg:min-w-48 rounded shadow-md  bg-white select-none'>
+        <div className='border p-4 mb-2 grid gap-2 min-w-36 lg:min-w-48 rounded-xl shadow-lg  bg-white select-none'>
             <Link to={url} className="min-h-20 max-h-24 lg:max-h-32 cursor-pointer rounded flex items-center justify-center overflow-hidden">
                 <img
                     src={images[0]}

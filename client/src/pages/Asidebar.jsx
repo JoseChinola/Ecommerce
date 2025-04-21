@@ -10,7 +10,7 @@ import SummaryApi from '../cammon/SummaryApi'
 import { logout } from '../store/userSlice'
 import toast from 'react-hot-toast'
 import AxiosToastError from '../utils/AxiosToastError'
-import { MdCategory, MdHome, MdOutlineDashboard, MdOutlineProductionQuantityLimits } from 'react-icons/md'
+import { MdCategory, MdHome, MdInventory, MdOutlineDashboard, MdOutlineProductionQuantityLimits } from 'react-icons/md'
 import { PiSubtractFill } from "react-icons/pi"
 import { AiFillProduct } from "react-icons/ai"
 import { TbTruckDelivery } from "react-icons/tb"
@@ -101,6 +101,9 @@ const Asidebar = ({ isOpen, closeAside }) => {
 
                         {isAdmin(user.role) && (
                             <>
+                                <NavLink to="/inventory" className={({ isActive }) => `${linkClass} ${isActive ? activeClass : 'text-[#1b406c]'}`}>
+                                    <MdInventory size={18} /> Inventory
+                                </NavLink>
                                 <NavLink to="/category" className={({ isActive }) => `${linkClass} ${isActive ? activeClass : 'text-[#1b406c]'}`}>
                                     <MdCategory size={18} /> Category
                                 </NavLink>

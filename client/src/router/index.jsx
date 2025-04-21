@@ -21,6 +21,7 @@ import CartMobile from "../pages/CartMobile";
 import CheckoutPage from "../pages/CheckoutPage";
 import Success from "../pages/Success";
 import Cancel from "../pages/Cancel";
+import Inventario from "../layouts/Inventario";
 
 
 
@@ -60,6 +61,10 @@ const Router = createBrowserRouter([
             {
                 path: "dashboard",
                 element: <AdminPermissions><Dashboard /></AdminPermissions>
+            },
+            {
+                path: "inventory",
+                element: < AdminPermissions > <Inventario /></ AdminPermissions>
             },
             {
                 path: "profile",
