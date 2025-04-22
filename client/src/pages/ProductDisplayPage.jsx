@@ -65,7 +65,7 @@ const ProductDisplayPage = () => {
     if (loading) return <ProductSkeleton />;
 
     return (
-        <section className='container mx-auto p-4 grid lg:grid-cols-2'>
+        <section className='container mx-auto p-4 grid lg:grid-cols-2 gap-4'>
             <div className=''>
                 <div className='bg-white lg:min-h-[50vh] lg:max-h-[50vh] rounded-md min-h-56 max-h-56 w-full h-full'>
                     <img
@@ -103,7 +103,7 @@ const ProductDisplayPage = () => {
                     </div>
                 </div>
 
-                <div className='my-4 lg:grid gap-3 hidden'>
+                <div className='my-4 lg:grid gap-3 hidden bg-white p-3 rounded-lg'>
                     <div>
                         <p className='font-semibold'>Description</p>
                         <p className='text-sm'>{data.description}</p>
@@ -126,7 +126,7 @@ const ProductDisplayPage = () => {
                 </div>
             </div>
 
-            <div className='p-1 lg:pl-8 text-base'>
+            <div className='p-3 lg:pl-8 text-base bg-white rounded-lg'>
                 <p className='bg-green-300 w-fit rounded-full px-2 mb-1'>10 Min</p>
                 <div className='flex gap-4 items-center'>
                     <h2 className='lg:text-3xl font-semibold capitalize'>{data.name}</h2>
@@ -135,9 +135,9 @@ const ProductDisplayPage = () => {
                 <Divider />
                 <div className=''>
                     <p className='font-bold'>Price:</p>
-                    <div className='flex items-center gap-4'>
+                    <div className='flex items-center gap-5'>
                         <div className='border border-primary-Green px-2 rounded-md bg-green-200 w-fit'>
-                            <p className='font-semibold text-lg text-center'> {DisplayPriceDOP(pricewithDiscount(data.price, data.discount))}</p>
+                            <p className='font-semibold md:text-lg text-center'> {DisplayPriceDOP(pricewithDiscount(data.price, data.discount))}</p>
                         </div>
 
                         {
@@ -159,9 +159,6 @@ const ProductDisplayPage = () => {
                                 <p className='text-lg text-red-500'>Out  of Stock</p>
                             </div>
                         ) : (
-                            // <button className='my-4 lg:ml-4 px-8 py-1 bg-primary-Green hover:bg-green-700 text-white rounded-2xl'>
-                            //     <LiaCartPlusSolid size={23} />
-                            // </button>
                             <div className='my-4 w-36 text-xl'>
                                 <AddToCartButton data={data} />
                             </div>
@@ -169,7 +166,7 @@ const ProductDisplayPage = () => {
                     }
                 </div>
 
-                <div>
+                <div className=''>
                     <h2 className='font-semibold'>Why shop fron ShopMix</h2>
                     <div>
                         <div className='flex items-center gap-4 my-3'>
@@ -178,8 +175,8 @@ const ProductDisplayPage = () => {
                                 alt="Superfast delivery"
                                 className='w-20 h-20'
                             />
-                            <div className='text-sm'>
-                                <div className='font-semibold'>Superfast Delivery</div>
+                            <div className='md:text-sm text-xs'>
+                                <div className='font-semibold py-1'>Superfast Delivery</div>
                                 <p>Get your orer delivered to you ddoorstep at the earliest from dark storesnear you. </p>
                             </div>
                         </div>
@@ -190,8 +187,8 @@ const ProductDisplayPage = () => {
                                 alt="Best prices offers"
                                 className='w-20 h-20'
                             />
-                            <div className='text-sm'>
-                                <div className='font-semibold capitalize'>Best Prices & Offers</div>
+                            <div className='md:text-sm text-xs'>
+                                <div className='font-semibold capitalize py-1'>Best Prices & Offers</div>
                                 <p>
                                     Destination with the best prices and offers directly from the manufacturers.
                                 </p>
@@ -204,8 +201,8 @@ const ProductDisplayPage = () => {
                                 alt="Wide Assortment"
                                 className='w-20 h-20'
                             />
-                            <div className='text-sm'>
-                                <div className='font-semibold capitalize'>Wide Assortment</div>
+                            <div className='md:text-sm text-xs'>
+                                <div className='font-semibold capitalize py-1'>Wide Assortment</div>
                                 <p>
                                     Choose from over 5,000 products across clothing, personal care, home, and other categories.
                                 </p>
@@ -215,7 +212,7 @@ const ProductDisplayPage = () => {
                 </div>
 
                 {/**only mobile */}
-                <div className='my-4 grid gap-3 lg:hidden'>
+                <div className='my-8 grid gap-3 lg:hidden'>
                     <div>
                         <p className='font-semibold'>Description</p>
                         <p className='text-sm'>{data.description}</p>

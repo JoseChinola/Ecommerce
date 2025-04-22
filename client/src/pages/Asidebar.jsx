@@ -62,7 +62,7 @@ const Asidebar = ({ isOpen, closeAside }) => {
                 </div>
 
                 <div className='h-full w-full p-4 flex flex-col'>
-                    <div className='font-semibold select-none md:mb-2'>
+                    <div className='font-semibold select-none'>
                         <div className='mb-1 flex italic items-center justify-center'>
                             <div className='w-10 h-10 lg:w-14 lg:h-12 rounded-full outline-none flex justify-center items-center overflow-hidden'>
                                 {user?.avatar ? (
@@ -76,7 +76,7 @@ const Asidebar = ({ isOpen, closeAside }) => {
                             <span className='uppercase flex flex-col justify-center items-center'>
                                 {user?.name || user?.mobile}
                                 {user?.role === 'ADMIN' && (
-                                    <span className='capitalize text-sm text-red-500 ml-1'>(Admin)</span>
+                                    <span className='capitalize text-sm text-red-500'>(Admin)</span>
                                 )}
                             </span>
                         </h5>

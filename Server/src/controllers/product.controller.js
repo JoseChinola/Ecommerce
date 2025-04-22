@@ -6,7 +6,7 @@ import subCategorySchema from '../models/subCategory.model.js';
 export const createProductController = async (req, res) => {
     try {
         const { name, image, categoryId, subCategoryId, unit,
-            stock, price, discount, description, more_details } = req.body
+            price, discount, description, more_details } = req.body
 
         const category = categoryId[0]?._id;
         const subCategory = subCategoryId[0]?._id;
@@ -31,7 +31,6 @@ export const createProductController = async (req, res) => {
             categoryId: category,
             subCategoryId: subCategory,
             unit,
-            stock,
             price,
             discount,
             description,

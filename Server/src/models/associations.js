@@ -1,11 +1,15 @@
-// associations.js
-import userSchema from "./user.model.js";
-import cartProductSchema from "./cartProduct.model.js";
+import storeSchema from "./store.model.js";
+import productSchema from "./product.model.js";
 
-// Un usuario puede tener muchos productos en su carrito.
-userSchema.hasMany(cartProductSchema, { foreignKey: "userId", as: "shopping_cart" });
+// Relación: un store pertenece a un producto
+storeSchema.belongsTo(productSchema, {
+  foreignKey: "productId",
+  as: "product",
+});
 
-// Cada producto en el carrito pertenece a un usuario.
-cartProductSchema.belongsTo(userSchema, { foreignKey: "userId", as: "user" });
+productSchema.hasMany(storeSchema, {
+  foreignKey: "productId",
+  as: "stores",
+});
 
-console.log("Associations defined successfully");
+console.log("Relaciones cargadas correctamente");

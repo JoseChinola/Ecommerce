@@ -2,6 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
 import categorySchema from "./category.model.js";
 import subCategorySchema from "./subCategory.model.js";
+import storeSchema from "./store.model.js";
 
 // Definir el modelo de Product
 const productSchema = sequelize.define('product', {
@@ -40,11 +41,6 @@ const productSchema = sequelize.define('product', {
     unit: {
         type: DataTypes.STRING,
         defaultValue: "",
-        allowNull: false,  // No permite que sea null
-    },
-    stock: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
         allowNull: false,  // No permite que sea null
     },
     price: {
@@ -96,7 +92,5 @@ productSchema.belongsTo(subCategorySchema, {
     foreignKey: "subCategoryId",
     as: "subcategoryData",
 });
-
-
 
 export default productSchema;

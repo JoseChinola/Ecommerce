@@ -156,6 +156,10 @@ const SummaryApi = {
     payment_url: {
         url: "/api/order/checkout",
         method: "post"
+    },
+    createStore: {
+        url: "/api/store/create",
+        method: "post"
     }
 }
 

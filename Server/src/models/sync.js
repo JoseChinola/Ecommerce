@@ -1,15 +1,14 @@
-import cartProductSchema from "./cartProduct.model.js";
-import orderSchema from "./order.model.js";
-import userSchema from "./user.model.js";
+import storeSchema from "./store.model.js";
+
 
 (async () => {
   try {
    // Primero sincroniza las tablas que no dependen de otras:
     // Primero sincronizamos la tabla de usuarios
-    await userSchema.sync({ force: true });
+    await storeSchema.sync({ force: true });
     
 
-    console.log("Todas las tablas se han creado correctamente en el orden adecuado.", userSchema);
+    console.log("Todas las tablas se han creado correctamente en el orden adecuado.", storeSchema);
   } catch (error) {
     console.error("Error al crear las tablas:", error);
   }

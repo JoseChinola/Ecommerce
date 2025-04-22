@@ -19,7 +19,7 @@ const Home = () => {
   }
 
   return (
-    <section className='bg-white rounded'>
+    <section className='bg-white rounded-lg'>
       <div className='container mx-auto rounded my-4 px-3 p-2'>
         {/* Banner container */}
         <div className='w-full h-full grid items-center border bg-white gap-2 p-2 rounded-md'>
@@ -30,7 +30,7 @@ const Home = () => {
         <div className='mt-4'>
           <h2 className='font-extrabold uppercase italic px-4 text-blue-500 bg-blue-100 py-2 rounded-md'>Category</h2>
 
-          <div className='container mx-auto px-2 py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4'>
+          <div className='container mx-auto px-2 py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2'>
             {
               loadingCategory ? (
                 new Array(12).fill(null).map((_, index) => (

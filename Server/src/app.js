@@ -12,6 +12,7 @@ import cartRouter from './routes/cart.routes.js';
 import "./models/associations.js";
 import addressRouter from './routes/address.routes.js';
 import orderRouter from './routes/order.routes.js';
+import storeRouter from './routes/store.routes.js';
 
 const app = express();
 app.use(cors({
@@ -35,6 +36,7 @@ app.use("/api/product", productRouter)
 app.use("/api/cart", cartRouter)
 app.use("/api/address", addressRouter)
 app.use("/api/order", orderRouter)
+app.use("/api/store", storeRouter)
 
 
 
