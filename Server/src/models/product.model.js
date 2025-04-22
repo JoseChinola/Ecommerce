@@ -21,14 +21,7 @@ const productSchema = sequelize.define('product', {
         defaultValue: [],
         allowNull: false,
     },
-    categoryId: {
-        type: DataTypes.UUID,
-        references: {
-            model: categorySchema,
-            key: "_id",
-        },
-        allowNull: true,  // No permite que sea null
-    },
+    
     subCategoryId: {
         type: DataTypes.UUID,
         references: {
@@ -41,12 +34,7 @@ const productSchema = sequelize.define('product', {
         type: DataTypes.STRING,
         defaultValue: "",
         allowNull: false,  // No permite que sea null
-    },
-    stock: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
-        allowNull: false,  // No permite que sea null
-    },
+    },    
     price: {
         type: DataTypes.FLOAT,
         defaultValue: 0,

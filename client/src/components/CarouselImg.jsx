@@ -154,7 +154,7 @@ const Carousel = () => {
                         carouselItems.length > 0 &&
                         carouselItems.map((item, i) => (
                             <div key={i} className="w-full sm:w-1/3 flex-shrink-0 flex justify-center items-center p-1">
-                                <div className="flex items-center justify-center gap-3 border rounded-2xl p-2">
+                                <div className="flex items-center justify-center gap-3 rounded-2xl p-2">
                                     <div className="w-24 lg:w-52 lg:h-52 h-24 rounded-lg">
                                         <img
                                             src={item.image}

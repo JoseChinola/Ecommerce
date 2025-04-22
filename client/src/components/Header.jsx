@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import logomv from '../assets/shopmix.png'
+import logomv from '../assets/logo.png'
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaRegCircleUser } from "react-icons/fa6";
@@ -55,10 +55,10 @@ const Header = ({ toggleAside }) => {
                         </button>
                         {/* logo */}
                         <div className='h-full'>
-                            <Link to={"/"} className='h-full flex items-center'>
+                            <Link to={"/"} className='h-full flex items-center gap-3 ml-4'>
                                 <img
                                     src={logomv}
-                                    width={110}
+                                    width={70}
                                     height={40}
                                     alt='logo'
                                     className='hidden lg:block'
@@ -66,17 +66,17 @@ const Header = ({ toggleAside }) => {
 
                                 <img
                                     src={logomv}
-                                    width={85}
+                                    width={50}
                                     height={60}
                                     alt='logo'
                                     className='lg:hidden'
                                 />
 
 
-                                <h2 className='text-lg lg:italic lg:text-lg lg:flex flex-col lg:text-left text-primary-Green text-center uppercase font-extrabold'>
-                                    ShopMix
+                                <h2 className='text-md lg:italic lg:text-lg lg:flex flex-col lg:text-left text-primary-Green text-center uppercase font-extrabold'>
+                                    D’RAF SERVICES
                                     <span className='hidden lg:flex text-sm italic font-medium animate-bounce'>
-                                        Your world, in one place
+                                        SERVIRTE ES NUESTRO COMPROMISO
                                     </span>
                                 </h2>
 
@@ -159,7 +159,7 @@ const Header = ({ toggleAside }) => {
                                     user?._id ? (
                                         <>
                                             <div className='relative'>
-                                                <div className='flex select-none justify-center items-center cursor-pointer gap-1'>
+                                                <Link to={"/profile"} className='flex select-none justify-center items-center cursor-pointer gap-1'>
                                                     {/* Contenedor de la imagen con tamaño fijo y centrado */}
                                                     <div className='w-14 h-14 rounded-full outline-none flex justify-center items-center overflow-hidden'>
                                                         {
@@ -175,7 +175,7 @@ const Header = ({ toggleAside }) => {
                                                     </div>
 
 
-                                                </div>
+                                                </Link>
                                             </div>
 
 

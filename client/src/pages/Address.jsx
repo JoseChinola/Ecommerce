@@ -20,7 +20,6 @@ const Address = () => {
     const [editData, setEditData] = useState({})
     const [deleteAddress, setDeleteAddress] = useState({ _id: '' });
     const { fetchAddress } = useGlobalContext()
-    console.log("deleteAddress", deleteAddress)
 
     const handleDisableAddress = async () => {
         try {

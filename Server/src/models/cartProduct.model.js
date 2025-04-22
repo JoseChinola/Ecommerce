@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
-import userSchema from "./user.model.js";
 import productSchema from "./product.model.js";
 
 const cartProductSchema = sequelize.define('cartProduct', {

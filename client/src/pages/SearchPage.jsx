@@ -69,7 +69,7 @@ const SearchPage = () => {
 
     return (
         <section className='bg-white'>
-            <div className='container mx-auto p-2'>
+            <div className='container mx-auto p-4'>
                 <p className='font-semibold'>
                     Search Result for: "{searchText}" ({data.length} found)
                 </p>
@@ -79,14 +79,14 @@ const SearchPage = () => {
                     next={handleFetchMore}
                     loader={<CardLoading />}
                 >
-                    <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-2 lg:gap-3 py-4'>
+                    <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 gap-2 lg:gap-3 py-4'>
                         {/* Mostrar productos cargados */}
                         {data.map((product, index) => (
                             <CardProduct data={product} key={product._id + "searchProduct" + index} />
                         ))}
 
                         {/* Mostrar cargando si hay más productos por cargar */}
-                        {loading && Array(12).fill(null).map((_, index) => (
+                        {loading && Array(10).fill(null).map((_, index) => (
                             <CardLoading key={index} />
                         ))}
                     </div>
