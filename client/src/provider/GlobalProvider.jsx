@@ -135,9 +135,12 @@ const GlobalProvider = ({ children }) => {
     }, [cartItem])
 
     useEffect(() => {
-        fetchCartItem()
-        fetchAddress()
-        handleLogout()
+        if (user?._id) {
+            fetchCartItem()
+            fetchAddress()
+            handleLogout()
+        }
+
     }, [user])
 
 
