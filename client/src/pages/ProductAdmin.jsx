@@ -75,10 +75,11 @@ const ProductAdmin = () => {
         }
     }, [search])
 
+
     return (
         <section className='p-3'>
-            <div className='p-4 bg-white rounded-lg grid m-auto'>
-                <div className='py-4 px-4 w-full rounded-md font-semibold bg-blue-50 shadow-md flex items-center justify-between'>
+            <div className='p-4 bg-white rounded-lg grid m-auto shadow-lg'>
+                <div className='py-3 px-4 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-between'>
                     <h2 className='font-extrabold uppercase text-primary-Green'>Product</h2>
                     <div className='h-full w-full min-w-24 max-w-52 bg-white px-3 flex items-center gap-2 py-2 rounded-md border focus-within:border-primary-Green'>
                         <IoSearchOutline size={23} />
@@ -99,7 +100,7 @@ const ProductAdmin = () => {
                     )
                 }
 
-                <div className='px-2 py-3 lg:p-5 mt-3 rounded-md bg-blue-50'>
+                <div className='px-2 py-3 lg:p-5 mt-3 rounded-md bg-secundary'>
                     <div className='min-h-[55vh]'>
                         <div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-4'>
                             {
@@ -112,15 +113,15 @@ const ProductAdmin = () => {
                         </div>
 
                     </div>
-                    <div className='flex justify-between items-center my-4'>
-                        <button onClick={handlePrevious} className='border border-primary-Green bg-gray-50 px-4 text-primary-Green rounded-md hover:bg-primary-Green hover:text-white select-none'>
-                            <MdNavigateBefore size={25} />
+                    <div className='flex justify-between items-center my-4 bg-white py-2 px-2 rounded-lg'>
+                        <button onClick={handlePrevious} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
+                            <MdNavigateBefore />
                         </button>
                         <p className='text-base font-semibold'>
                             {page}/{totalPageCount}
                         </p>
-                        <button onClick={handleNext} className='border border-primary-Green bg-gray-50 px-4 text-primary-Green rounded-md hover:bg-primary-Green hover:text-white select-none'>
-                            <MdNavigateNext size={25} />
+                        <button onClick={handleNext} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
+                            <MdNavigateNext />
                         </button>
 
                     </div>

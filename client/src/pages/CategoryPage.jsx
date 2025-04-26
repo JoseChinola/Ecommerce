@@ -24,15 +24,6 @@ const CategoryPage = () => {
     const [deleteCategory, setDeleteCategory] = useState({ _id: '' });
     const [dataEdit, setDataOpenEdit] = useState({ name: "", image: "" });
 
-    // const allCategory = useSelector(state => state.product.allCategory);
-
-
-    // useEffect(() => {
-    //     if (allCategory.length > 0) {
-    //         setData(allCategory);
-    //         setLoading(false);
-    //     }
-    // }, [allCategory]);
 
     const fetchCategory = async () => {
         try {
@@ -73,7 +64,7 @@ const CategoryPage = () => {
     };
 
     return (
-        <section className='p-3'>
+        <section className='p-3 bg-white rounded-lg'>
             {loading ? (
                 <div className='flex justify-center items-center min-h-[50vh]'>
                     <Loading />
@@ -81,16 +72,16 @@ const CategoryPage = () => {
             ) : (
                 <>
                     <div className='py-4 px-2 rounded-md font-semibold bg-blue-50 shadow-md flex items-center justify-between'>
-                        <h2 className='font-extrabold uppercase'>Category</h2>
+                        <h2 className='font-extrabold uppercase text-primary-Green'>Category</h2>
                         <button onClick={() => setOpenUploadCategory(true)} className='text-sm border text-green-500 font-semibold border-primary-Green hover:bg-primary-Green hover:text-white rounded flex px-3 py-1 items-center justify-center gap-1'>
                             <IoIosAddCircleOutline size={22} /> Add Category
                         </button>
                     </div>
 
-                    <div className='p-2 mt-3 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5'>
+                    <div className='p-2 mt-4 grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
                         {Array.isArray(data) && data.length > 0 ? (
                             data.map((category) => (
-                                <div key={category._id} className="lg:w-60 lg:h-full flex group flex-col bg-blue-50 gap-3 items-center rounded-md border-2 shadow-md relative">
+                                <div key={category._id} className="lg:w-48 lg:h-48 h-full w-full flex group flex-col bg-blue-50 gap-2 items-center rounded-md border-2 shadow-md relative">
                                     <img src={category.image} alt={category.name} className="w-58 h-44 object-cover rounded-md border-2" />
                                     <p className="text-green-500 py-2 font-semibold capitalize text-center">{category.name}</p>
 

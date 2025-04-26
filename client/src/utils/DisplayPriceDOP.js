@@ -1,6 +1,6 @@
 export const DisplayPriceDOP = (price) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('es-DO', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'DOP'
     }).format(price)
 }

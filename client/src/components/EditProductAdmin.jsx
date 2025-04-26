@@ -21,7 +21,6 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
         categoryId: Array.isArray(props.categoryId) ? props.categoryId : [props.categoryId],  // Siempre como un array
         subCategoryId: Array.isArray(props.subCategoryId) ? props.subCategoryId : [props.subCategoryId],
         unit: props.unit,
-        stock: props.stock,
         price: props.price,
         discount: props.discount,
         description: props.description,
@@ -135,8 +134,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                     image: [],
                     categoryId: [],
                     subCategoryId: [],
-                    unit: "",
-                    stock: "",
+                    unit: "",                   
                     price: "",
                     discount: "",
                     description: "",
@@ -358,21 +356,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                         className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
                                         required
                                     />
-                                </div>
-
-                                <div className='grid gap-1'>
-                                    <label htmlFor="stock" className='font-medium'>Number of Stock</label>
-
-                                    <input type="number"
-                                        id='stock'
-                                        placeholder='Enter product stock'
-                                        name='stock'
-                                        value={data.stock}
-                                        onChange={handleChange}
-                                        className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                                        required
-                                    />
-                                </div>
+                                </div>                               
 
                                 <div className='grid gap-1'>
                                     <label htmlFor="price" className='font-medium'>Price</label>

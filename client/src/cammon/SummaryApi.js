@@ -109,6 +109,10 @@ const SummaryApi = {
         url: "/api/product/delete-product",
         method: "delete"
     },
+    searchProduct: {
+        url: "/api/product/search-product",
+        method: "post"
+    },
     addToCart: {
         url: "/api/cart/create",
         method: "post"
@@ -128,10 +132,64 @@ const SummaryApi = {
     deleteCartItems: {
         url: '/api/cart/delete-cart-items',
         method: 'delete'
+    },
+    createAddress: {
+        url: '/api/address/create',
+        method: 'post'
+    },
+    getAddress: {
+        url: '/api/address/get',
+        method: 'get'
+    },
+    updateAddress: {
+        url: '/api/address/update',
+        method: 'put'
+    },
+    disableAddress: {
+        url: '/api/address/disable',
+        method: 'delete'
+    },
+    cashOnDeleveryOrder: {
+        url: '/api/order/cash-on-delivery',
+        method: "post"
+    },
+    payment_url: {
+        url: "/api/order/checkout",
+        method: "post"
+    },
+    createStore: {
+        url: "/api/store/create",
+        method: "post"
+    },
+    getStore: {
+        url: "/api/store/get",
+        method: "get"
+    },
+    updateStore: {
+        url: "/api/store/update",
+        method: "put"
+    },
+    deleteStore: {
+        url: "/api/store/delete",
+        method: "put"
     }
-
-
-
+    ,
+    createInventory: {
+        url: "/api/inventory/create",
+        method: "post"
+    },
+    getInventory: {
+        url: "/api/inventory/get",
+        method: "get"
+    },
+    updateInventory: {
+        url: "/api/inventory/update",
+        method: "put"
+    },
+    getInventoryMovement: {
+        url: "/api/inventory-movement/gets-movement",
+        method: "get"
+    },
 }
 
 

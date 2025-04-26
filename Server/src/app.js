@@ -9,9 +9,12 @@ import uploadRouter from './routes/upload.routes.js';
 import subCategoryRouter from './routes/subCategory.routes.js';
 import productRouter from './routes/product.routes.js';
 import cartRouter from './routes/cart.routes.js';
-
-// importe de rutas 
+import addressRouter from './routes/address.routes.js';
+import orderRouter from './routes/order.routes.js';
+import storeRouter from './routes/store.routes.js';
+import inventoryRouter from './routes/inventory.routes.js';
 import "./models/associations.js";
+import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
 
 const app = express();
 app.use(cors({
@@ -27,12 +30,21 @@ app.get('/', (req, res) => {
     res.send('<h1>Welcomen</h1>')
 })
 
+// Webhook de Stripe necesita raw body
+//app.post('/api/order/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
+
+
 app.use('/api/user', userRouter)
 app.use('/api/category', categoryRouter)
 app.use('/api/file', uploadRouter)
 app.use("/api/subcategory", subCategoryRouter)
 app.use("/api/product", productRouter)
 app.use("/api/cart", cartRouter)
+app.use("/api/address", addressRouter)
+app.use("/api/order", orderRouter)
+app.use("/api/store", storeRouter)
+app.use("/api/inventory", inventoryRouter)
+app.use("/api/inventory-movement", inventoryMovementRouter)
 
 
 

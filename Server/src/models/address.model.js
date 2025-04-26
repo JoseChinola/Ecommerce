@@ -1,7 +1,6 @@
-import { DataTypes, Sequelize } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
 
-// Definir el modelo de Address
 const addressSchema = sequelize.define('address', {
     _id: {
         type: DataTypes.UUID,
@@ -29,16 +28,25 @@ const addressSchema = sequelize.define('address', {
     },
     mobile: {
         type: DataTypes.STRING,
-        defaultValue: null,
+        allowNull: true,
     },
     status: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
     },
+    userId: {
+        type: DataTypes.UUID,
+        allowNull: false, // 🔹 Evita valores nulos para claves foráneas
+        references: {
+            model: "users",
+            key: "_id"
+        }
+    },
 }, {
     tableName: 'address',
     timestamps: true,
 });
+
 
 
 export default addressSchema;

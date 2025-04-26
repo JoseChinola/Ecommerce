@@ -2,11 +2,12 @@ import { Op, Sequelize } from 'sequelize';
 import productSchema from '../models/product.model.js'
 import categorySchema from '../models/category.model.js';
 import subCategorySchema from '../models/subCategory.model.js';
+import inventorySchema from '../models/Inventory.model.js';
 
 export const createProductController = async (req, res) => {
     try {
         const { name, image, categoryId, subCategoryId, unit,
-            stock, price, discount, description, more_details } = req.body
+            price, discount, description, more_details } = req.body
 
         const category = categoryId[0]?._id;
         const subCategory = subCategoryId[0]?._id;
@@ -31,7 +32,6 @@ export const createProductController = async (req, res) => {
             categoryId: category,
             subCategoryId: subCategory,
             unit,
-            stock,
             price,
             discount,
             description,
@@ -102,6 +102,11 @@ export const getProductController = async (req, res) => {
                 {
                     model: subCategorySchema, // Relación con subcategoría
                     as: 'subcategoryData'  // El alias definido en la asociación
+                },
+                {
+                    model: inventorySchema, // Relación con producto
+                    as: 'inventories',
+                    attributes: ["_id", "stock"],
                 }
             ]
         });
@@ -140,6 +145,7 @@ export const getProductController = async (req, res) => {
     }
 };
 
+
 export const getProductByCategory = async (req, res) => {
     try {
         const { id } = req.body
@@ -161,6 +167,13 @@ export const getProductByCategory = async (req, res) => {
         const product = await productSchema.findAll({
             where: whereCondition,
             limit: 15,
+            include: [
+                {
+                    model: inventorySchema, // Relación con producto
+                    as: 'inventories',
+                    attributes: ["_id", "stock"],
+                }
+            ],
         });
 
 
@@ -213,7 +226,16 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
                 where: query,
                 offset,
                 limit,
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                include: [
+                    {
+                        model: inventorySchema, // Relación con producto
+                        as: 'inventories',
+                        attributes: ["_id", "stock"],
+                    }
+                ],
+
+
             }),
             productSchema.count({ where: query })
         ]);
@@ -242,7 +264,16 @@ export const getProductDetails = async (req, res) => {
     try {
         const { productId } = req.body
 
-        const product = await productSchema.findOne({ where: { _id: productId } });
+        const product = await productSchema.findOne({
+            where: { _id: productId },
+            include: [
+                {
+                    model: inventorySchema, // Relación con producto
+                    as: 'inventories',
+                    attributes: ["_id", "stock"],
+                }
+            ],
+        });
 
 
         return res.json({
@@ -352,7 +383,47 @@ export const deleteProductDetails = async (req, res) => {
 //search product 
 export const searchProduct = async (req, res) => {
     try {
-        const { search, page, limit } = req.body
+        let { search, page, limit } = req.body
+
+        if (!page) {
+            page = 1
+        }
+        if (!limit) {
+            limit = 10
+        }
+
+        const query = search
+            ? {
+                [Op.or]: [
+                    { name: { [Op.like]: `%${search}%` } },
+                    { description: { [Op.like]: `%${search}%` } }
+                ]
+            }
+            : {};
+
+        const offset = (page - 1) * limit;
+        const [data, dataCount] = await Promise.all([
+            productSchema.findAll({
+                limit,
+                offset,
+                where: query,
+                order: [['createdAt', 'DESC']],
+                include: ['categoryData', 'subcategoryData']
+
+            }),
+            productSchema.count({ where: query })
+        ])
+
+        return res.json({
+            message: "Product data",
+            error: false,
+            success: true,
+            data: data,
+            totalCount: dataCount,
+            totalPage: Math.ceil(dataCount / limit),
+            page: page,
+            limit: limit
+        })
     } catch (error) {
         return res.status(500).json({
             message: error.message || "Internal server error",

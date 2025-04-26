@@ -1,4 +1,5 @@
 import cartProductSchema from "../models/cartProduct.model.js";
+import inventorySchema from "../models/Inventory.model.js";
 import productSchema from "../models/product.model.js";
 import userSchema from "../models/user.model.js";
 
@@ -35,6 +36,12 @@ export const addToCartItemController = async (req, res) => {
             productId
         });
 
+        await inventorySchema.decrement("stock", {
+            by: 1,
+            where: { productId: productId }
+        });
+
+
         // 🔹 Recargar el usuario con su carrito actualizado
         const user = await userSchema.findByPk(userId, {
             include: {
@@ -43,8 +50,9 @@ export const addToCartItemController = async (req, res) => {
             }
         });
 
+
         return res.json({
-            data: user.shopping_cart, // ✅ Devolvemos el carrito actualizado
+            data: user,
             message: "Item add successfully",
             error: false,
             success: true
@@ -63,13 +71,14 @@ export const getCartItemController = async (req, res) => {
     try {
         const userId = req.userId
 
+
         const cartItem = await cartProductSchema.findAll({
             where: { userId: userId },
             order: [['productId', 'DESC']],
             include: [
                 {
-                    model: productSchema, // Relación con categoría
-                    as: 'productData'  // El alias definido en la asociación
+                    model: productSchema,
+                    as: 'productData'
                 },
 
             ]
@@ -93,41 +102,50 @@ export const getCartItemController = async (req, res) => {
 
 export const updateCartItemQtyController = async (req, res) => {
     try {
-        const userId = req.userId
-        const { _id, qty } = req.body
+        const userId = req.userId;
+        const { _id: cartItemId, qty } = req.body;
 
-        console.log("req.body ", req.body)
-
-        if (!_id || !qty) {
-            return res.status(400).json({
-                message: "Provide Product, Qty",
-                error: true,
-                success: false
-            })
+        if (!cartItemId || qty == null) {
+            return res.status(400).json({ message: "Falta cartItemId o qty", success: false });
         }
 
+        // 1) Busca la fila del carrito para obtener productId y vieja cantidad
+        const cartItem = await cartProductSchema.findOne({
+            where: { _id: cartItemId, userId }
+        });
+        if (!cartItem) {
+            return res.status(404).json({ message: "Item de carrito no encontrado", success: false });
+        }
 
-        // Actualizar el campo "quantity"
-        const updateCartTime = await cartProductSchema.update(
+        // 2) Calcula cuánto varió la cantidad
+        const prevQty = cartItem.quantity;
+        const diff = qty - prevQty;
+
+        // 3) Actualiza el carrito
+        await cartProductSchema.update(
             { quantity: qty },
-            { where: { _id: _id, userId: userId } }
+            { where: { _id: cartItemId, userId } }
         );
 
-        return res.json({
-            message: "Item added",
-            success: true,
-            error: false,
-            data: updateCartTime
-        })
+        // 4) Si aumentó => decrementa stock. Si bajó => incrementa stock
+        if (diff > 0) {
+            await inventorySchema.decrement("stock", {
+                by: diff,
+                where: { productId: cartItem.productId }
+            });
+        } else if (diff < 0) {
+            await inventorySchema.increment("stock", {
+                by: -diff,
+                where: { productId: cartItem.productId }
+            });
+        }
 
+        return res.json({ message: "Cantidad y stock actualizados", success: true });
     } catch (error) {
-        return res.status(500).json({
-            message: error.message || "Internal Server Error",
-            error: true,
-            success: false
-        });
+        return res.status(500).json({ message: error.message, success: false });
     }
-}
+};
+
 
 export const deleteCartItemQtyController = async (req, res) => {
     try {
@@ -136,19 +154,40 @@ export const deleteCartItemQtyController = async (req, res) => {
 
         if (!_id) {
             return res.status(400).json({
-                message: "Provide Product",
+                message: "Falta id",
                 error: true,
                 success: false
             });
         }
+
+        // 1) Buscar el ítem del carrito para obtener productId y cantidad
+        const cartItem = await cartProductSchema.findOne({
+            where: { _id: _id, userId }
+        });
+
+        if (!cartItem) {
+            return res.status(404).json({
+                message: "Carrito no encontrado",
+                error: true,
+                success: false
+            });
+        }
+
+        const { productId, quantity } = cartItem;
 
         // Usamos el método destroy de Sequelize para eliminar el registro.
         const deleteCartItem = await cartProductSchema.destroy({
             where: { _id: _id, userId: userId }
         });
 
+        // 3) Restaurar el stock completo de ese producto en el inventario
+        await inventorySchema.increment("stock", {
+            by: quantity,
+            where: { productId }
+        });
+
         return res.json({
-            message: "Item remove",
+            message: "Producto Removido",
             success: true,
             error: false,
             data: deleteCartItem
@@ -167,6 +206,20 @@ export const deleteCartItemsController = async (req, res) => {
     try {
         const userId = req.userId;
 
+        // 1) Buscar el ítem del carrito para obtener productId y cantidad
+        const cartItem = await cartProductSchema.findOne({
+            where: { userId }
+        });
+
+        if (!cartItem) {
+            return res.status(404).json({
+                message: "Producto no encontrado",
+                error: true,
+                success: false
+            });
+        }
+
+        const { productId, quantity } = cartItem;
 
         // Eliminamos todos los productos del carrito de ese usuario
         const deleteCartItems = await cartProductSchema.destroy({
@@ -175,15 +228,20 @@ export const deleteCartItemsController = async (req, res) => {
 
         if (deleteCartItems === 0) {
             return res.status(404).json({
-                message: "No products found in cart",
+                message: "No Producto en el carrito",
                 error: true,
                 success: false
             });
         }
 
+        // 3) Restaurar el stock completo de ese producto en el inventario
+        await inventorySchema.increment("stock", {
+            by: quantity,
+            where: { productId }
+        });
 
         return res.json({
-            message: "All products removed from cart successfully",
+            message: "Productos Removidos",
             success: true,
             error: false,
             data: deleteCartItems

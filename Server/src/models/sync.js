@@ -1,15 +1,15 @@
-import cartProductSchema from "./cartProduct.model.js";
-import orderSchema from "./order.model.js";
-import userSchema from "./user.model.js";
+import inventorySchema from "./Inventory.model.js";
+import InventoryMovementSchema from "./inventoryMovementSchema.js";
+import warehouseSchema from "./warehouse.model.js";
 
 (async () => {
   try {
-   // Primero sincroniza las tablas que no dependen de otras:
+    // Primero sincroniza las tablas que no dependen de otras:
     // Primero sincronizamos la tabla de usuarios
-    await userSchema.sync({ force: true });
-    
+    await InventoryMovementSchema.sync({ force: true });
+    //await inventorySchema.sync({ force: true });
 
-    console.log("Todas las tablas se han creado correctamente en el orden adecuado.", userSchema);
+    console.log("Todas las tablas se han creado correctamente en el orden adecuado.", InventoryMovementSchema);
   } catch (error) {
     console.error("Error al crear las tablas:", error);
   }

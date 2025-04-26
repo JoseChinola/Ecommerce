@@ -88,7 +88,7 @@ const EditSubCategory = ({ close, data, fetchData }) => {
     }
 
     return (
-        <section className='fixed top-0 bottom-0 left-0 right-0 p-2 rounded z-40 bg-neutral-800 bg-opacity-70 flex items-center justify-center'>
+        <section className='fixed top-0 bottom-0 left-0 right-0 p-2 rounded z-50 bg-neutral-800 bg-opacity-70 flex items-center justify-center'>
             <div className='bg-white rounded-md max-w-4xl w-full  p-6'>
 
                 <div className='flex items-center justify-between bg-blue-50 p-2 rounded-md'>
