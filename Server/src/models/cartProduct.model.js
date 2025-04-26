@@ -48,4 +48,6 @@ cartProductSchema.belongsTo(productSchema, {
     as: "productData",
 });
 
+
+
 export default cartProductSchema;

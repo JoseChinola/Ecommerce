@@ -2,6 +2,7 @@ import { Op, Sequelize } from 'sequelize';
 import productSchema from '../models/product.model.js'
 import categorySchema from '../models/category.model.js';
 import subCategorySchema from '../models/subCategory.model.js';
+import inventorySchema from '../models/Inventory.model.js';
 
 export const createProductController = async (req, res) => {
     try {
@@ -101,6 +102,11 @@ export const getProductController = async (req, res) => {
                 {
                     model: subCategorySchema, // Relación con subcategoría
                     as: 'subcategoryData'  // El alias definido en la asociación
+                },
+                {
+                    model: inventorySchema, // Relación con producto
+                    as: 'inventories',
+                    attributes: ["_id", "stock"],
                 }
             ]
         });
@@ -139,6 +145,7 @@ export const getProductController = async (req, res) => {
     }
 };
 
+
 export const getProductByCategory = async (req, res) => {
     try {
         const { id } = req.body
@@ -160,6 +167,13 @@ export const getProductByCategory = async (req, res) => {
         const product = await productSchema.findAll({
             where: whereCondition,
             limit: 15,
+            include: [
+                {
+                    model: inventorySchema, // Relación con producto
+                    as: 'inventories',
+                    attributes: ["_id", "stock"],
+                }
+            ],
         });
 
 
@@ -212,7 +226,15 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
                 where: query,
                 offset,
                 limit,
-                order: [['createdAt', 'DESC']]
+                order: [['createdAt', 'DESC']],
+                include: [
+                    {
+                        model: inventorySchema, // Relación con producto
+                        as: 'inventories',
+                        attributes: ["_id", "stock"],
+                    }
+                ],
+
 
             }),
             productSchema.count({ where: query })
@@ -242,7 +264,16 @@ export const getProductDetails = async (req, res) => {
     try {
         const { productId } = req.body
 
-        const product = await productSchema.findOne({ where: { _id: productId } });
+        const product = await productSchema.findOne({
+            where: { _id: productId },
+            include: [
+                {
+                    model: inventorySchema, // Relación con producto
+                    as: 'inventories',
+                    attributes: ["_id", "stock"],
+                }
+            ],
+        });
 
 
         return res.json({
@@ -360,8 +391,8 @@ export const searchProduct = async (req, res) => {
         if (!limit) {
             limit = 10
         }
-        
-        const query = search 
+
+        const query = search
             ? {
                 [Op.or]: [
                     { name: { [Op.like]: `%${search}%` } },

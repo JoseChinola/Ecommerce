@@ -45,6 +45,7 @@ const AddAddress = ({ close }) => {
             AxiosToastError(error)
         }
     }
+    
     return (
         <section className='bg-black fixed top-0 bottom-0 left-0 right-0 z-50 bg-opacity-70 flex items-center h-screen overflow-auto sm:p-4 p-2'>
             <div className='bg-white p-4 w-full sm:max-w-2xl mx-auto rounded-md'>

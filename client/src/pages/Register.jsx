@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import logomv from '../assets/shopmix.png'
+import logomv from '../assets/logo.png'
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
@@ -69,7 +69,6 @@ const Register = () => {
                     password: "",
                     confirmPassword: ""
                 })
-
                 navigate("/login")
             }
 
@@ -85,17 +84,11 @@ const Register = () => {
     }
 
     return (
-        <section className='w-full container mx-auto px-4 xl:mb-4'>
+        <section className='w-full container mx-auto px-4'>
             <div className='bg-white w-full max-w-lg mx-auto rounded p-6'>
-                <button onClick={redirectToHomePage} className='flex bg-neutral-400  text-neutral-300 p-1 rounded hover:text-white hover:bg-blue-700'>
-                    <FaArrowLeft size={18} />
-                    <span className='pl-1 text-xs lg:text-sm'>
-                        Back home
-                    </span>
-                </button>
+              
 
-
-                <div className='flex justify-center items-center flex-col'>
+                <div onClick={redirectToHomePage} className='flex justify-center items-center flex-col cursor-pointer'>
                     <img
                         src={logomv}
                         width={90}
@@ -103,15 +96,15 @@ const Register = () => {
                         alt='logo'
                         className='lg:block'
                     />
-                    <p className='text-center text-xl'>
-                        Welcome to
-                        <span className='text-primary-green font-bold pl-1 text-2xl'>
-                            ShopMix
+                    <p className='text-center text-base md:text-xl flex items-center gap-1 flex-col'>
+                        Bienvenido
+                        <span className='text-primary-green font-bold text-sm md:text-2xl'>
+                            D’RAF SERVICES
                         </span>
                     </p>
                 </div>
 
-                <form action="" className='grid gap-2 mt-1' onSubmit={handleSubmit}>
+                <form action="" className='grid gap-2 mt-2' onSubmit={handleSubmit}>
                     {/* name input */}
                     <div className='grid gap-1'>
                         <label htmlFor="name" className='font-semibold'>Name: </label>

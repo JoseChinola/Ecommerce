@@ -8,6 +8,8 @@ import toast from "react-hot-toast";
 import { pricewithDiscount } from "../utils/PriceWithDiscount";
 import { GlobalContext } from './useGlobalContext'
 import { handleAddAddress } from "../store/addressSlice";
+import { handleInventory } from "../store/inventorySlice";
+import { handleInventoryMovements } from "../store/inventoryMovements";
 
 const GlobalProvider = ({ children }) => {
     const dispatch = useDispatch()
@@ -47,6 +49,7 @@ const GlobalProvider = ({ children }) => {
             const { data: responseData } = response
             if (responseData.success) {
                 fetchCartItem()
+                fetchInventario()
             }
 
         } catch (error) {
@@ -67,6 +70,7 @@ const GlobalProvider = ({ children }) => {
             if (responseData.success) {
                 toast.success(responseData.message)
                 fetchCartItem()
+                fetchInventario()
             }
 
         } catch (error) {
@@ -85,6 +89,7 @@ const GlobalProvider = ({ children }) => {
             if (responseData.success) {
                 toast.success(responseData.message);
                 fetchCartItem();
+                fetchInventario();
             }
 
         } catch (error) {
@@ -113,6 +118,37 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+    const fetchInventario = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getInventory
+            });
+
+            const { data: resData } = response;
+            if (resData.success) {
+                dispatch(handleInventory(resData.data));
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    };
+
+    const fetchMovements = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getInventoryMovement
+            });
+            const { data: resData } = response;
+            if (resData.success) {
+                dispatch(handleInventoryMovements(resData.data));
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    };
+
+
+
     useEffect(() => {
         const qty = cartItem.reduce((preve, curr) => {
             return preve + curr.quantity
@@ -139,6 +175,8 @@ const GlobalProvider = ({ children }) => {
             fetchCartItem()
             fetchAddress()
             handleLogout()
+            fetchInventario()
+            fetchMovements()
         }
 
     }, [user])
@@ -153,7 +191,9 @@ const GlobalProvider = ({ children }) => {
             fetchAddress,
             totalPrice,
             totalQty,
-            notDiscountTotalPrice
+            notDiscountTotalPrice,
+            fetchInventario,
+            fetchMovements
         }}>
             {children}
         </GlobalContext.Provider>

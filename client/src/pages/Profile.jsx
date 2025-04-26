@@ -9,6 +9,7 @@ import SummaryApi from '../cammon/SummaryApi';
 import toast from 'react-hot-toast';
 import fetchUserDetails from '../utils/fetchUserDetails';
 import { setUserDetails } from '../store/userSlice';
+import { Navigate } from 'react-router-dom';
 
 
 const Profile = () => {
@@ -65,6 +66,9 @@ const Profile = () => {
 
     }
 
+    if (!user || !user._id) {
+        return <Navigate to="/login" />;
+    }
 
     return (
         <div className='flex items-center justify-center rounded w-full bg-blue-50 p-2'>

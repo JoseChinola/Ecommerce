@@ -15,12 +15,14 @@ import { TbTruckDelivery } from "react-icons/tb"
 import { FaRegAddressCard } from "react-icons/fa6"
 import isAdmin from '../utils/isAdmin'
 import Divider from '../components/Divider';
-import { FaRegUserCircle, FaUser } from 'react-icons/fa';
+import { FaRegUserCircle, FaUser, FaUsersCog, FaWarehouse } from 'react-icons/fa';
+import { GiArchiveRegister } from 'react-icons/gi';
 
 const Asidebar = ({ isOpen, closeAside }) => {
     const user = useSelector((state) => state.user)
     const dispatch = useDispatch()
     const navigate = useNavigate()
+    const [openInventoryMenu, setOpenInventoryMenu] = React.useState(false);
 
     const handleLogout = async () => {
         try {
@@ -38,9 +40,9 @@ const Asidebar = ({ isOpen, closeAside }) => {
     }
 
     const getLinkClass = (isActive) => {
-        return `flex items-center gap-3 text-sm px-3 py-1.5 transition duration-300 rounded ${isActive
-                ? 'font-semibold text-primary-Green bg-gray-100'
-                : 'text-[#1b406c] hover:bg-primary-Green hover:text-white hover:font-medium'
+        return `flex items-center gap-3 text-sm px-3 py-1 transition duration-300 rounded ${isActive
+            ? 'font-semibold text-primary-Green bg-gray-100'
+            : 'text-[#1b406c] hover:bg-primary-Green hover:text-white hover:font-medium'
             }`
     }
 
@@ -95,23 +97,46 @@ const Asidebar = ({ isOpen, closeAside }) => {
                         </NavLink>
 
                         {isAdmin(user.role) && (
-                            <>
-                                <NavLink to="/inventory" className={({ isActive }) => getLinkClass(isActive)}>
-                                    <MdInventory size={18} /> Inventario
-                                </NavLink>
-                                <NavLink to="/category" className={({ isActive }) => getLinkClass(isActive)}>
-                                    <MdCategory size={18} /> Categoria
-                                </NavLink>
-                                <NavLink to="/subcategory" className={({ isActive }) => getLinkClass(isActive)}>
-                                    <PiSubtractFill size={18} /> Sub Categoria
-                                </NavLink>
-                                <NavLink to="/upload-product" className={({ isActive }) => getLinkClass(isActive)}>
-                                    <MdOutlineProductionQuantityLimits size={18} /> Subir Producto
-                                </NavLink>
-                                <NavLink to="/product" className={({ isActive }) => getLinkClass(isActive)}>
-                                    <AiFillProduct size={18} /> Productos
-                                </NavLink>
-                            </>
+                            <div>
+                                <button
+                                    onClick={() => setOpenInventoryMenu(!openInventoryMenu)}
+                                    className="w-full flex items-center justify-between gap-2 text-sm px-3 py-1.5 rounded text-[#1b406c] hover:bg-primary-Green hover:text-white transition"
+                                >
+                                    <span className="flex items-center gap-2">
+                                        <MdInventory size={18} /> Panel Admin
+                                    </span>
+                                    <span>{openInventoryMenu ? "▴" : "▾"}</span>
+                                </button>
+
+                                {openInventoryMenu && (
+                                    <div className="ml-4 mt-1 flex flex-col gap-1">
+                                        <NavLink to="/warehouse" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <FaWarehouse /> Almacén
+                                        </NavLink>
+                                        <NavLink to="/inventory" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <MdInventory /> Inventario
+                                        </NavLink>
+                                        <NavLink to="/inventory-movements" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <GiArchiveRegister /> Movimientos
+                                        </NavLink>
+                                        <NavLink to="/category" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <MdCategory /> Categorías
+                                        </NavLink>
+                                        <NavLink to="/subcategory" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <PiSubtractFill /> Subcategoría
+                                        </NavLink>
+                                        <NavLink to="/upload-product" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <MdOutlineProductionQuantityLimits /> Subir Producto
+                                        </NavLink>
+                                        <NavLink to="/product" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <AiFillProduct /> Productos
+                                        </NavLink>
+                                        <NavLink to="/users" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <FaUsersCog /> Usuarios
+                                        </NavLink>
+                                    </div>
+                                )}
+                            </div>
                         )}
 
                         <NavLink to="/profile" className={({ isActive }) => getLinkClass(isActive)}>

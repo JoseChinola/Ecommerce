@@ -7,7 +7,7 @@ const verifyEmailTemplate = ({ name, url }) => {
             <a href="${url}" 
                 style="display: block; width: 100%; padding: 14px 0; text-align: center; font-size: 18px; color: white; 
                 background: #071263; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                Verify Email jodido pato 
+                Verify Email
             </a>
         </p>
         <p>If you didn't sign up for ShopMix, please ignore this email.</p>

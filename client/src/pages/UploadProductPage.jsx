@@ -20,7 +20,6 @@ const UploadProductPage = () => {
     categoryId: [],
     subCategoryId: [],
     unit: "",
-    stock: "",
     price: "",
     discount: "",
     description: "",
@@ -126,7 +125,6 @@ const UploadProductPage = () => {
           categoryId: [],
           subCategoryId: [],
           unit: "",
-          stock: "",
           price: "",
           discount: "",
           description: "",
@@ -141,12 +139,12 @@ const UploadProductPage = () => {
   return (
     <section className='p-3'>
       <div className='p-4 bg-white border rounded-lg max-w-4xl grid m-auto shadow-lg'>
-        <div className='py-3 max-w-3xl w-full rounded-md font-semibold bg-blue-50 shadow-md flex items-center justify-center m-auto'>
+        <div className='py-3 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-center m-auto'>
           <h2 className='font-extrabold uppercase text-primary-Green'>Upload Product</h2>
         </div>
 
-        <div className='flex p-4 items-center justify-center w-full'>
-          <form className='grid gap-4 w-full max-w-3xl items-center' onSubmit={handleSubmit}>
+        <div className='flex py-3 px-3 items-center justify-center w-full bg-secundary rounded-lg mt-4'>
+          <form className='grid gap-4 w-full max-w-4xl items-center bg-white px-3 py-3 rounded-lg' onSubmit={handleSubmit}>
             <div className='grid gap-1'>
               <label htmlFor="name" className='font-medium'>Name</label>
 
@@ -337,21 +335,7 @@ const UploadProductPage = () => {
                 className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
                 required
               />
-            </div>
-
-            <div className='grid gap-1'>
-              <label htmlFor="stock" className='font-medium'>Number of Stock</label>
-
-              <input type="number"
-                id='stock'
-                placeholder='Enter product stock'
-                name='stock'
-                value={data.stock}
-                onChange={handleChange}
-                className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                required
-              />
-            </div>
+            </div>           
 
             <div className='grid gap-1'>
               <label htmlFor="price" className='font-medium'>Price</label>
@@ -417,9 +401,9 @@ const UploadProductPage = () => {
             </div>
 
             <button
-              className='bg-primary-Green text-white hover:bg-white py-1 
+              className='bg-primary-Green text-white hover:bg-white py-2 
                   px-3 text-center font-semibold border 
-                  border-primary-Green hover:text-primary-Green rounded cursor-pointer'
+                  border-primary-Green hover:text-primary-Green rounded-lg cursor-pointer'
             >
               Submit
             </button>

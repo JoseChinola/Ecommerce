@@ -12,11 +12,12 @@ const Carousel = () => {
     const [itemsPerSlide, setItemsPerSlide] = useState(3);
     const intervalRef = useRef(null);
 
-    // Estados para detectar el gesto de swipe
+    // Swipe state
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
-    const minSwipeDistance = 50; // distancia mínima para considerar un swipe
+    const minSwipeDistance = 50;
 
+    // Fetch products with discount
     const fetchProductData = async () => {
         try {
             setLoading(true);
@@ -26,14 +27,20 @@ const Carousel = () => {
             });
             const { data: resData } = resp;
             if (resData.success) {
-                const discountedProducts = resData.data.filter(product => product.discount > 0);
-                const items = discountedProducts.map((product) => {
+                const discountedProducts = resData.data.filter(p => p.discount > 0);
+                const items = discountedProducts.map(product => {
                     const images = product.image ? JSON.parse(product.image) : [];
+                    const stock = Array.isArray(product.inventoryData)
+                        ? product.inventoryData.reduce((sum, inv) => sum + (inv.stock || 0), 0)
+                        : Array.isArray(product.inventories)
+                            ? product.inventories.reduce((sum, inv) => sum + (inv.stock || 0), 0)
+                            : 0;
                     return {
-                        image: images.length > 0 ? images[0] : null,
+                        image: images[0] || null,
                         discount: product.discount,
                         name: product.name,
-                        _id: product._id
+                        _id: product._id,
+                        stock,
                     };
                 }).filter(item => item.image !== null);
                 setCarouselItems(items);
@@ -45,23 +52,24 @@ const Carousel = () => {
         }
     };
 
-    // Hook para ajustar itemsPerSlide según el ancho de pantalla
+    // Adjust items per slide on resize
     useEffect(() => {
         const handleResize = () => {
-            if (window.innerWidth < 640) { // ejemplo: mobile
-                setItemsPerSlide(1);
-            } else {
-                setItemsPerSlide(3);
-            }
+            if (window.innerWidth < 640) setItemsPerSlide(1);
+            else setItemsPerSlide(3);
         };
-
         handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    useEffect(() => { fetchProductData(); }, []);
+    // Fetch carousel items once
+    useEffect(() => {
+        // call fetchProductData without returning a promise
+        fetchProductData();
+    }, []);
 
+    // Auto scroll effect
     useEffect(() => {
         if (carouselItems.length > 0) {
             startAutoScroll();
@@ -71,66 +79,41 @@ const Carousel = () => {
 
     const startAutoScroll = () => {
         stopAutoScroll();
-        intervalRef.current = setInterval(() => {
-            goToNext();
-        }, 4000);
+        intervalRef.current = setInterval(goToNext, 4000);
     };
 
     const stopAutoScroll = () => {
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-        }
+        if (intervalRef.current) clearInterval(intervalRef.current);
     };
 
     const goToNext = () => {
         stopAutoScroll();
-        setCurrentIndex((prevIndex) => (prevIndex + itemsPerSlide) % carouselItems.length);
+        setCurrentIndex(prev => (prev + itemsPerSlide) % carouselItems.length);
         startAutoScroll();
     };
 
     const goToPrevious = () => {
         stopAutoScroll();
-        setCurrentIndex((prevIndex) => 
-            (prevIndex - itemsPerSlide + carouselItems.length) % carouselItems.length
-        );
+        setCurrentIndex(prev => (prev - itemsPerSlide + carouselItems.length) % carouselItems.length);
         startAutoScroll();
     };
 
-    // Funciones para manejar el swipe
-    const onTouchStart = (e) => {
-        setTouchEnd(null); // reinicia el touchEnd
-        setTouchStart(e.targetTouches[0].clientX);
-    };
-
-    const onTouchMove = (e) => {
-        setTouchEnd(e.targetTouches[0].clientX);
-    };
-
+    // Touch handlers
+    const onTouchStart = e => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
+    const onTouchMove = e => setTouchEnd(e.targetTouches[0].clientX);
     const onTouchEnd = () => {
         if (!touchStart || !touchEnd) return;
         const distance = touchStart - touchEnd;
         if (Math.abs(distance) < minSwipeDistance) return;
-
-        if (distance > 0) {
-            // Swipe hacia la izquierda: siguiente
-            goToNext();
-        } else {
-            // Swipe hacia la derecha: anterior
-            goToPrevious();
-        }
+        distance > 0 ? goToNext() : goToPrevious();
     };
 
     return (
         <div className="relative flex items-center w-full p-4 overflow-hidden sm:rounded-xl">
-            {/* Botón "Anterior" - Puedes mostrarlo u ocultarlo según convenga */}
-            <button
-                onClick={goToPrevious}
-                className="absolute hidden sm:block left-2 bg-white hover:bg-gray-200 shadow-lg p-2 rounded-full z-10"
-            >
+            <button onClick={goToPrevious} className="absolute hidden sm:block left-2 bg-white hover:bg-gray-200 shadow-lg p-2 rounded-full z-10">
                 <FaAngleLeft size={25} />
             </button>
 
-            {/* Contenedor del carrusel con eventos de touch */}
             <div
                 className="w-full overflow-hidden relative"
                 onTouchStart={onTouchStart}
@@ -149,27 +132,28 @@ const Carousel = () => {
                                     <p className="bg-gray-300 rounded-lg w-16 h-5"></p>
                                 </div>
                             </div>
-                        ))
-                    ) : (
-                        carouselItems.length > 0 &&
+                        ))) : (
                         carouselItems.map((item, i) => (
-                            <div key={i} className="w-full sm:w-1/3 flex-shrink-0 flex justify-center items-center p-1">
-                                <div className="flex items-center justify-center gap-3 rounded-2xl p-2">
-                                    <div className="w-24 lg:w-52 lg:h-52 h-24 rounded-lg">
-                                        <img
-                                            src={item.image}
-                                            alt={`product-${i}`}
-                                            className="w-full h-full object-scale-down"
-                                        />
-                                    </div>
-                                    <div className="flex items-center flex-col gap-3">
-                                        <p className="md:text-sm text-xs inline-block font-semibold bg-red-500 rounded-full text-white px-2">
-                                            -{item.discount}%
-                                        </p>
-                                        <div className="md:text-sm text-xs inline-block font-semibold rounded-full text-green-500 px-2 cursor-pointer">
-                                            <AddToCartButton data={item} />
-                                        </div>
-                                    </div>
+                            <div key={i} className="w-full sm:w-1/3 flex-shrink-0 flex flex-col items-center p-1">
+                                <div className="w-24 lg:w-52 lg:h-52 h-24 rounded-lg overflow-hidden">
+                                    <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                                </div>
+                                <div className="mt-2 text-center">
+                                    <p className="font-semibold text-sm">{item.name}</p>
+                                    <p className="text-xs text-gray-600">cantidad: {item.stock}</p>
+                                </div>
+                                <div className="mt-1 flex items-center gap-2">
+
+                                    {item.stock > 0 ? (
+                                        <>
+                                            <span className="inline-block font-semibold text-xs bg-red-500 text-white rounded-full px-1 py-1">
+                                                -{item.discount}%
+                                            </span>
+                                            <AddToCartButton data={item} fetchProductData={fetchProductData} />
+                                        </>
+                                    ) : (
+                                        <span className="text-red-500 text-xs">Agotado</span>
+                                    )}
                                 </div>
                             </div>
                         ))
@@ -177,11 +161,7 @@ const Carousel = () => {
                 </div>
             </div>
 
-            {/* Botón "Siguiente" */}
-            <button
-                onClick={goToNext}
-                className="absolute hidden sm:block right-2 bg-white hover:bg-gray-200 shadow-lg p-2 rounded-full z-10"
-            >
+            <button onClick={goToNext} className="absolute hidden sm:block right-2 bg-white hover:bg-gray-200 shadow-lg p-2 rounded-full z-10">
                 <FaAngleRight size={25} />
             </button>
         </div>

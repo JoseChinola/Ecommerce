@@ -22,6 +22,9 @@ import CheckoutPage from "../pages/CheckoutPage";
 import Success from "../pages/Success";
 import Cancel from "../pages/Cancel";
 import Inventario from "../layouts/Inventario";
+import Warehouse from "../layouts/Warehouse";
+import InventoryMovements from "../pages/InventoryMovements";
+import UsersPage from "../pages/UsersPage";
 
 
 
@@ -63,8 +66,16 @@ const Router = createBrowserRouter([
                 element: <AdminPermissions><Dashboard /></AdminPermissions>
             },
             {
+                path: "warehouse",
+                element: < AdminPermissions > <Warehouse /></ AdminPermissions>
+            },
+            {
                 path: "inventory",
                 element: < AdminPermissions > <Inventario /></ AdminPermissions>
+            },
+            {
+                path: "inventory-movements",
+                element: < AdminPermissions > <InventoryMovements /></ AdminPermissions>
             },
             {
                 path: "profile",
@@ -97,6 +108,10 @@ const Router = createBrowserRouter([
             {
                 path: "product",
                 element: <AdminPermissions><ProductAdmin /></AdminPermissions>
+            },
+            {
+                path: "users",
+                element: <AdminPermissions><UsersPage /></AdminPermissions>
             },
             {
                 path: ":category",

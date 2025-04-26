@@ -1,14 +1,14 @@
 import { Router } from 'express'
-import { addStoreController } from '../controllers/store.controller.js'
+import { addStoreController, deleteStoreController, getStoreController, updatewarehouseController } from '../controllers/warehouse.controller.js'
 import auth from '../middleware/auth.js'
 import { admin } from '../middleware/Admin.js'
 
 
 const storeRouter = Router()
 storeRouter.post("/create", auth, admin, addStoreController)
-// storeRouter.get("/get", auth, admin, createProductController)
-// storeRouter.put("/update", auth, admin, createProductController)
-// storeRouter.delete("/delete", auth, admin, createProductController)
+storeRouter.get("/get", auth, admin, getStoreController)
+storeRouter.put("/update", auth, admin, updatewarehouseController)
+storeRouter.put("/delete", auth, admin, deleteStoreController)
 
 
 

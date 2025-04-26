@@ -24,15 +24,6 @@ const CategoryPage = () => {
     const [deleteCategory, setDeleteCategory] = useState({ _id: '' });
     const [dataEdit, setDataOpenEdit] = useState({ name: "", image: "" });
 
-    // const allCategory = useSelector(state => state.product.allCategory);
-
-
-    // useEffect(() => {
-    //     if (allCategory.length > 0) {
-    //         setData(allCategory);
-    //         setLoading(false);
-    //     }
-    // }, [allCategory]);
 
     const fetchCategory = async () => {
         try {
@@ -87,10 +78,10 @@ const CategoryPage = () => {
                         </button>
                     </div>
 
-                    <div className='p-2 mt-4 grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+                    <div className='p-2 mt-4 grid gap-4 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
                         {Array.isArray(data) && data.length > 0 ? (
                             data.map((category) => (
-                                <div key={category._id} className="lg:w-52 lg:h-full flex group flex-col bg-blue-50 gap-2 items-center rounded-md border-2 shadow-md relative">
+                                <div key={category._id} className="lg:w-48 lg:h-48 h-full w-full flex group flex-col bg-blue-50 gap-2 items-center rounded-md border-2 shadow-md relative">
                                     <img src={category.image} alt={category.name} className="w-58 h-44 object-cover rounded-md border-2" />
                                     <p className="text-green-500 py-2 font-semibold capitalize text-center">{category.name}</p>
 

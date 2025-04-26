@@ -85,6 +85,10 @@ const userSchema = sequelize.define('users', {
 // Establecer relaciones con los otros modelos
 userSchema.belongsTo(addressSchema, { foreignKey: 'address_details' });
 userSchema.belongsTo(orderSchema, { foreignKey: 'orderHistory' });
+userSchema.hasMany(cartProductSchema, {
+    foreignKey: 'userId',
+    as: 'shopping_cart'
+});
 
 
 export default userSchema;

@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
-import userSchema from "./user.model.js";
 
 const addressSchema = sequelize.define('address', {
     _id: {

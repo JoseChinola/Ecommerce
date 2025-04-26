@@ -26,18 +26,18 @@ const Header = ({ toggleAside }) => {
     const isSearchPage = location.pathname === "/search"
 
     // Rutas en las que el header no debe mostrarse
-    const isHidden = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot-password" || location.pathname === "/verification-otp" || location.pathname === "/reset-password";
+    const isHidden = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot-password" || location.pathname === "/verification-otp" || location.pathname === "/reset-password" || location.pathname === "/verify-email";
 
     const redirectToLoginPage = () => {
         navigate("/login")
     }
 
 
-    if (isHidden) return <div className='xl:h-20 h-5'></div>;
+    if (isHidden) return <div className='xl:h-14 h-5'></div>;
 
 
     return (
-        <header className='h-28 lg:h-20 lg:shadow-md flex px-2 md:items-center justify-center flex-col bg-white rounded-md mx-3 mt-2'>
+        <header className='h-28 lg:h-20 lg:shadow-md flex px-2 md:items-center justify-center flex-col gap-2 bg-white rounded-lg mx-3 mt-2'>
 
             {
                 !(isSearchPage && isMobile) && (

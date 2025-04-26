@@ -160,7 +160,36 @@ const SummaryApi = {
     createStore: {
         url: "/api/store/create",
         method: "post"
+    },
+    getStore: {
+        url: "/api/store/get",
+        method: "get"
+    },
+    updateStore: {
+        url: "/api/store/update",
+        method: "put"
+    },
+    deleteStore: {
+        url: "/api/store/delete",
+        method: "put"
     }
+    ,
+    createInventory: {
+        url: "/api/inventory/create",
+        method: "post"
+    },
+    getInventory: {
+        url: "/api/inventory/get",
+        method: "get"
+    },
+    updateInventory: {
+        url: "/api/inventory/update",
+        method: "put"
+    },
+    getInventoryMovement: {
+        url: "/api/inventory-movement/gets-movement",
+        method: "get"
+    },
 }
 
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import logomv from '../assets/shopmix.png'
+import logomv from '../assets/logo.png'
 import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaRegEyeSlash } from "react-icons/fa6";
@@ -98,17 +98,17 @@ const Login = () => {
         <section className="w-full container mx-auto px-4 mb-10 ">
             <div className="flex flex-col items-center justify-center mx-auto mr-">
                 <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <div className="p-4 space-y-3 md:space-y-6 sm:p-5">
 
-                        <h2 to={"/"} className="flex flex-col items-center justify-center focus:ring-blue-500 mb-1 text-2xl font-semibold text-gray-900 w-full">
-                            <img className="w-24 h-16" src={logomv} alt="logo" />
-                            <span className="text-gray-500 font-bold pl-1 text-2xl">
-                                Welcome to <Link to={"/"} className="text-primary-green font-bold pl-1 text-2xl">ShopMix</Link>
+                        <h2 to={"/"} className="flex flex-col items-center gap-1 justify-center focus:ring-blue-500 text-2xl font-semibold text-gray-900 w-full">
+                            <img className="w-20 h-20" src={logomv} alt="logo" />
+                            <span className="text-gray-500 font-bold text-sm md:text-2xl flex items-center flex-col gap-2">
+                                Bienvenido <Link to={"/"} className="text-primary-Green font-bold text-sm md:text-2xl">D’RAF SERVICES</Link>
                             </span>
                         </h2>
 
 
-                        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                        <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
                             <div className='relative'>
                                 <label htmlFor="email"
                                     className="block mb-1 text-base font-semibold">
@@ -190,7 +190,7 @@ const Login = () => {
                                 Login
                             </button>
                         </form>
-                        <p className="text-sm font-medium italic tracking-wide text-black">
+                        <p className="text-sm font-medium italic tracking-wide text-black flex flex-col md:flex-row">
                             Don’t have account? <Link to={"/register"} className="font-semibold text-base hover:underline hover:text-blue-600 text-blue-800">Register</Link>
                         </p>
                     </div>

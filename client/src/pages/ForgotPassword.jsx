@@ -67,9 +67,9 @@ const ForgotPassword = () => {
     }
 
     return (
-        <section className="w-full container mx-auto px-4 mb-0">
+        <section className="w-full container mx-auto px-4 h-full min-h-[80vh] max-h-[75vh]">
             <div className="flex flex-col items-center justify-center mx-auto mr-">
-                <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
+                <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <div className='p-0 m-0'>
                             <button onClick={redirectToHomePage} className='flex bg-neutral-400  text-neutral-300 p-1 rounded hover:text-white hover:bg-blue-700'>
