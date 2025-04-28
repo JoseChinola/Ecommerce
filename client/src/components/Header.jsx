@@ -26,7 +26,7 @@ const Header = ({ toggleAside }) => {
     const isSearchPage = location.pathname === "/search"
 
     // Rutas en las que el header no debe mostrarse
-    const isHidden = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot-password" || location.pathname === "/verification-otp" || location.pathname === "/reset-password" || location.pathname === "/verify-email";
+    const isHidden = location.pathname === "/login" || location.pathname === "/register" || location.pathname === "/forgot-password" || location.pathname === "/verification-otp" || location.pathname === "/reset-password" || location.pathname === "/verify-email" || location.pathname === "/verifyEmail-register";
 
     const redirectToLoginPage = () => {
         navigate("/login")

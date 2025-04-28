@@ -25,6 +25,9 @@ import Inventario from "../layouts/Inventario";
 import Warehouse from "../layouts/Warehouse";
 import InventoryMovements from "../pages/InventoryMovements";
 import UsersPage from "../pages/UsersPage";
+import VerifyEmailPage from "../pages/verifyEmailPage";
+import VerifyEmailRegister from "../components/VerifyEmailRegister";
+
 
 
 
@@ -49,6 +52,11 @@ const Router = createBrowserRouter([
                 path: "register",
                 element: <RegisterRedirect />
             },
+            {
+                path: "verifyEmail-register",
+                element: <VerifyEmailRegister />
+            }
+            ,
             {
                 path: "forgot-password",
                 element: <ForgotPassword />
@@ -141,7 +149,11 @@ const Router = createBrowserRouter([
             {
                 path: "cancel",
                 element: <Cancel />
-            }
+            },
+            {
+                path: "/verify-email",
+                element: <VerifyEmailPage />
+            },
         ]
     }
 ])

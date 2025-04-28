@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
+import helmet from "helmet";
 import userRouter from './routes/user.routes.js';
 import { FRONTEND_URL } from './config.js';
 import cookieParser from 'cookie-parser';
@@ -15,6 +16,7 @@ import storeRouter from './routes/store.routes.js';
 import inventoryRouter from './routes/inventory.routes.js';
 import "./models/associations.js";
 import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
+import dashboardRouter from './routes/dashboard.routes.js';
 
 const app = express();
 app.use(cors({
@@ -24,7 +26,9 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser())
 app.use(morgan("dev"));
-
+app.use(helmet({
+    crossOriginResourcePolicy: false,
+}));
 
 app.get('/', (req, res) => {
     res.send('<h1>Welcomen</h1>')
@@ -45,6 +49,7 @@ app.use("/api/order", orderRouter)
 app.use("/api/store", storeRouter)
 app.use("/api/inventory", inventoryRouter)
 app.use("/api/inventory-movement", inventoryMovementRouter)
+app.use("/api", dashboardRouter)
 
 
 

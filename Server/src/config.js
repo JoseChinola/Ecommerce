@@ -1,5 +1,6 @@
 export const {
     FRONTEND_URL = "http://localhost:5173",
+    RESEND_API = "re_JMWiRK9Z_MmQcPLmDR7icx1zpVB5Tioru",
     PORT = 3000,
     SECRETE_KEY_ACCESS_TOKEN = "batallandocontralagueradenarnialyestonocuentaporquepoppopoo",
     SECRETE_KEY_REFRESH_TOKEN = "whileBatallandoContraLaGuerraDeNarnialyEstoNoCuentaPorquePopPopoo",
@@ -7,10 +8,11 @@ export const {
     DB_PASSWORD = "Esmerali-123456",
     DB_NAME = "ShopMix",
     EMAIL_USER = "ttestmateo@gmail.com",
+    EMAIL_PASS = "jdhm ubic uemw ffcy",
     CLODINARY_CLOUD_NAME = "dg0wzl8i2",
     CLODINARY_API_KEY = "739648333859378",
     CLODINARY_API_SECRET_KEY = "JqKlEnVIMwInMheDjGGpGfWErsE",
     STRIPE_SECRET_KEY = 'sk_test_51RAFPsGg68kb2KxI7lCbF0SW4hh5gwSngChjE2qzh3OZPFccWOBuxfZsIGAgvrroziPNpH25QTag2liU1T65Cqf200BKzwDOO2',
     STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY = 'whsec_912ba35493de6bfe091c80550e74a46edbd1fd4862f04e6cef361913fdc8d538',
-    NODE_TLS_REJECT_UNAUTHORIZED = "0"
+    // NODE_TLS_REJECT_UNAUTHORIZED = "0"
 } = process.env;

@@ -9,6 +9,10 @@ const SummaryApi = {
         url: "/api/user/login",
         method: "post"
     },
+    verify_email: {
+        url: "/api/user/verify-email",
+        method: "post"
+    },
     forgotPassword: {
         url: "/api/user/forgot-password",
         method: "put"
@@ -157,6 +161,10 @@ const SummaryApi = {
         url: "/api/order/checkout",
         method: "post"
     },
+    getOrderItems: {
+        url: "/api/order/order-list",
+        method: "get"
+    },
     createStore: {
         url: "/api/store/create",
         method: "post"
@@ -190,6 +198,11 @@ const SummaryApi = {
         url: "/api/inventory-movement/gets-movement",
         method: "get"
     },
+    getDashboard: {
+        url: "/api/dashboard",
+        method: "get"
+    },
+
 }
 
 

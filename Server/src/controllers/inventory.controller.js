@@ -253,7 +253,7 @@ export const updateInventoryController = async (req, res) => {
 
 
 
-        res.json({
+        return res.json({
             message: "Inventario actualizado con exito",
             error: false,
             success: true,

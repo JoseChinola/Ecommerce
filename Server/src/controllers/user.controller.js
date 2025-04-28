@@ -47,14 +47,16 @@ export async function registerUserController(req, res) {
             verifyEmail: false
         });
 
+
+
         // URL de verificación de email
-        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${newUser.id}`;
+        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${newUser._id}`;
 
         try {
             // Enviar email de verificación
-            await sendEmail({
+            const verify = await sendEmail({
                 sendTo: email,
-                subject: "Verify your email - ShopMix",
+                subject: "Verify your email - D’RAF SERVICES",
                 html: verifyEmailTemplate({
                     name,
                     url: verifyEmailUrl
@@ -69,8 +71,9 @@ export async function registerUserController(req, res) {
             });
         }
 
+
         return res.status(201).json({
-            message: "User registered successfully. Check your email to verify your account.",
+            message: "Usuario registrado correctamente. verificar su correo.",
             error: false,
             success: true,
             data: newUser
@@ -111,7 +114,7 @@ export async function verifyEmailController(req, res) {
         }
 
         // Actualizar el estado de verificación del email
-        await userSchema.update({ verifyEmail: true }, { where: { _id: code } });
+        await userSchema.update({ verify_email: true }, { where: { _id: code } });
 
         return res.json({
             message: "Email verified successfully",
@@ -157,6 +160,14 @@ export async function loginController(req, res) {
         if (user.status !== "Active") {
             return res.status(400).json({
                 message: "Contact to Admin",
+                error: true,
+                success: false
+            });
+        }
+
+        if (user.verify_email !== true) {
+            return res.status(400).json({
+                message: "Email no verificado",
                 error: true,
                 success: false
             });
@@ -230,8 +241,8 @@ export async function logoutController(req, res) {
         res.clearCookie("refreshToken", cookiesOption)
 
         const removeRefreshToken = await userSchema.update({ refresh_token: "" }, { where: { _id: userid } })
-        
-        
+
+
         return res.json({
             message: "Logout success",
             error: false,
@@ -252,7 +263,7 @@ export async function uploadAvatar(req, res) {
     try {
         const userId = req.userId
         const image = req.file;
-           
+
         if (!image) {
             return res.status(400).json({
                 message: "No image file provided.",

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import logomv from '../assets/shopmix.png'
+import logomv from '../assets/logo.png'
 import { MdOutlineMail } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -75,14 +75,14 @@ const ForgotPassword = () => {
                             <button onClick={redirectToHomePage} className='flex bg-neutral-400  text-neutral-300 p-1 rounded hover:text-white hover:bg-blue-700'>
                                 <FaArrowLeft size={18} />
                                 <span className='pl-1 text-xs lg:text-sm'>
-                                    Back home
+                                    Pagina Principal
                                 </span>
                             </button>
                         </div>
                         <h2 className="flex flex-col items-center justify-center focus:ring-blue-500 text-2xl font-semibold text-gray-900 w-full">
-                            <img className="w-24 h-16" src={logomv} alt="logo" />
+                            <img className="w-20 h-20" src={logomv} alt="logo" />
                             <span className="text-gray-500 font-bold pl-1 text-2xl">
-                                Welcome to <span className="text-primary-green font-bold pl-1 text-2xl">Forgot Password</span>
+                                <span className="text-primary-green font-bold pl-1 text-2xl">¿Has olvidado tu contraseña?</span>
                             </span>
                         </h2>
 
@@ -91,7 +91,7 @@ const ForgotPassword = () => {
                             <div className='relative'>
                                 <label htmlFor="email"
                                     className="block mb-1 text-base font-semibold">
-                                    Email
+                                    Correo
                                 </label>
                                 <input
                                     type="email"
@@ -109,12 +109,12 @@ const ForgotPassword = () => {
                             </div>
 
                             <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"} w-full text-white py-2 rounded font-semibold mt-2 tracking-wide`}>
-                                Send OTP
+                                Enviar OTP
                             </button>
                         </form>
 
                         <p className="text-sm font-medium tracking-wide text-black mt-1">
-                            Already have account? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
+                            ¿Ya tienes cuenta? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
                         </p>
                     </div>
                 </div>

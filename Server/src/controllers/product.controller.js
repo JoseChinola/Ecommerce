@@ -149,10 +149,9 @@ export const getProductController = async (req, res) => {
 export const getProductByCategory = async (req, res) => {
     try {
         const { id } = req.body
-
         if (!id) {
             return res.status(400).json({
-                message: "providde category id",
+                message: "provide category id",
                 error: true,
                 success: false
             })
@@ -184,6 +183,7 @@ export const getProductByCategory = async (req, res) => {
             success: true
         })
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
             message: error.message || "Internal server error",
             error: true,

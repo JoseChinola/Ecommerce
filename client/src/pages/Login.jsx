@@ -58,8 +58,6 @@ const Login = () => {
                 data: data
             })
 
-
-
             if (res.data.error) {
                 toast.error(res.data.message)
             }

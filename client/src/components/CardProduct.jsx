@@ -34,7 +34,7 @@ const CardProduct = ({ data }) => {
             </div>
 
             {/* Nombre del producto */}
-            <div className="px-2 font-semibold text-sm sm:text-base line-clamp-1">
+            <div className="px-1 font-semibold text-sm sm:text-base line-clamp-1">
                 {data.name}
             </div>
 
@@ -44,7 +44,7 @@ const CardProduct = ({ data }) => {
             </div>
 
             {/* Precio y botón */}
-            <div className="flex items-center justify-between px-2 gap-2 text-sm">
+            <div className="flex items-center justify-between px-2 gap-3 text-sm">
                 <span className="font-semibold text-green-700">
                     {DisplayPriceDOP(pricewithDiscount(data.price, data.discount))}
                 </span>

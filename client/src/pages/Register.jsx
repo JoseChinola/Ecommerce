@@ -69,7 +69,7 @@ const Register = () => {
                     password: "",
                     confirmPassword: ""
                 })
-                navigate("/login")
+                navigate("/verifyEmail-register")
             }
 
         } catch (error) {

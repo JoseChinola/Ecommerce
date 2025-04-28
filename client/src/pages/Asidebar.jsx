@@ -130,10 +130,7 @@ const Asidebar = ({ isOpen, closeAside }) => {
                                         </NavLink>
                                         <NavLink to="/product" className={({ isActive }) => getLinkClass(isActive)}>
                                             <AiFillProduct /> Productos
-                                        </NavLink>
-                                        <NavLink to="/users" className={({ isActive }) => getLinkClass(isActive)}>
-                                            <FaUsersCog /> Usuarios
-                                        </NavLink>
+                                        </NavLink>                                      
                                     </div>
                                 )}
                             </div>
