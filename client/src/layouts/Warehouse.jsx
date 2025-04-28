@@ -105,6 +105,7 @@ const Warehouse = () => {
                         <thead className='bg-gray-100 text-gray-700'>
                             <tr>
                                 <th className='px-4 py-2 border'>Almacen</th>
+                                <th className='px-4 py-2 border'>Dirección</th>
                                 <th className='px-4 py-2 border'>Descripción</th>
                                 <th className='px-4 py-2 border'>Acciones</th>
                             </tr>
@@ -114,6 +115,7 @@ const Warehouse = () => {
                                 paginatedData.map((store, index) => (
                                     <tr key={store._id || index}>
                                         <td className='px-4 py-2 border'>{store.name || '—'}</td>
+                                        <td className='px-4 py-2 border'>{store.address || '—'}</td>
                                         <td className='px-4 py-2 border text-center'>{store.description}</td>
                                         <td className='px-4 py-2 border text-center space-x-4'>
                                             <button onClick={() => {

@@ -96,7 +96,7 @@ export async function verifyEmailController(req, res) {
         // Verificar si se envió el código
         if (!code) {
             return res.status(400).json({
-                message: "Verification code is required",
+                message: "Se requiere código de verificación",
                 error: true,
                 success: false
             });
@@ -107,7 +107,7 @@ export async function verifyEmailController(req, res) {
 
         if (!user) {
             return res.status(400).json({
-                message: "Invalid verification code",
+                message: "Código de verificación no válido",
                 error: true,
                 success: false
             });
@@ -117,7 +117,7 @@ export async function verifyEmailController(req, res) {
         await userSchema.update({ verify_email: true }, { where: { _id: code } });
 
         return res.json({
-            message: "Email verified successfully",
+            message: "Correo verificado exitosamente",
             success: true,
             error: false
         });

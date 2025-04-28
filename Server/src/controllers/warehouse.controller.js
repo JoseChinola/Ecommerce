@@ -4,12 +4,13 @@ import warehouseSchema from '../models/warehouse.model.js'
 
 export const addStoreController = async (req, res) => {
     try {
-        const { name, description } = req.body;
+        const { name, description, address } = req.body;
 
         // 2️⃣ Crear el almacén (store)
         const newStore = await warehouseSchema.create({
             name,
-            description
+            description,
+            address
         });
 
         return res.json({
@@ -55,10 +56,10 @@ export const getStoreController = async (req, res) => {
 
 export const updatewarehouseController = async (req, res) => {
     try {
-        const { _id, name, description } = req.body;
+        const { _id, name, description, address } = req.body;
 
         const updateStore = await warehouseSchema.update(
-            { name, description },
+            { name, description, address },
             {
                 where: {
                     _id: _id

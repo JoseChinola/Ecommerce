@@ -8,7 +8,7 @@ import AxiosToastError from '../utils/AxiosToastError'
 import { FaArrowLeft, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 
 const VerificarEmailPage = () => {
-    const [status, setStatus] = useState('idle')               // 'idle' | 'loading' | 'success' | 'error'
+    const [status, setStatus] = useState('idle')
     const [message, setMessage] = useState('')
     const location = useLocation()
     const navigate = useNavigate()

@@ -45,18 +45,18 @@ const Address = () => {
     return (
         <div className='grid gap-4 p-3'>
             <div className='bg-white shadow-lg px-4 my-2 py-3  rounded-lg'>
-                <h2 className='font-semibold'>Address</h2>
+                <h2 className='font-semibold'>Dirección</h2>
             </div>
             {/* Section Address */}
             <div className="w-full bg-blue-50 p-4 rounded-xl border">
                 <div className="flex justify-between items-center w-full mb-4">
-                    <h3 className="text-2xl font-bold px-2 capitalize">Your addresses</h3>
+                    <h3 className="text-2xl font-bold px-2 capitalize">Tus Dirreciones</h3>
                     <div
                         onClick={() => setOpenAddress(true)}
                         className="flex items-center gap-2 bg-white rounded-lg border-2 border-dashed border-blue-300 p-2 hover:bg-blue-100 transition-colors cursor-pointer"
                     >
                         <FaPlus className="text-blue-600" />
-                        <span className="text-blue-600 font-medium">Add address</span>
+                        <span className="text-blue-600 font-medium">Añadir Dirección</span>
                     </div>
                 </div>
 

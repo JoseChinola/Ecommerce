@@ -24,7 +24,7 @@ const Home = () => {
         {/* Banner container */}
         <div className='w-full h-full grid items-center border bg-white gap-2 p-2 rounded-md'>
           <p className='font-semibold lg:text-xl italic px-4 py-2'>Offers up to <span className='text-white bg-red-500 rounded-full w-fit text-center px-2'>-5%</span></p>
-          <Carousel handleRedirectDisplay={handleRedirectProductListpage} />
+          <Carousel />
         </div>
 
         <div className='mt-4'>

@@ -3,14 +3,15 @@ import orderSchema from '../models/order.model.js';
 import userSchema from '../models/user.model.js';
 import productSchema from '../models/product.model.js';
 import addressSchema from '../models/address.model.js';
-import { sequelize } from '../Db.js';
+
 
 export const getDashboardController = async (req, res) => {
     try {
         // 1) Stats básicos
         const totalSales = await orderSchema.sum('totalAmt');
         const totalOrders = await orderSchema.count();
-        const totalClients = await userSchema.count();
+        const totalClients = await userSchema.count({ where: { role: { [Op.ne]: 'ADMIN' } } });
+
         const totalProducts = await productSchema.count();
 
         // 2) Distribución por país

@@ -10,10 +10,6 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import AxiosToastError from '../utils/AxiosToastError';
 import EditCategory from '../components/EditCategory';
 import ConfirmBox from '../components/ConfirmBox';
-import { useSelector } from 'react-redux';
-
-
-
 
 const CategoryPage = () => {
     const [openUploadCategory, setOpenUploadCategory] = useState(false);

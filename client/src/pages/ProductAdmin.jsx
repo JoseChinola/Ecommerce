@@ -80,12 +80,12 @@ const ProductAdmin = () => {
         <section className='p-3'>
             <div className='p-4 bg-white rounded-lg grid m-auto shadow-lg'>
                 <div className='py-3 px-4 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-between'>
-                    <h2 className='font-extrabold uppercase text-primary-Green'>Product</h2>
+                    <h2 className='font-extrabold uppercase text-primary-Green'>Productos</h2>
                     <div className='h-full w-full min-w-24 max-w-52 bg-white px-3 flex items-center gap-2 py-2 rounded-md border focus-within:border-primary-Green'>
                         <IoSearchOutline size={23} />
                         <input
                             type="text"
-                            placeholder='Search product here...'
+                            placeholder='Buscar product...'
                             className='h-full w-full bg-transparent outline-none'
                             value={search}
                             onChange={handleOnChange}
