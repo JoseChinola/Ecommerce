@@ -13,6 +13,10 @@ const SummaryApi = {
         url: "/api/user/verify-email",
         method: "post"
     },
+    resend_verification_email: {
+        url: "/api/user/resend-verification-email",
+        method: "post"
+    },
     forgotPassword: {
         url: "/api/user/forgot-password",
         method: "put"

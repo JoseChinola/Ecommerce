@@ -1,11 +1,10 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import logomv from '../assets/logo.png'
 import { FaEnvelopeOpenText } from 'react-icons/fa'
 
 const VerifyEmailRegister = () => {
     return (
-        <section className="w-full min-h-[80vh] flex items-center justify-center px-4">
+        <section className="w-full min-h-[78vh] flex items-center justify-center px-4">
             <div className="bg-white rounded-lg shadow-md w-full max-w-md p-4 text-center">
                 <div className='flex items-center mb-4 justify-center flex-col'>
                     <img src={logomv} alt="Logo" className="w-24 h-24" />

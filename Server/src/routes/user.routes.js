@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
     forgotPasswordController, loginController,
     logoutController, refreshTokenController, registerUserController,
+    resendVerificationEmail,
     resetPassord,
     updateUserDetails, uploadAvatar, userDetailsController, verifyEmailController,
     verifyForgotPasswordOtp
@@ -13,6 +14,7 @@ const userRouter = Router()
 
 userRouter.post('/register', registerUserController)
 userRouter.post('/verify-email', verifyEmailController)
+userRouter.post('/resend-verification-email', resendVerificationEmail)
 userRouter.post('/login', loginController)
 userRouter.get('/logout', auth, logoutController)
 userRouter.put('/upload-avatar', auth, upload.single('avatar'), uploadAvatar)

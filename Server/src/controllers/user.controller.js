@@ -113,6 +113,14 @@ export async function verifyEmailController(req, res) {
             });
         }
 
+        if (user.verify_email === true) {
+            return res.status(400).json({
+                message: "Correo verificado",
+                error: true,
+                success: false
+            });
+        }
+
         // Actualizar el estado de verificación del email
         await userSchema.update({ verify_email: true }, { where: { _id: code } });
 
@@ -130,6 +138,60 @@ export async function verifyEmailController(req, res) {
         });
     }
 }
+
+export async function resendVerificationEmail(req, res) {
+    const { email } = req.body
+
+    if (!email) {
+        return res.status(400).json({
+            message: "El email es obligatorio.",
+            error: true
+        })
+    }
+
+    try {
+        const user = await userSchema.findOne({ where: { email } })
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado.",
+                error: true
+            })
+        }
+
+        if (user.verify_email === true) {
+            return res.status(400).json({
+                message: "Este correo ya está verificado.",
+                error: true,
+                success: false
+            });
+        }
+
+        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${user._id}`
+
+        await sendEmail({
+            sendTo: user.email,
+            subject: "Verifica tu correo - D’RAF SERVICES",
+            html: verifyEmailTemplate({
+                name: user.name,
+                url: verifyEmailUrl
+            })
+        })
+
+        res.json({
+            message: "Correo de verificación reenviado correctamente.",
+            success: true,
+            error: false
+        })
+    } catch (err) {
+        console.error("Error reenviando correo:", err)
+        res.status(500).json({
+            message: "Error interno al reenviar el correo.",
+            error: true
+        })
+    }
+}
+
 
 //Login controller 
 export async function loginController(req, res) {
@@ -240,7 +302,7 @@ export async function logoutController(req, res) {
         res.clearCookie("accessToken", cookiesOption)
         res.clearCookie("refreshToken", cookiesOption)
 
-        const removeRefreshToken = await userSchema.update({ refresh_token: "" }, { where: { _id: userid } })
+        await userSchema.update({ refresh_token: "" }, { where: { _id: userid } })
 
 
         return res.json({

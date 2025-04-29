@@ -7,6 +7,7 @@ import ProductCardAdmin from '../components/ProductCardAdmin'
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
+import NoData from '../components/NoData'
 
 
 const ProductAdmin = () => {
@@ -23,23 +24,30 @@ const ProductAdmin = () => {
             const resp = await Axios({
                 ...SummaryApi.getProduct,
                 data: {
-                    page: 1,
+                    page: page,
                     limit: 12,
                     search: search
                 }
             })
 
             const { data: resData } = resp
-           
-            if (resData.success) {
-                setProductData(resData.data)
+
+            console.log(resData)
+            if (resData.success && resData.data?.products) {
+                setProductData(resData.data.products);
+                setTotalPageCount(resData.data.totalPages || 1);
+            } else {
+                setProductData([]); // Para evitar errores en el map
+                setTotalPageCount(1);
             }
+
         } catch (error) {
             AxiosToastError(error)
         } finally {
             setLoading(false)
         }
     }
+
 
     useEffect(() => {
         fetchProductData()
@@ -92,39 +100,47 @@ const ProductAdmin = () => {
                         />
                     </div>
                 </div>
-                {
-                    loading && (
-                        <div className='p-8'>
-                            <Loading />
-                        </div>
-                    )
-                }
 
                 <div className='px-2 py-3 lg:p-5 mt-3 rounded-md bg-secundary'>
-                    <div className='min-h-[55vh]'>
-                        <div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-6 gap-4'>
-                            {
-                                productData.map((p, index) => {
-                                    return (
-                                        <ProductCardAdmin fetchData={fetchProductData} data={p} key={p._id + index + "productAdmin"} />
-                                    )
-                                })
-                            }
+                    <div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4'>
+                        {loading ? (
+                            Array.from({ length: 12 }).map((_, index) => (
+                                <div
+                                    key={index}
+                                    className="animate-pulse bg-white shadow rounded-lg p-4 h-[200px]"
+                                >
+                                    <div className="bg-gray-300 h-24 w-full rounded mb-4"></div>
+                                    <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                                </div>
+                            ))
+                        ) : productData.length > 0 ? (
+                            productData.map((p, index) => (
+                                <ProductCardAdmin
+                                    fetchData={fetchProductData}
+                                    data={p}
+                                    key={p._id + index + "productAdmin"}
+                                />
+                            ))
+                        ) : (
+                            <NoData />
+                        )}
+                    </div>
+
+                    {totalPageCount > 1 && (
+                        <div className='flex justify-between items-center my-4 bg-white py-2 px-2 rounded-lg'>
+                            <button onClick={handlePrevious} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
+                                <MdNavigateBefore />
+                            </button>
+                            <p className='text-base font-semibold'>
+                                {page}/{totalPageCount}
+                            </p>
+                            <button onClick={handleNext} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
+                                <MdNavigateNext />
+                            </button>
                         </div>
+                    )}
 
-                    </div>
-                    <div className='flex justify-between items-center my-4 bg-white py-2 px-2 rounded-lg'>
-                        <button onClick={handlePrevious} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
-                            <MdNavigateBefore />
-                        </button>
-                        <p className='text-base font-semibold'>
-                            {page}/{totalPageCount}
-                        </p>
-                        <button onClick={handleNext} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
-                            <MdNavigateNext />
-                        </button>
-
-                    </div>
                 </div>
             </div>
         </section>

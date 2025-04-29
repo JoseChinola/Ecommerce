@@ -20,8 +20,10 @@ const Login = () => {
     })
     const [showPassword, setShowPassword] = useState(false)
     const [rememberMe, setRememberMe] = useState(false);
+    const [status, setStatus] = useState('idle')
     const dispatch = useDispatch()
     const navigate = useNavigate()
+
 
 
     const handleRememberMeChange = () => {
@@ -68,7 +70,8 @@ const Login = () => {
                 localStorage.setItem('refreshToken', res.data.data.refreshToken)
 
                 const userDatails = await fetchUserDetails()
-                dispatch(setUserDetails(userDatails.data))
+
+                dispatch(setUserDetails(userDatails.data))           
 
                 if (rememberMe) {
                     localStorage.setItem("rememberedEmail", data.email);
@@ -85,6 +88,7 @@ const Login = () => {
             }
 
         } catch (error) {
+            setStatus('error')
             AxiosToastError(error)
         }
 
@@ -93,15 +97,15 @@ const Login = () => {
 
 
     return (
-        <section className="w-full container mx-auto px-4 mb-10 ">
-            <div className="flex flex-col items-center justify-center mx-auto mr-">
+        <section className="w-full container mx-auto px-4 h-fit">
+            <div className="flex flex-col items-center justify-center mx-auto">
                 <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
-                    <div className="p-4 space-y-3 md:space-y-6 sm:p-5">
+                    <div className="p-4 space-y-3 md:space-y-3 sm:p-5">
 
-                        <h2 to={"/"} className="flex flex-col items-center gap-1 justify-center focus:ring-blue-500 text-2xl font-semibold text-gray-900 w-full">
+                        <h2 to={"/"} className="flex flex-col items-center gap-1 justify-center focus:ring-blue-500 font-semibold text-gray-900 w-full">
                             <img className="w-20 h-20" src={logomv} alt="logo" />
-                            <span className="text-gray-500 font-bold text-sm md:text-2xl flex items-center flex-col gap-2">
-                                Bienvenido <Link to={"/"} className="text-primary-Green font-bold text-sm md:text-2xl">D’RAF SERVICES</Link>
+                            <span className="text-gray-500 font-bold text-sm md:text-xl flex items-center flex-col gap-2">
+                                Bienvenido <Link to={"/"} className="text-primary-Green font-bold text-sm md:text-xl">D’RAF SERVICES</Link>
                             </span>
                         </h2>
 
@@ -185,7 +189,7 @@ const Login = () => {
                                 </Link>
                             </div>
                             <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"} w-full text-white py-2 rounded font-semibold mt-2 tracking-wide`}>
-                                Login
+                                {status === 'error' ? 'Verificar correo' : 'Login'}
                             </button>
                         </form>
                         <p className="text-sm font-medium italic tracking-wide text-black flex flex-col md:flex-row">

@@ -38,14 +38,12 @@ const Header = ({ toggleAside }) => {
 
     return (
         <header className='h-28 lg:h-20 lg:shadow-md flex px-2 md:items-center justify-center flex-col gap-2 bg-white rounded-lg mx-3 mt-2'>
-
             {
                 !(isSearchPage && isMobile) && (
                     <div className='container mx-auto flex items-center justify-between'>
                         {/* Botón hamburguesa solo en móviles */}
                         <button
                             onClick={toggleAside}
-
                             className='md:hidden text-2xl text-gray-700'>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">

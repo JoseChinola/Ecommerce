@@ -54,7 +54,7 @@ const ProductDisplayPage = () => {
         } catch (error) {
             AxiosToastError(error);
         } finally {
-            setLoading(false);
+            setLoading(true);
         }
     };
 
