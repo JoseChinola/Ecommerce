@@ -66,6 +66,11 @@ const orderSchema = sequelize.define(
       type: DataTypes.FLOAT,
       defaultValue: 0,
     },
+    discount: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+      allowNull: false,  // No permite que sea null
+    },
     totalAmt: {
       type: DataTypes.FLOAT,
       defaultValue: 0,
