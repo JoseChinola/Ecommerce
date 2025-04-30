@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import DetailsOrder from '../components/DetailsOrder';
+import { Navigate } from 'react-router-dom';
 
 const MyOrders = () => {
     const orders = useSelector((state) => state?.orders?.order);
+    const user = useSelector(state => state.user);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
+
+    if (!user || !user._id) {
+        return <Navigate to="/" />;
+    }
+
 
     // Agrupar las órdenes por orderId
     const groupedOrders = orders?.reduce((acc, item) => {
@@ -56,8 +63,6 @@ const MyOrders = () => {
             </div>
         );
     }
-
-    console.log("selectedOrder", selectedOrder);
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
@@ -137,7 +142,7 @@ const MyOrders = () => {
                 orderDetails={selectedOrder}
             />
         </div>
-        
+
     );
 };
 

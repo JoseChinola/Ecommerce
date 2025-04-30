@@ -11,6 +11,7 @@ import { pricewithDiscount } from '../utils/PriceWithDiscount'
 import emptyCart from '../assets/cartEmpty.png'
 import ConfirmBox from './ConfirmBox'
 import toast from 'react-hot-toast'
+import { FaMinus } from 'react-icons/fa6'
 
 
 const DisplayCartItem = ({ close }) => {
@@ -19,6 +20,8 @@ const DisplayCartItem = ({ close }) => {
     const cartItem = useSelector(state => state.cartItem.cart)
     const user = useSelector(state => state.user)
     const navigate = useNavigate()
+
+    console.log(cartItem)
 
     const handleClearCart = () => {
         deleteCartItems()
@@ -40,10 +43,10 @@ const DisplayCartItem = ({ close }) => {
 
     return (
         <section className='bg-neutral-900 fixed top-0 bottom-0 left-0 right-0 bg-opacity-70 z-50'>
-            <div className='bg-white w-full max-w-sm min-h-screen max-h-screen ml-auto rounded-md'>
+            <div className='bg-secundary md:space-y-5 space-y-2 p-1.5 w-full max-w-sm min-h-screen max-h-screen ml-auto rounded-lg'>
 
-                <div className="flex items-center justify-between p-3 rounded-md shadow-md">
-                    <h1 className="font-semibold uppercase italic">Cart</h1>
+                <div className="flex items-center justify-between p-3 rounded-md shadow-md bg-white">
+                    <h1 className="font-semibold uppercase italic">Carrito</h1>
                     <Link to={"/"} onClick={close} className="sm:hidden block">
                         <IoClose size={30} />
                     </Link>
@@ -52,13 +55,13 @@ const DisplayCartItem = ({ close }) => {
                     </button>
                 </div>
 
-                <div className='min-h-[75vh] lg:min-h-[79vh] h-full max-h-[calc(100vh-120px)] bg-blue-50 p-2 flex flex-col gap-4'>
+                <div className='h-full max-h-[calc(100vh-120px)] bg-blue-50 p-2 flex flex-col gap-4 rounded-lg'>
                     {/** display items  */}
                     {
                         cartItem[0] ? (
                             <>
                                 <div className='flex items-center justify-between px-4 py-2 bg-blue-100 text-blue-500 gap-2 rounded-full'>
-                                    <p>Your total savings</p>
+                                    <p>Tu ahorro total</p>
                                     <p className='font-bold'>{DisplayPriceDOP(notDiscountTotalPrice - totalPrice)}</p>
                                 </div>
                                 <div className='bg-white rounded-lg p-3 grid gap-5 overflow-auto'>
@@ -78,12 +81,21 @@ const DisplayCartItem = ({ close }) => {
                                                             <p className='text-sm text-ellipsis line-clamp-2'>
                                                                 {item?.productData?.name}
                                                             </p>
-                                                            <p className='text-neutral-400'>{item?.productData?.unit}</p>
-                                                            <p className='font-semibold text-blue-500'>{DisplayPriceDOP(pricewithDiscount(item?.productData?.price, item?.productData?.discount))}</p>
+                                                            <div className='flex flex-wrap gap-2'>
+                                                                <p className='text-neutral-400'>{item?.productData?.unit}</p>
+                                                                <p className='text-sm text-red-500 font-semibold'>
+                                                                   Descuento -{item?.productData?.discount}%
+                                                                </p>
+                                                                <p className='font-semibold text-blue-500'>{DisplayPriceDOP(pricewithDiscount(item?.productData?.price, item?.productData?.discount))}</p>
+                                                            </div>
+
                                                         </div>
+
+
                                                         <div className='w-32'>
                                                             <AddToCartButton data={item?.productData} />
                                                         </div>
+
                                                     </div>
                                                 )
                                             })
@@ -92,32 +104,37 @@ const DisplayCartItem = ({ close }) => {
                                 </div>
                                 <div className='bg-white p-2 rounded-lg flex flex-col gap-1.5 border'>
                                     <div className="flex justify-between items-center relative group">
-                                        <h3 className="font-semibold">Bill Details</h3>
+                                        <h3 className="font-semibold">Detalles de la factura</h3>
 
                                         {/* Botón con Tooltip */}
                                         <button onClick={() => setOpenDeleteConfirmBox(true)} className="text-lg sm:text-2xl relative flex gap-1 justify-center items-center text-red-500 bg-white hover:bg-red-500 hover:text-white border rounded-full px-2">
-                                            <LuDelete /> <span className='text-sm font-semibold '>Clear cart</span>
+                                            <LuDelete /> <span className='text-sm font-semibold '>Vaciar carrito</span>
 
                                             {/* Tooltip */}
                                             <span className="absolute hidden lg:block -top-8 right-0 translate-x-1 bg-gray-800 text-white text-xs rounded-md px-2 py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 whitespace-nowrap">
-                                                Clear cart
+                                                Vaciar carrito
                                             </span>
                                         </button>
                                     </div>
                                     <div className='flex px-2 gap-4 justify-between items-center bg-blue-100 text-blue-500 rounded-lg py-1'>
-                                        <p>Items total </p>
-                                        <p className='flex items-center gap-2 font-medium'><span className='line-through text-neutral-400'>{DisplayPriceDOP(notDiscountTotalPrice)}</span><span>{DisplayPriceDOP(totalPrice)}</span></p>
+                                        <p>SubTotal </p>
+                                        <p className='flex items-center gap-2 font-medium'>{DisplayPriceDOP(notDiscountTotalPrice)}</p>
+                                    </div>
+
+                                    <div className='flex px-2 gap-4 justify-between items-center bg-blue-100 text-blue-500 rounded-lg py-1'>
+                                        <p>Descuento total</p>
+                                        <p className='flex items-center font-medium line-through text-neutral-400'><span className='font-bold text-lg text-neutral-400'><FaMinus /></span>{DisplayPriceDOP(notDiscountTotalPrice - totalPrice)}</p>
                                     </div>
                                     <div className='flex px-2 gap-4 justify-between items-center bg-blue-100 text-blue-500 rounded-lg py-1'>
-                                        <p>Quantity total </p>
-                                        <p className='text-neutral-600 font-medium'>{totalQty} item</p>
+                                        <p>Cantidad total </p>
+                                        <p className='text-neutral-600 font-medium'>{totalQty} Produto</p>
                                     </div>
                                     <div className='flex px-2 gap-4 justify-between items-center bg-blue-100 text-blue-500 rounded-lg py-1'>
-                                        <p>Delivery Charge</p>
-                                        <p className='font-medium text-neutral-600'>Free</p>
+                                        <p>Gastos de envío</p>
+                                        <p className='font-medium text-neutral-600'>Gratis</p>
                                     </div>
                                     <div className='flex font-semibold justify-between items-center gap-4'>
-                                        <p>Grand Total</p>
+                                        <p>Total</p>
                                         <p className='text-blue-500'>{DisplayPriceDOP(totalPrice)}</p>
                                     </div>
                                 </div>
@@ -141,7 +158,7 @@ const DisplayCartItem = ({ close }) => {
 
                 {
                     cartItem[0] && (
-                        <div className='px-2'>
+                        <div className='px-2 bg-white rounded-lg py-2'>
                             <div className='text-blue-500 border px-4 py-1 font-bold text-base lg:text-lg static bottom-3 rounded-md flex items-center gap-4 justify-between'>
                                 <div>
                                     Pay  {DisplayPriceDOP(totalPrice)}

@@ -80,7 +80,7 @@ const Router = createBrowserRouter([
             },
             {
                 path: "inventory-movements",
-                element: < AdminPermissions > <InventoryMovements /></ AdminPermissions>
+                element: <AdminPermissions > <InventoryMovements /></ AdminPermissions>
             },
             {
                 path: "profile",

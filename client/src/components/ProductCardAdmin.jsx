@@ -36,11 +36,12 @@ const ProductCardAdmin = ({ data, fetchData }) => {
         }
     }
 
+
     return (
         <div className='border mb-1 grid gap-2 min-w-24 lg:min-w-36 rounded-lg shadow-lg bg-white'>
             <div className='min-h-20 max-h-20 lg:max-h-32 rounded flex items-center justify-center overflow-hidden'>
                 <img
-                    src={images[0]}
+                    src={images[1]}
                     alt={data?.name}
                     className='object-scale-down w-full h-full p-2'
                 />
@@ -55,10 +56,10 @@ const ProductCardAdmin = ({ data, fetchData }) => {
                     {data?.unit}
                 </p>
                 <div className='flex items-center justify-between w-full px-1 py-2'>
-                    <button onClick={() => setEditOpen(true)} className='border px-3  border-primary-Green text-primary-Green hover:bg-primary-Green hover:text-white rounded-lg'>
+                    <button onClick={() => setEditOpen(true)} className='border md:px-3 py-1 px-1 md:py-0  border-primary-Green text-primary-Green hover:bg-primary-Green hover:text-white rounded-lg'>
                         <CiEdit />
                     </button>
-                    <button onClick={() => setOpenDelete(true)} className='border px-3 border-red-600 text-red-600 hover:bg-red-600 hover:text-white rounded-lg'>
+                    <button onClick={() => setOpenDelete(true)} className='border md:px-3 md:py-0 py-1 px-1 border-red-600 text-red-600 hover:bg-red-600 hover:text-white rounded-lg'>
                         <MdDelete />
                     </button>
                 </div>

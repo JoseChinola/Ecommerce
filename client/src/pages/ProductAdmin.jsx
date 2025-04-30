@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import SummaryApi from '../cammon/SummaryApi'
 import AxiosToastError from '../utils/AxiosToastError'
 import Axios from '../utils/Axios'
-import Loading from '../components/Loading'
 import ProductCardAdmin from '../components/ProductCardAdmin'
 import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
@@ -31,13 +30,12 @@ const ProductAdmin = () => {
             })
 
             const { data: resData } = resp
-
-            console.log(resData)
-            if (resData.success && resData.data?.products) {
-                setProductData(resData.data.products);
-                setTotalPageCount(resData.data.totalPages || 1);
+            console.log('resData', resData)
+            if (resData.success && resData.data) {
+                setProductData(resData.data);
+                setTotalPageCount(resData.totalNoPage || 1);
             } else {
-                setProductData([]); // Para evitar errores en el map
+                setProductData([]);
                 setTotalPageCount(1);
             }
 

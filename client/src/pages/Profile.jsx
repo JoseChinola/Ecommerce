@@ -17,19 +17,19 @@ const Profile = () => {
     const dispatch = useDispatch()
     const [openEditAvatar, setOpenEditAvatar] = useState(false)
     const [userData, setUserData] = useState({
-        name: user.name,
-        email: user.email,
-        mobile: user.mobile
+        name: user?.name || '',
+        email: user?.email || '',
+        mobile: user?.mobile || ''
     })
+
     const [loading, setLoading] = useState(false)
 
 
     useEffect(() => {
-
         setUserData(() => ({
-            name: user?.name,
-            email: user?.email,
-            mobile: user?.mobile,
+            name: user?.name || '',
+            email: user?.email || '',
+            mobile: user?.mobile || '',
         }))
     }, [user])
 

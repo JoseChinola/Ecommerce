@@ -22,7 +22,6 @@ const CheckoutPage = () => {
     const navigate = useNavigate()
 
 
-
     const handleCashOndelivery = async () => {
         try {
             const response = await Axios({

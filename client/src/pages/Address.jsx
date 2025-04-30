@@ -10,16 +10,20 @@ import AxiosToastError from '../utils/AxiosToastError';
 import toast from 'react-hot-toast';
 import { useGlobalContext } from '../provider/useGlobalContext';
 import ConfirmBox from '../components/ConfirmBox';
+import { Navigate } from 'react-router-dom';
 
 
 const Address = () => {
     const addressList = useSelector(state => state.addresses.addressList)
+    const user = useSelector(state => state.user);
     const [openAddress, setOpenAddress] = useState(false)
     const [openEdit, setOpenEdit] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [editData, setEditData] = useState({})
     const [deleteAddress, setDeleteAddress] = useState({ _id: '' });
     const { fetchAddress } = useGlobalContext()
+
+
 
     const handleDisableAddress = async () => {
         try {
@@ -40,6 +44,10 @@ const Address = () => {
         } catch (error) {
             AxiosToastError(error)
         }
+    }
+
+    if (!user || !user._id) {
+        return <Navigate to="/" />;
     }
 
     return (

@@ -145,12 +145,12 @@ const UploadProductPage = () => {
 
         <div className='flex py-3 px-3 items-center justify-center w-full bg-secundary rounded-lg mt-4'>
           <form className='grid gap-4 w-full max-w-4xl items-center bg-white px-3 py-3 rounded-lg' onSubmit={handleSubmit}>
-            <div className='grid gap-1'>
-              <label htmlFor="name" className='font-medium'>Name</label>
+            <div className='grid gap-1 bg-secundary px-2 py-1 rounded-lg'>
+              <label htmlFor="name" className='font-bold text-primary-Green'>Nombre</label>
 
               <input type="text"
                 id='name'
-                placeholder='Enter product name'
+                placeholder='Introduzca el nombre del producto'
                 name='name'
                 value={data.name}
                 onChange={handleChange}
@@ -159,12 +159,12 @@ const UploadProductPage = () => {
               />
             </div>
 
-            <div className='grid gap-1'>
-              <label htmlFor="description" className='font-medium'>Description</label>
+            <div className='grid gap-1 px-2 py-1 rounded-lg bg-secundary'>
+              <label htmlFor="description" className='font-bold text-primary-Green'>Description</label>
 
               <textarea type="text"
                 id='description'
-                placeholder='Enter product description'
+                placeholder='Introduzca la descripcion'
                 name='description'
                 value={data.description}
                 onChange={handleChange}
@@ -175,14 +175,14 @@ const UploadProductPage = () => {
               />
             </div>
 
-            <div>
-              <p className='font-medium'>Image </p>
+            <div className='px-2 py-1 rounded-lg bg-secundary'>
+              <p className='font-bold text-primary-Green'>Images </p>
               <div>
                 {/* Display uploaded images */}
                 {data.image.length > 0 && ( // Solo muestra el div si hay imágenes
-                  <div className="px-4 gap-2 h-24 border bg-blue-50 bg-opacity-40 rounded-lg flex items-center">
+                  <div className="px-4 py-1 gap-2 h-24 border bg-blue-50 bg-opacity-40 rounded flex items-center">
                     {data.image.map((img, index) => (
-                      <div key={index} className="h-20 w-20 rounded-sm min-w-20 bg-blue-50 relative group">
+                      <div key={index} className="h-20 w-20 rounded-lg min-w-20 bg-blue-50 relative group px-2">
                         <img
                           src={img}
                           alt={`Image ${index}`}
@@ -203,13 +203,13 @@ const UploadProductPage = () => {
                 {/* Upload button */}
                 <label
                   htmlFor="productImage"
-                  className="bg-blue-50 h-24 border rounded-md border-blue-200 flex items-center justify-center cursor-pointer"
+                  className="bg-blue-50 h-24 border rounded-lg border-blue-200 flex items-center justify-center cursor-pointer"
                 >
                   <div className="flex justify-center items-center flex-col">
                     {imageLoading ? <Loading /> : (
                       <>
                         <FaCloudUploadAlt size={35} />
-                        <p>Upload Image</p>
+                        <p>Subir Imagen</p>
                       </>
                     )}
                   </div>
@@ -224,188 +224,213 @@ const UploadProductPage = () => {
               </div>
             </div>
 
-            <div className='grid gap-1'>
-              <label htmlFor="" className='font-medium'>Category</label>
-              <div>
-                <select
-                  className='bg-blue-50 border w-full p-2 rounded-md'
-                  value={selectCategory}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    const category = allCategory.find(el => el._id === value)
+            {/*Categoria y subCategoria */}
+            <div className='px-2 py-1 rounded-lg flex items-center justify-between gap-4 bg-secundary'>
+              <div className='grid gap-1 w-full'>
+                <label htmlFor="" className='font-bold text-primary-Green'>Categoría</label>
+                <div className='flex flex-wrap gap-2'>
+                  <select
+                    className='bg-blue-50 border w-full p-2 rounded-md'
+                    value={selectCategory}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      const category = allCategory.find(el => el._id === value)
 
-                    setData((prev) => {
-                      return {
-                        ...prev,
-                        categoryId: [...prev.categoryId, category]
-                      }
-                    })
+                      setData((prev) => {
+                        return {
+                          ...prev,
+                          categoryId: [...prev.categoryId, category]
+                        }
+                      })
 
-                    setSelectCategory("")
-                  }}
-                >
-                  <option value="">Select Category</option>
-                  {
-                    allCategory.map((c, index) => {
-                      return (
-                        <option key={index} value={c?._id}>
-                          {c?.name}
-                        </option>
-                      )
-                    })
-                  }
-                </select>
+                      setSelectCategory("")
+                    }}
+                  >
+                    <option value="">Selecciona Categoría</option>
+                    {
+                      allCategory.map((c, index) => {
+                        return (
+                          <option key={index} value={c?._id}>
+                            {c?.name}
+                          </option>
+                        )
+                      })
+                    }
+                  </select>
 
-                <div className='flex flex-wrap gap-3'>
-                  {
-                    data.categoryId.map((c, index) => {
-                      return (
-                        <div key={c._id + index + "productsection"} className='text-sm flex items-center rounded p-1 gap-1 bg-blue-50 mt-2'>
-                          <p>{c.name}</p>
-                          <div>
-                            <IoClose size={20} className='hover:text-red-500 cursor-pointer' onClick={() => handleRemoveCategorySelected(index)} />
+                  <div className='flex flex-wrap gap-3'>
+                    {
+                      data.categoryId.map((c, index) => {
+                        return (
+                          <div key={c._id + index + "productsection"} className='text-sm flex items-center rounded p-1 gap-1 bg-blue-50'>
+                            <p>{c.name}</p>
+                            <div>
+                              <IoClose size={20} className='hover:text-red-500 cursor-pointer' onClick={() => handleRemoveCategorySelected(index)} />
+                            </div>
                           </div>
-                        </div>
-                      )
-                    })
-                  }
+                        )
+                      })
+                    }
+                  </div>
                 </div>
+              </div>
+
+              <div className='grid gap-1 w-full'>
+                <label htmlFor="" className='font-bold text-primary-Green' >Subcategoría</label>
+                <div className='flex flex-wrap gap-2'>
+                  <select
+                    className='bg-blue-50 border w-full p-2 rounded-md'
+                    value={selectSubCategory}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      const subCategory = allSubCategory.find(el => el._id === value)
+
+                      setData((prev) => {
+                        return {
+                          ...prev,
+                          subCategoryId: [...prev.subCategoryId, subCategory]
+                        }
+                      })
+
+                      setSelectSubCategory("")
+                    }}
+                  >
+                    <option value="">Selecciona subcategoría</option>
+                    {
+                      allSubCategory.map((c, index) => {
+                        return (
+                          <option key={index} value={c?._id} >
+                            {c?.name}
+                          </option>
+                        )
+                      })
+                    }
+                  </select>
+
+                  <div className='flex flex-wrap gap-3'>
+                    {
+                      data.subCategoryId.map((c, index) => {
+                        return (
+                          <div key={c._id + index + "subCategorySection"} className='text-sm flex items-center rounded p-1 gap-1 bg-blue-50'>
+                            <p>{c.name}</p>
+                            <div>
+                              <IoClose size={20} className='hover:text-red-500 cursor-pointer' onClick={() => handleRemoveSubCategorySelected(index)} />
+                            </div>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            {/*Unidad, Precio y descuento */}
+            <div className='px-2 py-1 grid grid-cols-2 gap-2 bg-secundary rounded-lg'>
+              <div className='grid gap-1'>
+                <label htmlFor="unit" className='font-bold text-primary-Green'>Unidad</label>
+
+                <input type="text"
+                  id='unit'
+                  placeholder='Introducir unidad de producto'
+                  name='unit'
+                  value={data.unit}
+                  onChange={handleChange}
+                  className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
+                  required
+                />
+              </div>
+
+              <div className='grid gap-1'>
+                <label htmlFor="price" className='font-bold text-primary-Green'>Precio</label>
+
+                <input type="number"
+                  id='price'
+                  placeholder='Introduzca el precio del producto'
+                  name='price'
+                  value={data.price}
+                  onChange={handleChange}
+                  className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
+                  required
+                />
+              </div>
+
+              <div className='grid gap-1'>
+                <label htmlFor="discount" className='font-bold text-primary-Green'>Descuento</label>
+
+                <input type="number"
+                  id='discount'
+                  placeholder='Introduzca el descuento del producto'
+                  name='discount'
+                  value={data.discount}
+                  onChange={handleChange}
+                  className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
+                  required
+                />
               </div>
             </div>
 
-            <div className='grid gap-1'>
-              <label htmlFor="" className='font-medium' >Sub Category</label>
-              <div>
-                <select
-                  className='bg-blue-50 border w-full p-2 rounded-md'
-                  value={selectSubCategory}
-                  onChange={(e) => {
-                    const value = e.target.value
-                    const subCategory = allSubCategory.find(el => el._id === value)
-
-                    setData((prev) => {
-                      return {
-                        ...prev,
-                        subCategoryId: [...prev.subCategoryId, subCategory]
-                      }
-                    })
-
-                    setSelectSubCategory("")
-                  }}
-                >
-                  <option value="">Select Sub Category</option>
-                  {
-                    allSubCategory.map((c, index) => {
-                      return (
-                        <option key={index} value={c?._id} >
-                          {c?.name}
-                        </option>
-                      )
-                    })
-                  }
-                </select>
-
-                <div className='flex flex-wrap gap-3'>
-                  {
-                    data.subCategoryId.map((c, index) => {
-                      return (
-                        <div key={c._id + index + "subCategorySection"} className='text-sm flex items-center rounded p-1 gap-1 bg-blue-50 mt-2'>
-                          <p>{c.name}</p>
-                          <div>
-                            <IoClose size={20} className='hover:text-red-500 cursor-pointer' onClick={() => handleRemoveSubCategorySelected(index)} />
-                          </div>
-                        </div>
-                      )
-                    })
-                  }
-                </div>
-              </div>
-            </div>
-
-
-            <div className='grid gap-1'>
-              <label htmlFor="unit" className='font-medium'>Unit</label>
-
-              <input type="text"
-                id='unit'
-                placeholder='Enter product unit'
-                name='unit'
-                value={data.unit}
-                onChange={handleChange}
-                className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                required
-              />
-            </div>           
-
-            <div className='grid gap-1'>
-              <label htmlFor="price" className='font-medium'>Price</label>
-
-              <input type="number"
-                id='price'
-                placeholder='Enter product price'
-                name='price'
-                value={data.price}
-                onChange={handleChange}
-                className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                required
-              />
-            </div>
-
-            <div className='grid gap-1'>
-              <label htmlFor="discount" className='font-medium'>Discount</label>
-
-              <input type="number"
-                id='discount'
-                placeholder='Enter product discount'
-                name='discount'
-                value={data.discount}
-                onChange={handleChange}
-                className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                required
-              />
-            </div>
 
             {/** add more fields  */}
-            {
-              Object?.keys(data?.more_details)?.map((k, index) => {
-                return (
-                  <div className='grid gap-1'>
-                    <label className='font-medium' htmlFor={k}>{k}</label>
+            <div className='px-2 py-1 grid grid-cols-2 gap-2 bg-secundary rounded-lg'>
+              {
+                Object?.keys(data?.more_details)?.map((k, index) => {
+                  return (
+                    <div className='grid gap-1 w-full' key={index}>
+                      <div className="flex items-center gap-3">
+                        <label className='font-bold text-primary-Green capitalize' htmlFor={k}>{k}</label>
+                        <div>
+                          <IoClose size={20} className='hover:text-red-500 cursor-pointer' onClick={() => {
+                            // Eliminar el campo de `more_details` en el estado
+                            setData(prev => {
+                              const newMoreDetails = { ...prev.more_details };
+                              delete newMoreDetails[k]; // Elimina el campo
+                              return { ...prev, more_details: newMoreDetails }; // Actualiza el estado
+                            });
+                          }} />
+                        </div>
 
-                    <input type="text"
-                      id={k}
-                      value={data?.more_details[k]}
-                      onChange={(e) => {
-                        const value = e.target.value
-                        setData((preve) => {
-                          return {
-                            ...preve,
-                            more_details: {
-                              ...preve.more_details,
-                              [k]: value
-                            }
-                          }
-                        })
-                      }}
-                      className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                      required
-                    />
-                  </div>
-                )
-              })
-            }
+                      </div>
+
+                      <input
+                        type="text"
+                        id={k}
+                        value={data?.more_details[k]}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setData((prev) => {
+                            return {
+                              ...prev,
+                              more_details: {
+                                ...prev.more_details,
+                                [k]: value
+                              }
+                            };
+                          });
+                        }}
+                        className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
+                        required
+                      />
+                    </div>
+                  );
+                })
+              }
+            </div>
+
 
             <div onClick={() => setOpenAddField(true)} className='inline-block bg-white text-primary-Green hover:bg-primary-Green py-1 
           px-3 w-36 text-center font-semibold border border-primary-Green hover:text-white rounded cursor-pointer'>
-              Add Fields
+              Añadir campos
             </div>
 
             <button
-              className='bg-primary-Green text-white hover:bg-white py-2 
+              className=' text-primary-Green hover:bg-primary-Green py-2 
                   px-3 text-center font-semibold border 
-                  border-primary-Green hover:text-primary-Green rounded-lg cursor-pointer'
+                  border-primary-Green hover:text-white rounded-lg cursor-pointer'
             >
-              Submit
+              Agregar Producto
             </button>
           </form>
         </div>

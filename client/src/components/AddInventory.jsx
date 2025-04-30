@@ -162,7 +162,7 @@ const AddInventory = ({ close }) => {
                                     <img
                                         src={selectedProduct.imageParsed}
                                         alt={selectedProduct.name}
-                                        className='w-14 h-14 object-cover mt-2 rounded-md border'
+                                        className='w-16 h-16 object-contain rounded-md border'
                                     />
                                 </div>
                             )}

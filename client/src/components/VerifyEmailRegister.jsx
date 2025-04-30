@@ -1,8 +1,17 @@
 import React from 'react'
 import logomv from '../assets/logo.png'
 import { FaEnvelopeOpenText } from 'react-icons/fa'
+import { useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 const VerifyEmailRegister = () => {
+    const user = useSelector(state => state.user);
+
+    if (user || user._id) {
+        return <Navigate to="/" />;
+    }
+
+
     return (
         <section className="w-full min-h-[78vh] flex items-center justify-center px-4">
             <div className="bg-white rounded-lg shadow-md w-full max-w-md p-4 text-center">
@@ -20,7 +29,7 @@ const VerifyEmailRegister = () => {
                 <p className="text-gray-700 mb-6">
                     Gracias por registrarte. Por favor, revisa tu correo electrónico y haz clic en el
                     enlace que te hemos enviado para confirmar tu cuenta.
-                </p>               
+                </p>
             </div>
         </section>
     )

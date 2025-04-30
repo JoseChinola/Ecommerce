@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { IoClose } from 'react-icons/io5';
 import Loading from './Loading';
 import { LuWarehouse } from 'react-icons/lu';
+import { FaLocationArrow } from 'react-icons/fa';
 
 const AddWarehouse = ({ close, fetchStore }) => {
     const { register, handleSubmit, reset, } = useForm()
@@ -21,7 +22,8 @@ const AddWarehouse = ({ close, fetchStore }) => {
                 ...SummaryApi.createStore,
                 data: {
                     name: data.name,
-                    description: data.description
+                    description: data.description,
+                    address: data.address
                 }
             })
 
@@ -72,6 +74,17 @@ const AddWarehouse = ({ close, fetchStore }) => {
                             <LuWarehouse className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
 
+                        <div className='grid gap-1 relative'>
+                            <label htmlFor="address">Dirrecion Almacén:</label>
+                            <input
+                                type="text"
+                                id='address'
+                                placeholder='nombre de almacen'
+                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer'
+                                {...register('address', { required: true })}
+                            />
+                            <FaLocationArrow className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        </div>
 
 
                         <div className='grid gap-1'>

@@ -187,6 +187,7 @@ export async function resendVerificationEmail(req, res) {
         console.error("Error reenviando correo:", err)
         res.status(500).json({
             message: "Error interno al reenviar el correo.",
+            success: false,
             error: true
         })
     }
@@ -278,6 +279,7 @@ export async function loginController(req, res) {
             }
         });
     } catch (error) {
+        
         return res.status(500).json({
             message: error.message || "Internal Server Error",
             error: true,

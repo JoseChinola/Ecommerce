@@ -7,7 +7,7 @@ const AddFieldComponent = ({ close, value, onChange, submit }) => {
         bg-opacity-70 z-50 flex justify-center items-center p-4'>
             <div className='bg-white rounded p-4 w-full max-w-md'>
                 <div className='flex items-center justify-between bg-blue-50 p-2 rounded-md'>
-                    <h1 className='font-semibold uppercase italic'>Add Sub Category</h1>
+                    <h1 className='font-semibold uppercase italic'>Agregar campo</h1>
                     <button onClick={close} className='w-fit block ml-auto hover:text-red-600'>
                         <IoClose size={30} />
                     </button>
@@ -15,7 +15,7 @@ const AddFieldComponent = ({ close, value, onChange, submit }) => {
 
                 <input
                     className='bg-blue-50 my-3 p-2 border outline-none focus-within:border-primary-Green rounded w-full'
-                    placeholder='Enter Field name'
+                    placeholder='Introduzca el nombre del campo'
                     value={value}
                     onChange={onChange}
                 />
@@ -27,7 +27,7 @@ const AddFieldComponent = ({ close, value, onChange, submit }) => {
                       border border-primary-Green
                       '
                 >
-                    Add Field
+                    Agregar campo
                 </button>
             </div>
         </section>

@@ -67,6 +67,7 @@ const Home = () => {
       </div>
 
       {/* display category product */}
+
       {
         categoryData.map((c, index) => (
           <CategoryWiseProductDisplay
@@ -76,6 +77,7 @@ const Home = () => {
           />
         ))
       }
+
     </section>
   )
 }

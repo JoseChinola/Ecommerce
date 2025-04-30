@@ -13,6 +13,7 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
         defaultValues: {
             _id: data._id,
             name: data.name,
+            address: data.address,
             description: data.description
         }
     })
@@ -28,6 +29,7 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                 data: {
                     _id: data._id,
                     name: data.name,
+                    address: data.address,
                     description: data.description
                 }
             })
@@ -77,6 +79,18 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                             <LuWarehouse className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
 
+
+                        <div className='grid gap-1 relative'>
+                            <label htmlFor="address">Dirrecion Almacén:</label>
+                            <input
+                                type="text"
+                                id='address'
+                                placeholder='nombre de almacen'
+                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer'
+                                {...register('address', { required: true })}
+                            />
+                            <FaLocationArrow className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        </div>
 
 
                         <div className='grid gap-1'>

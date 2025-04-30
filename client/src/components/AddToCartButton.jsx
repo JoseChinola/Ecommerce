@@ -10,6 +10,7 @@ import { FaMinus, FaPlus } from "react-icons/fa6";
 import { useGlobalContext } from '../provider/useGlobalContext'
 
 const AddToCartButton = ({ data, fetchProductData }) => {
+    
     const { fetchCartItem, updateCartItem, deleteCartItem, fetchInventario } = useGlobalContext()
     const [loading, setLoading] = useState(false)
     const cartItem = useSelector(state => state.cartItem.cart)
@@ -70,63 +71,63 @@ const AddToCartButton = ({ data, fetchProductData }) => {
         e.preventDefault();
         e.stopPropagation();
         try {
-          setLoading(true);
-          // Espera a que se actualice la cantidad en el carrito
-          await updateCartItem(cartItemDetails._id, qty + 1);
-          toast.success("Producto agregado");
-      
-          // Ahora recarga datos donde haga falta:
-          fetchCartItem?.();
-          fetchInventario?.();
-          fetchProductData?.();
+            setLoading(true);
+            // Espera a que se actualice la cantidad en el carrito
+            await updateCartItem(cartItemDetails._id, qty + 1);
+            toast.success("Producto agregado");
+
+            // Ahora recarga datos donde haga falta:
+            fetchCartItem?.();
+            fetchInventario?.();
+            fetchProductData?.();
         } catch (error) {
-          AxiosToastError(error);
+            AxiosToastError(error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
-      
-      const decreaseQty = async (e) => {
+    };
+
+    const decreaseQty = async (e) => {
         e.preventDefault();
         e.stopPropagation();
         try {
-          setLoading(true);
-          if (qty === 1) {
-            // Si era 1, eliminamos el ítem
-            await deleteCartItem(cartItemDetails._id);
-            toast.success("Producto eliminado");
-          } else {
-            // Si era >1, solo bajamos en 1
-            await updateCartItem(cartItemDetails._id, qty - 1);
-            toast.success("Cantidad reducida");
-          }
-      
-          // Y recargamos datos
-          fetchCartItem?.();
-          fetchInventario?.();
-          fetchProductData?.();
+            setLoading(true);
+            if (qty === 1) {
+                // Si era 1, eliminamos el ítem
+                await deleteCartItem(cartItemDetails._id);
+                toast.success("Producto eliminado");
+            } else {
+                // Si era >1, solo bajamos en 1
+                await updateCartItem(cartItemDetails._id, qty - 1);
+                toast.success("Cantidad reducida");
+            }
+
+            // Y recargamos datos
+            fetchCartItem?.();
+            fetchInventario?.();
+            fetchProductData?.();
         } catch (error) {
-          AxiosToastError(error);
+            AxiosToastError(error);
         } finally {
-          setLoading(false);
+            setLoading(false);
         }
-      };
+    };
 
     return (
         <div className='w-full'>
             {
                 isAvailableCart ? (
-                    <div className='flex items-center justify-between gap-1 md:gap-2 bg-slate-200 lg:px-2 py-[0.7px] rounded-lg'>
-                        <button onClick={decreaseQty} className='bg-green-500 text-white  hover:text-red-500 hover:bg-white rounded-full'>
+                    <div className='flex items-center justify-between gap-1 md:gap-2 bg-slate-200 lg:px-2 py-1 rounded-lg'>
+                        <button onClick={decreaseQty} className='bg-green-500 text-white text-base  hover:text-red-500 hover:bg-white rounded-full'>
                             <FaMinus />
                         </button>
-                        <p className='font-semibold'>{qty}</p>
-                        <button onClick={increaseQty} className='bg-green-500 text-white hover:bg-white hover:text-green-500 rounded-full'>
+                        <p className='font-bold text-base'>{qty}</p>
+                        <button onClick={increaseQty} className='bg-green-500 text-white text-base hover:bg-white hover:text-green-500 rounded-full'>
                             <FaPlus />
                         </button>
                     </div>
                 ) : (
-                    <button onClick={handleAddToCart} className=' bg-slate-200 text-slate-500 hover:bg-green-500 px-4 py-1 hover:text-white rounded-full'>
+                    <button onClick={handleAddToCart} className=' bg-slate-200 flex items-center cursor-pointer justify-center text-slate-500 hover:bg-green-500 px-4 py-1 hover:text-white rounded-2xl w-full'>
                         {
                             loading ? <Loading /> : <LiaCartPlusSolid size={23} />
                         }
