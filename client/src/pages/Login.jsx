@@ -117,6 +117,10 @@ const Login = () => {
                 data: { email }
             })
 
+            if (res.data.error) {
+                toast.error(res.data.message);
+            }
+            
             if (res.data.success) {
                 toast.success("Correo de verificación reenviado");
                 setResendSuccess(true);
@@ -130,7 +134,7 @@ const Login = () => {
     };
 
     return (
-        <section className="w-full container mx-auto px-4 h-[80vh]">
+        <section className="w-full container mx-auto px-4 min-h-[80vh]">
             <div className="flex flex-col items-center justify-center mx-auto">
                 <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
                     <div className="p-4 space-y-3 md:space-y-3 sm:p-5">

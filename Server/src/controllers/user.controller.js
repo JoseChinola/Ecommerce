@@ -279,7 +279,7 @@ export async function loginController(req, res) {
             }
         });
     } catch (error) {
-        
+
         return res.status(500).json({
             message: error.message || "Internal Server Error",
             error: true,
@@ -388,7 +388,46 @@ export async function updateUserDetails(req, res) {
         const updatedUser = await userSchema.findOne({ where: { _id: userId } });
 
         return res.json({
-            message: "Update successfully",
+            message: "Usuario Actualizado",
+            error: false,
+            success: true,
+            data: updatedUser
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+// update user details Admin
+export async function updateAdminUserDetails(req, res) {
+    try {
+        const userId = req.userId // auth middleware
+
+        const { _id, name, email, role, status } = req.body
+
+
+
+        await userSchema.update(
+            {
+                ...(name && { name: name }),
+                ...(email && { email: email }),
+                ...(status && { status: status }),
+                ...(role && { mobile: role })
+
+            },
+            { where: { _id: _id } })
+
+        // Después de la actualización, obtenemos los datos actualizados
+        const updatedUser = await userSchema.findOne({ where: { _id: _id } });
+
+        return res.json({
+            message: "Usuario Actualizado",
             error: false,
             success: true,
             data: updatedUser
@@ -683,4 +722,28 @@ export async function userDetailsController(req, res) {
             success: false,
         });
     }
+}
+
+export async function getsUsersController(req, res) {
+    try {
+
+        const user = await userSchema.findAll({
+            attributes: ['_id', 'name', 'email', 'role', 'mobile', 'verify_email', 'status', 'createdAt']
+        })
+
+
+        return res.json({
+            message: "Usuarios ",
+            data: user,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+
 }

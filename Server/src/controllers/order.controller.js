@@ -37,11 +37,11 @@ export async function CashOnDeleveryOrderController(req, res) {
 
         const orderId = `ORD-${nanoid(10)}`;
 
-        const payload = list_items.map(item => {
-
+        const payload = list_items.map(item => {            
             const productDetails = {
                 name: item.productData.name,
-                image: item.productData.image
+                image: item.productData.image,
+                unit_price: item.productData.price,
             };
 
             return {

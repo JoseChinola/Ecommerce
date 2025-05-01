@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     FaCheck,
     FaRedo,
@@ -7,6 +7,7 @@ import {
     FaMinus
 } from 'react-icons/fa';
 import moment from 'moment'; // Asegúrate de instalarlo: npm install moment
+import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 
 const iconMapping = {
     'FaCheck': <FaCheck />,
@@ -61,6 +62,7 @@ const transformTransactions = (transactions = []) => {
 };
 
 const Timeline = ({ data }) => {
+    const [showAll, setShowAll] = useState(false);
     // Si no hay datos, mostramos skeleton
     if (!data || !Array.isArray(data)) {
         return (
@@ -81,6 +83,9 @@ const Timeline = ({ data }) => {
     }
 
     const transformedTransactions = transformTransactions(data);
+    const displayedTransactions = showAll
+        ? transformedTransactions
+        : transformedTransactions.slice(0, 5);
 
     return (
         <div className="bg-blue-50 rounded-2xl shadow-md p-4 w-full h-full mx-auto">
@@ -95,25 +100,22 @@ const Timeline = ({ data }) => {
 
             {/* Timeline events */}
             <div className="relative">
-                {transformedTransactions.map((tx, idx) => (
+                {displayedTransactions.map((tx, idx) => (
                     <div key={idx} className="relative flex items-start">
-                        {/* Línea y marcador */}
                         <div className="flex flex-col items-center">
                             {idx !== 0 && <div className="w-px h-4 bg-gray-200"></div>}
-                            <div className={`w-full h-full sm:p-1 rounded-full ${tx.color} flex items-center justify-center text-white shadow-md`}>
+                            <div className={`w-full h-full sm:p-[3px] rounded-full ${tx.color} flex items-center justify-center text-white shadow-md`}>
                                 {iconMapping[tx.iconName] || <FaCheck />}
                             </div>
-                            {idx !== transformedTransactions.length - 1 && <div className="h-6 w-px bg-gray-200"></div>}
+                            {idx !== displayedTransactions.length - 1 && <div className="h-6 w-px bg-gray-200"></div>}
                         </div>
-
-                        {/* Contenido */}
-                        <div className="ml-6 flex-1 py-1">
-                            <div className="flex justify-between items-center p-0 m-0">
-                                <p className="text-sm font-medium text-gray-700">
+                        <div className="ml-4 flex-1 py-1">
+                            <div className="flex justify-between items-center p-0 m-0 gap-2">
+                                <p className="text-xs font-medium text-gray-700">
                                     {tx.description} <span className="font-semibold">{tx.id}</span>
                                 </p>
                                 <span className={`text-sm font-bold ${tx.amountColor}`}>
-                                    {tx.amount < 0 ? '-' : '+'}${Math.abs(tx.amount).toFixed(2)}
+                                    {tx.amount < 0 ? '-' : '+'}${DisplayPriceDOP(tx.amount)}
                                 </span>
                             </div>
                             <span className="text-xs text-gray-400">{tx.date}</span>
@@ -122,11 +124,15 @@ const Timeline = ({ data }) => {
                 ))}
             </div>
 
-            {/* Footer */}
+            {/* 📌 Footer con botón para cambiar entre mostrar todas o solo 5 */}
             <div className="border-t mt-4 pt-2 text-center">
-                <a href="#" className="text-blue-600 hover:text-blue-800 transition duration-200 font-medium inline-flex items-center gap-1">
-                    Ver todas las transacciones <i className="pi pi-arrow-down" />
-                </a>
+                <button
+                    onClick={() => setShowAll(!showAll)} // 📌 al hacer click, cambia el estado
+                    className="text-blue-600 hover:text-blue-800 transition duration-200 font-medium inline-flex items-center gap-1"
+                >
+                    {showAll ? 'Ver menos transacciones' : 'Ver todas las transacciones'}
+                    <i className={`pi ${showAll ? 'pi-arrow-up' : 'pi-arrow-down'}`} />
+                </button>
             </div>
         </div>
     );

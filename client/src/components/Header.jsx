@@ -42,15 +42,20 @@ const Header = ({ toggleAside }) => {
                 !(isSearchPage && isMobile) && (
                     <div className='container mx-auto flex items-center justify-between'>
                         {/* Botón hamburguesa solo en móviles */}
-                        <button
-                            onClick={toggleAside}
-                            className='md:hidden text-2xl text-gray-700'>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                    d="M3.75 5.25h16.5m-16.5 6.75h16.5m-16.5 6.75h16.5" />
-                            </svg>
-                        </button>
+                        {
+                            user?._id && isMobile && (
+                                <button
+                                    onClick={toggleAside}
+                                    className='md:hidden text-2xl text-gray-700'>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        strokeWidth="1.5" stroke="currentColor" className="w-8 h-8">
+                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                            d="M3.75 5.25h16.5m-16.5 6.75h16.5m-16.5 6.75h16.5" />
+                                    </svg>
+                                </button>
+                            )
+                        }
+
                         {/* logo */}
                         <div className='h-full'>
                             <Link to={"/"} className='h-full flex items-center gap-3 ml-4'>
@@ -146,7 +151,7 @@ const Header = ({ toggleAside }) => {
                                             </div>
                                         </>
                                     ) : (
-                                        <FaRegCircleUser size={28} />
+                                        <button onClick={redirectToLoginPage}><FaRegCircleUser size={28} /></button>
                                     )
                                 }
                             </div>
@@ -171,8 +176,6 @@ const Header = ({ toggleAside }) => {
                                                         }
 
                                                     </div>
-
-
                                                 </Link>
                                             </div>
 

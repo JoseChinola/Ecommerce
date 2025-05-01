@@ -47,14 +47,14 @@ const Dashboard = () => {
             </div>
 
             {/* VisitorGraph & Timeline Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                {/*Produto mas vendido */}
-                <div className="md:col-span-2 rounded-2xl">
+            <div className="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 mt-6">
+                {/* Producto más vendido */}
+                <div className="rounded-2xl">
                     <TopProductsTable data={data.topProducts} />
                 </div>
 
-                {/* Transacciones (1/3 del ancho en md) */}
-                <div className="md:col-span-1 rounded-2xl">
+                {/* Transacciones */}
+                <div className="rounded-2xl px-4">
                     <Timeline data={data.timeline} />
                 </div>
             </div>

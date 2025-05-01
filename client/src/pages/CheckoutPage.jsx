@@ -13,7 +13,7 @@ import { loadStripe } from '@stripe/stripe-js'
 
 
 const CheckoutPage = () => {
-    const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchMovements } = useGlobalContext()
+    const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchMovements, fetchAddress, fetchOrderItems } = useGlobalContext()
     const [openAddress, setOpenAddress] = useState(false)
     const addressList = useSelector(state => state.addresses.addressList)
     const cartItemsList = useSelector(state => state.cartItem.cart)
@@ -44,6 +44,13 @@ const CheckoutPage = () => {
                 if (fetchMovements) {
                     fetchMovements()
                 }
+                if (fetchAddress) {
+                    fetchAddress()
+                }
+                if (fetchOrderItems) {
+                    fetchOrderItems()
+                }
+                
                 navigate('/success', {
                     state: {
                         text: "Order"

@@ -23,7 +23,7 @@ const Address = () => {
     const [deleteAddress, setDeleteAddress] = useState({ _id: '' });
     const { fetchAddress } = useGlobalContext()
 
-
+    
 
     const handleDisableAddress = async () => {
         try {
@@ -34,6 +34,7 @@ const Address = () => {
                 }
             })
             const { data: resData } = response
+            
             if (resData.success) {
                 toast.success(resData.message)
                 if (fetchAddress) {

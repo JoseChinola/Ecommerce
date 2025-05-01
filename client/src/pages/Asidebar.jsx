@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { IoMdClose } from "react-icons/io";
 import { useDispatch, useSelector } from 'react-redux'
 import { NavLink, useNavigate } from 'react-router-dom'
@@ -22,7 +22,7 @@ const Asidebar = ({ isOpen, closeAside }) => {
     const user = useSelector((state) => state.user)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const [openInventoryMenu, setOpenInventoryMenu] = React.useState(false);
+    const [openInventoryMenu, setOpenInventoryMenu] = useState(false);
 
     const handleLogout = async () => {
         try {
@@ -130,7 +130,10 @@ const Asidebar = ({ isOpen, closeAside }) => {
                                         </NavLink>
                                         <NavLink to="/product" className={({ isActive }) => getLinkClass(isActive)}>
                                             <AiFillProduct /> Productos
-                                        </NavLink>                                      
+                                        </NavLink>
+                                        <NavLink to="/users" className={({ isActive }) => getLinkClass(isActive)}>
+                                            <AiFillProduct /> Users
+                                        </NavLink>
                                     </div>
                                 )}
                             </div>

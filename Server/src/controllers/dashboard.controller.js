@@ -50,8 +50,7 @@ export const getDashboardController = async (req, res) => {
 
         // 4) Últimos 5 pedidos (timeline)
         const timeline = await orderSchema.findAll({
-            attributes: ['orderId', 'totalAmt', 'paymentStatus', 'createdAt'],
-            limit: 5,
+            attributes: ['orderId', 'totalAmt', 'paymentStatus', 'createdAt'],        
             order: [['createdAt', 'DESC']],
             raw: true
         });
@@ -118,9 +117,9 @@ export const getDashboardController = async (req, res) => {
             success: true,
             data: {
                 stats: [
-                    { title: 'Ventas Totales', value: parseFloat(totalSales).toFixed(2), color: 'bg-green-100 text-green-600', iconName: 'FaDollarSign' },
+                    { title: 'Ventas', value: parseFloat(totalSales).toFixed(2), color: 'bg-green-100 text-green-600', iconName: 'FaDollarSign' },
                     { title: 'Pedidos', value: totalOrders, color: 'bg-blue-100 text-blue-600', iconName: 'FaShoppingCart' },
-                    { title: 'Clientes', value: totalClients, color: 'bg-purple-100 text-purple-600', iconName: 'FaUsers' },
+                    { title: 'Clientes', value: totalClients, color: 'bg-orange-300 text-purple-600', iconName: 'FaUsers' },
                     { title: 'Productos', value: totalProducts, color: 'bg-yellow-100 text-yellow-600', iconName: 'FaBoxOpen' }
                 ],
                 cityDistribution,

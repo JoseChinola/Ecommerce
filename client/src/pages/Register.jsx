@@ -5,7 +5,6 @@ import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
-import { FaArrowLeft } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
@@ -40,44 +39,30 @@ const Register = () => {
 
     const valideValue = Object.values(data).every(el => el)
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        if (data.password !== data.confirmPassword) {
-            toast.error(
-                "Password and confirm password must be same"
-            )
-
-            return
-        }
-
-        try {
-            const res = await Axios({
-                ...SummaryApi.register,
-                data: data
-            })
-
-            if (res.data.error) {
-                toast.error(res.data.message)
-            }
-
-            if (res.data.success) {
-                toast.success(res.data.message)
-                setData({
-                    name: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: ""
-                })
-                navigate("/verifyEmail-register")
-            }
-
-        } catch (error) {
-            AxiosToastError(error)
-        }
-
-
+    const handleSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+        toast.error("Password and confirm password must be same");
+        return;
     }
+
+    try {
+        const res = await Axios({
+            ...SummaryApi.register,
+            data: data
+        });
+
+        if (res.data.error) {
+            toast.error(res.data.message);
+        }
+
+        if (res.data.success) {
+            toast.success(res.data.message);
+            navigate("/verifyEmail-register");
+        }
+    } catch (error) {
+        AxiosToastError(error);
+    }
+};
 
     const redirectToHomePage = () => {
         navigate("/")

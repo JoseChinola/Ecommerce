@@ -1,142 +1,188 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from "react-hook-form"
-import { FaAddressCard, FaCity } from "react-icons/fa";
-import { TbMapSearch, TbMapPinCode } from "react-icons/tb";
-import { SiOpenstreetmap } from "react-icons/si";
+import { FaAddressCard } from "react-icons/fa"
+import { TbMapSearch, TbMapPinCode } from "react-icons/tb"
+import { SiOpenstreetmap } from "react-icons/si"
 import { useGlobalContext } from '../provider/useGlobalContext'
-import Axios from '../utils/Axios';
-import SummaryApi from '../cammon/SummaryApi';
-import AxiosToastError from '../utils/AxiosToastError';
-import toast from 'react-hot-toast';
-import { IoClose } from 'react-icons/io5';
-import { CiMobile1 } from "react-icons/ci";
-
+import Axios from '../utils/Axios'
+import SummaryApi from '../cammon/SummaryApi'
+import AxiosToastError from '../utils/AxiosToastError'
+import toast from 'react-hot-toast'
+import { IoClose } from 'react-icons/io5'
+import { CiMobile1 } from "react-icons/ci"
+import rdData from '../utils/rdData'
 
 const AddAddress = ({ close }) => {
-    const { register, handleSubmit, reset } = useForm()
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setValue,
+        watch,
+        formState: { errors }
+    } = useForm()
     const { fetchAddress } = useGlobalContext()
 
-    const onSubmit = async (data) => {
+    // Build array of all cities from rdData
+    const provinces = Object.keys(rdData)
+    const allCities = provinces.flatMap(prov => rdData[prov].ciudades)
 
+    const selectedCity = watch('city')
+    const [municipios, setMunicipios] = useState([])
+    const [pincodes, setPincodes] = useState([])
+
+    // When user selects a city, determine its province and load municipios & pincodes
+    useEffect(() => {
+        if (!selectedCity) {
+            setMunicipios([])
+            setPincodes([])
+            setValue('state', '')
+            setValue('municipio', '')
+            setValue('pincode', '')
+            return
+        }
+        // Find province for this city
+        const prov = provinces.find(p =>
+            rdData[p].ciudades.includes(selectedCity)
+        )
+        // Set hidden state field for submission
+        setValue('state', prov || '')
+        // Populate municipios & codigos_postales for that province
+        if (prov) {
+            setMunicipios(rdData[prov].municipios)
+            setPincodes(rdData[prov].codigos_postales)
+            // reset dependent selects
+            setValue('municipio', '')
+            setValue('pincode', '')
+        }
+    }, [selectedCity, provinces, setValue])
+
+    const onSubmit = async data => {
         try {
-            const response = await Axios({
+            await Axios({
                 ...SummaryApi.createAddress,
                 data: {
                     address_line: data.addressline,
                     city: data.city,
-                    state: data.state,
+                    state: data.state,       // hidden field
                     pincode: data.pincode,
                     country: data.country,
                     mobile: data.mobile
                 }
             })
-
-            const { data: respondata } = response
-            if (respondata.success) {
-                toast.success(respondata.message)
-                if (close) {
-                    close()
-                    reset()
-                    fetchAddress()
-                }
-            }
-
-        } catch (error) {
-            AxiosToastError(error)
+            toast.success("Address added")
+            close && close()
+            reset()
+            fetchAddress()
+        } catch (err) {
+            AxiosToastError(err)
         }
     }
-    
+
     return (
-        <section className='bg-black fixed top-0 bottom-0 left-0 right-0 z-50 bg-opacity-70 flex items-center h-screen overflow-auto sm:p-4 p-2'>
-            <div className='bg-white p-4 w-full sm:max-w-2xl mx-auto rounded-md'>
-                <div className='p-1 flex justify-between items-center border bg-blue-50 rounded-md px-2'>
-                    <h2 className='font-semibold italic sm:text-lg'>Address</h2>
-                    <button onClick={close} className="w-fit ml-auto hover:text-red-600 hidden sm:block">
+        <section className='bg-black fixed inset-0 z-50 bg-opacity-70 flex items-center overflow-auto p-4'>
+            <div className='bg-white p-4 w-full max-w-2xl mx-auto rounded-md'>
+                <div className='flex justify-between items-center border bg-blue-50 rounded-md px-2 py-1'>
+                    <h2 className='font-semibold italic text-lg'>Añadir Dirección</h2>
+                    <button onClick={close} className="hover:text-red-600">
                         <IoClose size={30} />
                     </button>
                 </div>
 
-                <form className='mt-4 grid gap-4 border p-2 rounded-lg' onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit)} className='mt-4 grid gap-4 border p-2 rounded-lg'>
+                    {/* Hidden state/province field */}
+                    <input type="hidden" {...register('state', { required: true })} />
+
                     <div className='grid sm:grid-cols-2 gap-4'>
-                        <div className='grid gap-1 relative'>
-                            <label htmlFor="addressline">Address Line:</label>
+                        {/* Address Line */}
+                        <div className='relative'>
+                            <label>Dirección:</label>
                             <input
-                                type="text"
-                                id='addressline'
-                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 
-                                        rounded-md focus:outline-none 
-                                           focus:ring-2 focus:ring-blue-500 peer'
-                                {...register('addressline', { required: true })}
+                                className='bg-blue-50 p-2 pl-10 w-full border rounded-md focus:ring-2 focus:ring-blue-500'
+                                {...register('addressline', { required: "Required" })}
                             />
-                            <FaAddressCard className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            <FaAddressCard className="absolute left-3 top-9 text-gray-500" />
+                            {errors.addressline && <p className="text-red-500 text-sm">{errors.addressline.message}</p>}
                         </div>
 
-                        <div className='grid gap-1 relative'>
-                            <label htmlFor="city">City:</label>
-                            <input
-                                type="text"
-                                id='city'
-                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 
-                                        rounded-md focus:outline-none 
-                                           focus:ring-2 focus:ring-blue-500 peer'
-                                {...register('city', { required: true })}
-                            />
-                            <FaCity className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        {/* City */}
+                        <div className='relative'>
+                            <label>Ciudad:</label>
+                            <select
+                                className='bg-blue-50 p-2 pl-10 w-full border rounded-md focus:ring-2 focus:ring-blue-500'
+                                {...register('city', { required: "Select city" })}
+                            >
+                                <option value="">Selecciona ciudad</option>
+                                {allCities.map(city => (
+                                    <option key={city} value={city}>{city}</option>
+                                ))}
+                            </select>
+                            <TbMapSearch className="absolute left-3 top-9 text-gray-500" />
+                            {errors.city && <p className="text-red-500 text-sm">{errors.city.message}</p>}
                         </div>
 
-                        <div className='grid gap-1 relative'>
-                            <label htmlFor="state">State:</label>
-                            <input
-                                type="text"
-                                id='state'
-                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 
-                                        rounded-md focus:outline-none 
-                                           focus:ring-2 focus:ring-blue-500 peer'
-                                {...register('state', { required: true })}
-                            />
-                            <TbMapSearch className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        {/* Municipio */}
+                        <div className='relative'>
+                            <label>Municipio:</label>
+                            <select
+                                className='bg-blue-50 p-2 pl-10 w-full border rounded-md focus:ring-2 focus:ring-blue-500'
+                                {...register('municipio', { required: "Select municipio" })}
+                            >
+                                <option value="">Seleccione municipio</option>
+                                {municipios.map(mun => (
+                                    <option key={mun} value={mun}>{mun}</option>
+                                ))}
+                            </select>
+                            <TbMapSearch className="absolute left-3 top-9 text-gray-500" />
+                            {errors.municipio && <p className="text-red-500 text-sm">{errors.municipio.message}</p>}
                         </div>
 
-                        <div className='grid gap-1 relative'>
-                            <label htmlFor="pincode">Pincode:</label>
-                            <input
-                                type="text"
-                                id='pincode'
-                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 
-                                        rounded-md focus:outline-none 
-                                           focus:ring-2 focus:ring-blue-500 peer'
-                                {...register('pincode', { required: true })}
-                            />
-                            <TbMapPinCode className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        {/* Pincode */}
+                        <div className='relative'>
+                            <label>Codigo Postal:</label>
+                            <select
+                                className='bg-blue-50 p-2 pl-10 w-full border rounded-md focus:ring-2 focus:ring-blue-500'
+                                {...register('pincode', { required: "Select pincode" })}
+                            >
+                                <option value="">Seleccionar Postal</option>
+                                {pincodes.map(cp => (
+                                    <option key={cp} value={cp}>{cp}</option>
+                                ))}
+                            </select>
+                            <TbMapPinCode className="absolute left-3 top-9 text-gray-500" />
+                            {errors.pincode && <p className="text-red-500 text-sm">{errors.pincode.message}</p>}
                         </div>
 
-                        <div className='grid gap-1 relative'>
-                            <label htmlFor="country">Country:</label>
+                        {/* Country */}
+                        <div className='relative'>
+                            <label>Pais:</label>
                             <input
-                                type="text"
-                                id='country'
-                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 
-                                        rounded-md focus:outline-none 
-                                           focus:ring-2 focus:ring-blue-500 peer'
+                                readOnly
+                                value="Dominican Republic"
+                                className='bg-blue-50 p-2 pl-10 w-full border rounded-md focus:ring-2 focus:ring-blue-500'
                                 {...register('country', { required: true })}
                             />
-                            <SiOpenstreetmap className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            <SiOpenstreetmap className="absolute left-3 top-9 text-gray-500" />
                         </div>
 
-                        <div className='grid gap-1 relative'>
-                            <label htmlFor="mobile">Mobile No.:</label>
+                        {/* Mobile */}
+                        <div className='relative'>
+                            <label>Numero de Movil:</label>
                             <input
-                                type="text"
-                                id='mobile'
-                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 
-                                        rounded-md focus:outline-none 
-                                           focus:ring-2 focus:ring-blue-500 peer'
-                                {...register('mobile', { required: true })}
+                                className='bg-blue-50 p-2 pl-10 w-full border rounded-md focus:ring-2 focus:ring-blue-500'
+                                {...register('mobile', { required: "Required" })}
                             />
-                            <CiMobile1 className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            <CiMobile1 className="absolute left-3 top-9 text-gray-500" />
+                            {errors.mobile && <p className="text-red-500 text-sm">{errors.mobile.message}</p>}
                         </div>
                     </div>
-                    <button type='submit' className='bg-primary-Green w-full py-2 font-semibold hover:bg-green-600 text-white rounded-md'>Submit</button>
+
+                    <button
+                        type='submit'
+                        className='mt-4 bg-primary-Green w-full py-2 font-semibold hover:bg-green-600 text-white rounded-md'
+                    >
+                        Agregar
+                    </button>
                 </form>
             </div>
         </section>

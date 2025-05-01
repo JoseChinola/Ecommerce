@@ -41,6 +41,10 @@ const SummaryApi = {
         url: "/api/user/user-details",
         method: "get"
     },
+    getsAllUsers: {
+        url: "/api/user/users-get",
+        method: "get"
+    },
     logout: {
         url: "/api/user/logout",
         method: "get"
@@ -51,6 +55,10 @@ const SummaryApi = {
     },
     updateUserDetails: {
         url: "/api/user/update-user",
+        method: "put"
+    },
+    updateAdminUserDetails: {
+        url: "/api/user/update-user-admin",
         method: "put"
     },
     addCategory: {

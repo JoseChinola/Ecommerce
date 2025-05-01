@@ -23,14 +23,14 @@ const Home = () => {
       <div className='container mx-auto rounded my-4 px-3 p-2'>
         {/* Banner container */}
         <div className='w-full h-full grid items-center border bg-white gap-2 p-2 rounded-md'>
-          <p className='font-semibold lg:text-xl italic px-4 py-2'>Offers up to <span className='text-white bg-red-500 rounded-full w-fit text-center px-2'>-5%</span></p>
+          <p className='font-semibold lg:text-xl italic px-4 py-2'>Ofertas hasta <span className='text-white bg-red-500 rounded-full w-fit text-center px-2'>-5%</span></p>
           <Carousel />
         </div>
 
         <div className='mt-4'>
           <h2 className='font-extrabold uppercase italic px-4 text-blue-500 bg-blue-100 py-2 rounded-md'>Category</h2>
 
-          <div className='container mx-auto px-2 py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-2'>
+          <div className='container mx-auto px-2 py-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-10 gap-4'>
             {
               loadingCategory ? (
                 new Array(12).fill(null).map((_, index) => (

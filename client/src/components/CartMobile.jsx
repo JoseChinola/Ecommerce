@@ -10,6 +10,12 @@ import { useSelector } from 'react-redux';
 const CartMobileLink = () => {
     const { totalPrice, totalQty } = useGlobalContext()
     const cartItem = useSelector(state => state.cartItem.cart)
+    const user = useSelector((state) => state?.user)
+
+    if (!user?._id) {
+        return null;
+    }
+
     return (
         <>
             {
