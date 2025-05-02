@@ -124,10 +124,7 @@ const Asidebar = ({ isOpen, closeAside }) => {
                                         </NavLink>
                                         <NavLink to="/subcategory" className={({ isActive }) => getLinkClass(isActive)}>
                                             <PiSubtractFill /> Subcategoría
-                                        </NavLink>
-                                        <NavLink to="/upload-product" className={({ isActive }) => getLinkClass(isActive)}>
-                                            <MdOutlineProductionQuantityLimits /> Subir Producto
-                                        </NavLink>
+                                        </NavLink>                                       
                                         <NavLink to="/product" className={({ isActive }) => getLinkClass(isActive)}>
                                             <AiFillProduct /> Productos
                                         </NavLink>

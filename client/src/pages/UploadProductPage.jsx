@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import UploadImage from '../utils/UploadImage';
@@ -13,7 +13,7 @@ import AxiosToastError from '../utils/AxiosToastError'
 import successAlert from '../utils/SuccessAlert';
 
 
-const UploadProductPage = () => {
+const UploadProductPage = ({ onClose, fetchProductData }) => {
   const [data, setData] = useState({
     name: "",
     image: [],
@@ -23,6 +23,7 @@ const UploadProductPage = () => {
     price: "",
     discount: "",
     description: "",
+    publish: '',
     more_details: {},
 
   })
@@ -76,22 +77,19 @@ const UploadProductPage = () => {
 
   }
 
-  const handleRemoveCategorySelected = async (index) => {
-
-    data.categoryId.splice(index, 1)
-
+  const handleRemoveCategorySelected = (index) => {
     setData((prev) => ({
-      ...prev
+      ...prev,
+      categoryId: prev.categoryId.filter((_, i) => i !== index),
     }));
-  }
-
-  const handleRemoveSubCategorySelected = async (index) => {
-    data.subCategoryId.splice(index, 1)
-
+  };
+  
+  const handleRemoveSubCategorySelected = (index) => {
     setData((prev) => ({
-      ...prev
+      ...prev,
+      subCategoryId: prev.subCategoryId.filter((_, i) => i !== index),
     }));
-  }
+  };
 
   const handleAddField = () => {
     setData((preve) => {
@@ -128,8 +126,17 @@ const UploadProductPage = () => {
           price: "",
           discount: "",
           description: "",
+          publish: "",
           more_details: {},
         })
+
+        if (fetchProductData) {
+          fetchProductData()
+        }
+        if (onClose) {
+          onClose()
+        }
+
       }
     } catch (error) {
       AxiosToastError(error)
@@ -137,10 +144,13 @@ const UploadProductPage = () => {
   }
 
   return (
-    <section className='p-3'>
-      <div className='p-4 bg-white border rounded-lg max-w-4xl grid m-auto shadow-lg'>
-        <div className='py-3 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-center m-auto'>
-          <h2 className='font-extrabold uppercase text-primary-Green'>Upload Product</h2>
+    <section className='fixed w-full top-0 bottom-0 left-0 right-0 p-3 rounded z-50 bg-neutral-800 bg-opacity-70 flex items-center justify-center overflow-auto'>
+      <div className='bg-white w-full p-4 mx-auto max-w-3xl rounded overflow-y-auto h-full scrollbarCustom'>
+        <div className='py-3 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-between px-4'>
+          <h2 className='font-extrabold uppercase text-primary-Green'>Subir Producto</h2>
+          <button onClick={onClose} className="hover:text-red-600">
+            <IoClose size={30} />
+          </button>
         </div>
 
         <div className='flex py-3 px-3 items-center justify-center w-full bg-secundary rounded-lg mt-4'>
@@ -160,7 +170,7 @@ const UploadProductPage = () => {
             </div>
 
             <div className='grid gap-1 px-2 py-1 rounded-lg bg-secundary'>
-              <label htmlFor="description" className='font-bold text-primary-Green'>Description</label>
+              <label htmlFor="description" className='font-bold text-primary-Green'>Descripción</label>
 
               <textarea type="text"
                 id='description'
@@ -176,17 +186,17 @@ const UploadProductPage = () => {
             </div>
 
             <div className='px-2 py-1 rounded-lg bg-secundary'>
-              <p className='font-bold text-primary-Green'>Images </p>
+              <p className='font-bold text-primary-Green'>Images</p>
               <div>
                 {/* Display uploaded images */}
                 {data.image.length > 0 && ( // Solo muestra el div si hay imágenes
                   <div className="px-4 py-1 gap-2 h-24 border bg-blue-50 bg-opacity-40 rounded flex items-center">
                     {data.image.map((img, index) => (
-                      <div key={index} className="h-20 w-20 rounded-lg min-w-20 bg-blue-50 relative group px-2">
+                      <div key={index} className="h-20 w-20 rounded-lg aspect-square min-w-20 bg-blue-50 relative group px-2">
                         <img
                           src={img}
                           alt={`Image ${index}`}
-                          className="w-full h-full object-cover cursor-pointer"
+                          className="w-full h-full object-contain cursor-pointer"
                           onClick={() => setViewImageURL(img)}
                         />
                         <div
@@ -369,6 +379,21 @@ const UploadProductPage = () => {
                   className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
                   required
                 />
+              </div>
+
+              <div className='grid gap-1'>
+                <label htmlFor="discount" className='font-bold text-primary-Green'>Publicar</label>
+
+                <select
+                  id="publish"
+                  name="publish"
+                  value={data.publish}
+                  onChange={handleChange}
+                  className='bg-blue-50 border w-full p-2 rounded-md'
+                >
+                  <option value="true">Sí</option>
+                  <option value="false">No</option>
+                </select>
               </div>
             </div>
 

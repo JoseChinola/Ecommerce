@@ -101,11 +101,7 @@ const Router = createBrowserRouter([
             {
                 path: "subcategory",
                 element: <AdminPermissions><SubCategoryPage /></AdminPermissions>
-            },
-            {
-                path: "upload-product",
-                element: <AdminPermissions><UploadProductPage /></AdminPermissions>
-            },
+            },           
             {
                 path: "product",
                 element: <AdminPermissions><ProductAdmin /></AdminPermissions>

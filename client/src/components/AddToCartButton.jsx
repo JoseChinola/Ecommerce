@@ -10,10 +10,11 @@ import { FaMinus, FaPlus } from "react-icons/fa6";
 import { useGlobalContext } from '../provider/useGlobalContext'
 
 const AddToCartButton = ({ data, fetchProductData }) => {
-    
+
     const { fetchCartItem, updateCartItem, deleteCartItem, fetchInventario } = useGlobalContext()
     const [loading, setLoading] = useState(false)
     const cartItem = useSelector(state => state.cartItem.cart)
+    const user = useSelector((state) => state?.user)
     const [isAvailableCart, setIsAvailableCart] = useState(false)
     const [qty, setQty] = useState(0)
     const [cartItemDetails, setCartItemDetails] = useState()
@@ -116,7 +117,7 @@ const AddToCartButton = ({ data, fetchProductData }) => {
     return (
         <div className='w-full'>
             {
-                isAvailableCart ? (
+                isAvailableCart && user?._id ? (
                     <div className='flex items-center justify-between gap-1 md:gap-2 bg-slate-200 lg:px-2 py-1 rounded-lg'>
                         <button onClick={decreaseQty} className='bg-green-500 text-white text-base  hover:text-red-500 hover:bg-white rounded-full'>
                             <FaMinus />

@@ -12,7 +12,7 @@ const ViewImage = ({ url, close }) => {
                     <img
                         src={url}
                         alt="Full screen"
-                        className='w-full h-full object-scale-down'
+                        className='w-full h-full object-cover aspect-square'
                     />
                 </div>
             </div>

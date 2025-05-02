@@ -7,10 +7,13 @@ import { MdNavigateNext } from "react-icons/md";
 import { MdNavigateBefore } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
 import NoData from '../components/NoData'
+import UploadProductPage from './UploadProductPage'
+import { FaPlus } from 'react-icons/fa6'
 
 
 const ProductAdmin = () => {
     const [productData, setProductData] = useState([])
+    const [openAddProducto, setOpenAddProducto] = useState(false);
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [totalPageCount, setTotalPageCount] = useState(1)
@@ -86,6 +89,7 @@ const ProductAdmin = () => {
             <div className='p-4 bg-white rounded-lg grid m-auto shadow-lg'>
                 <div className='py-3 px-4 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-between'>
                     <h2 className='font-extrabold uppercase text-primary-Green'>Mantenimiento Productos</h2>
+
                     <div className='h-full w-full min-w-24 max-w-52 bg-white px-3 flex items-center gap-2 py-2 rounded-md border focus-within:border-primary-Green'>
                         <IoSearchOutline size={23} />
                         <input
@@ -96,6 +100,13 @@ const ProductAdmin = () => {
                             onChange={handleOnChange}
                         />
                     </div>
+
+                    <button
+                        onClick={() => setOpenAddProducto(true)}
+                        className="text-[#0aa86f] border border-[#0aa86f] bg-white px-4 py-2 rounded-lg hover:bg-[#0aa86f] hover:text-white flex items-center gap-2 w-full sm:w-auto"
+                    >
+                        <FaPlus /> Añadir Productos
+                    </button>
                 </div>
 
                 <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary'>
@@ -140,6 +151,10 @@ const ProductAdmin = () => {
 
                 </div>
             </div>
+
+            {openAddProducto && (
+                <UploadProductPage onClose={() => setOpenAddProducto(false)} fetchProductData={fetchProductData} />
+            )}
         </section>
     )
 }

@@ -7,7 +7,7 @@ import inventorySchema from '../models/Inventory.model.js';
 //create product
 export const createProductController = async (req, res) => {
     try {
-        const { name, image, categoryId, subCategoryId, unit, price, discount, description, more_details } = req.body;
+        const { name, publish, image, categoryId, subCategoryId, unit, price, discount, description, more_details } = req.body;
 
 
         // Verifica si la imagen está correctamente procesada antes de insertarla
@@ -16,7 +16,7 @@ export const createProductController = async (req, res) => {
         // Verifica si los valores son válidos antes de guardar en la base de datos
         if (!name || imageToSave === "[]" || !unit || !price || !description) {
             return res.status(400).json({
-                message: "Enter required fields",
+                message: "Todos los campos son requeridos",
                 error: true,
                 success: false
             });
@@ -37,7 +37,7 @@ export const createProductController = async (req, res) => {
         // Verifica si se ha recibido al menos una categoría y una subcategoría
         if (categories.length === 0 || subCategories.length === 0) {
             return res.status(400).json({
-                message: "You must select at least one category and one subcategory",
+                message: "Debes seleccionar al menos una categoría y una subcategoría",
                 error: true,
                 success: false
             });
@@ -51,6 +51,7 @@ export const createProductController = async (req, res) => {
             price,
             discount,
             description,
+            publish,
             more_details
         });
 
@@ -186,7 +187,7 @@ export const getProductByCategory = async (req, res) => {
                 success: false
             });
         }
- 
+
 
         // Recupera los productos que pertenecen a las categorías especificadas
         const products = await productSchema.findAll({

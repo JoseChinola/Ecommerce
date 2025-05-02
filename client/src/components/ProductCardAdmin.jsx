@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import { CiEdit } from "react-icons/ci";
-import { MdDelete } from "react-icons/md";
 import EditProductAdmin from './EditProductAdmin';
 import ConfirmBox from './ConfirmBox';
 import AxiosToastError from '../utils/AxiosToastError';
@@ -38,6 +36,7 @@ const ProductCardAdmin = ({ data, fetchData }) => {
         }
     };
 
+ 
     return (
         <div className="flex flex-col border p-2 sm:p-4 rounded-xl shadow bg-white select-none transition-all w-full max-w-[200px] sm:max-w-[230px] md:max-w-[250px] lg:max-w-[250px]">
             {/* Imagen */}
