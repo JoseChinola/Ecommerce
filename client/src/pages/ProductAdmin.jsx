@@ -30,7 +30,6 @@ const ProductAdmin = () => {
             })
 
             const { data: resData } = resp
-            console.log('resData', resData)
             if (resData.success && resData.data) {
                 setProductData(resData.data);
                 setTotalPageCount(resData.totalNoPage || 1);
@@ -86,7 +85,7 @@ const ProductAdmin = () => {
         <section className='p-3'>
             <div className='p-4 bg-white rounded-lg grid m-auto shadow-lg'>
                 <div className='py-3 px-4 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-between'>
-                    <h2 className='font-extrabold uppercase text-primary-Green'>Productos</h2>
+                    <h2 className='font-extrabold uppercase text-primary-Green'>Mantenimiento Productos</h2>
                     <div className='h-full w-full min-w-24 max-w-52 bg-white px-3 flex items-center gap-2 py-2 rounded-md border focus-within:border-primary-Green'>
                         <IoSearchOutline size={23} />
                         <input
@@ -99,8 +98,8 @@ const ProductAdmin = () => {
                     </div>
                 </div>
 
-                <div className='px-2 py-3 lg:p-5 mt-3 rounded-md bg-secundary'>
-                    <div className='grid grid-cols-2 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4'>
+                <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary'>
+                    <div className='grid grid-cols-2 w-full sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4'>
                         {loading ? (
                             Array.from({ length: 12 }).map((_, index) => (
                                 <div

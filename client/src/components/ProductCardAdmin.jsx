@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { CiEdit } from "react-icons/ci";
 import { MdDelete } from "react-icons/md";
 import EditProductAdmin from './EditProductAdmin';
@@ -7,10 +7,14 @@ import AxiosToastError from '../utils/AxiosToastError';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
 import toast from 'react-hot-toast';
+import moment from '../utils/configMoment';
+import { AiOutlineEdit } from "react-icons/ai";
+import { RiDeleteBinLine } from "react-icons/ri";
+
 
 const ProductCardAdmin = ({ data, fetchData }) => {
-    const [editOpen, setEditOpen] = useState(false)
-    const [openDelete, setOpenDelete] = useState(false)
+    const [editOpen, setEditOpen] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
 
     const images = data?.image ? JSON.parse(data?.image) : [];
 
@@ -18,65 +22,72 @@ const ProductCardAdmin = ({ data, fetchData }) => {
         try {
             const response = await Axios({
                 ...SummaryApi.deleteProduct,
-                data: {
-                    _id: data._id
-                }
-            })
+                data: { _id: data._id }
+            });
 
-            const { data: resData } = response
+            const { data: resData } = response;
             if (resData.success) {
-                toast.success(resData.message)
+                toast.success(resData.message);
                 if (fetchData) {
-                    fetchData()
+                    fetchData();
                 }
-                setOpenDelete(false)
+                setOpenDelete(false);
             }
         } catch (error) {
-            AxiosToastError(error)
+            AxiosToastError(error);
         }
-    }
-
+    };
 
     return (
-        <div className='border mb-1 grid gap-2 min-w-24 lg:min-w-36 rounded-lg shadow-lg bg-white'>
-            <div className='min-h-20 max-h-20 lg:max-h-32 rounded flex items-center justify-center overflow-hidden'>
+        <div className="flex flex-col border p-2 sm:p-4 rounded-xl shadow bg-white select-none transition-all w-full max-w-[200px] sm:max-w-[230px] md:max-w-[250px] lg:max-w-[250px]">
+            {/* Imagen */}
+            <div className="aspect-square rounded flex items-center justify-center overflow-hidden">
                 <img
-                    src={images[1]}
-                    alt={data?.name}
-                    className='object-scale-down w-full h-full p-2'
+                    src={images[0]}
+                    alt="Product"
+                    className="w-full h-full object-contain"
                 />
             </div>
 
-            <div className='flex items-start justify-start flex-col gap-1 mx-2'>
-                <p className='text-ellipsis line-clamp-1 font-medium text-sm'>
-                    {data?.name}
-                </p>
+            {/* Nombre del producto */}
+            <div className="px-1 font-semibold text-sm sm:text-base line-clamp-1 mb-1 mt-2">
+                {data.name}
+            </div>
 
-                <p className='text-slate-400 text-base'>
-                    {data?.unit}
-                </p>
-                <div className='flex items-center justify-between w-full px-1 py-2'>
-                    <button onClick={() => setEditOpen(true)} className='border md:px-3 py-1 px-1 md:py-0  border-primary-Green text-primary-Green hover:bg-primary-Green hover:text-white rounded-lg'>
-                        <CiEdit />
-                    </button>
-                    <button onClick={() => setOpenDelete(true)} className='border md:px-3 md:py-0 py-1 px-1 border-red-600 text-red-600 hover:bg-red-600 hover:text-white rounded-lg'>
-                        <MdDelete />
-                    </button>
+            {/* Tiempo de creación */}
+            <div className='flex justify-between'>
+                <div className="text-xs text-gray-500 mb-2 flex flex-col">
+                    <span className='font-bold'>Creado</span>
+                    {moment(data.createdAt).format('DD/MM/YYYY')}
+                </div>
+                <div className="text-xs text-gray-500 mb-2 flex flex-col">
+                    <span className='font-bold'>Actualizado</span>
+                    {moment(data.updatedAt).format('DD/MM/YYYY')}
                 </div>
             </div>
-            {
-                editOpen && (
-                    <EditProductAdmin data={data} fetchData={fetchData} close={() => setEditOpen(false)} />
-                )
-            }
 
-            {
-                openDelete && (
-                    <ConfirmBox close={() => setOpenDelete(false)} cancel={() => setOpenDelete(false)} confirm={handleDelete} />
-                )
-            }
+
+            {/* Botones de acción */}
+            <div className="flex justify-between items-center rounded-lg w-full gap-2 text-lg">
+                <button onClick={() => setEditOpen(true)} className="w-full flex items-center justify-center py-1 rounded-lg text-primary-Green hover:bg-primary-Green hover:text-white">
+                    <AiOutlineEdit />
+                </button>
+                <button onClick={() => setOpenDelete(true)} className="w-full flex items-center justify-center py-1 rounded-lg text-red-600 hover:bg-red-600 hover:text-white">
+                    <RiDeleteBinLine />
+                </button>
+            </div>
+
+            {/* Editar producto */}
+            {editOpen && (
+                <EditProductAdmin data={data} fetchData={fetchData} close={() => setEditOpen(false)} />
+            )}
+
+            {/* Confirmación de eliminación */}
+            {openDelete && (
+                <ConfirmBox close={() => setOpenDelete(false)} cancel={() => setOpenDelete(false)} confirm={handleDelete} />
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default ProductCardAdmin
+export default ProductCardAdmin;

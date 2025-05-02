@@ -23,25 +23,25 @@ const paymentStatusMapping = {
         iconName: 'FaCheck',
         color: 'bg-blue-500',
         amountColor: 'text-cyan-400',
-        description: 'Payment from',
+        description: 'Pago desde',
     },
     Failed: {
         iconName: 'FaExclamationTriangle',
         color: 'bg-pink-400',
         amountColor: 'text-pink-400',
-        description: 'Payment failed from',
+        description: 'Pago fallido de',
     },
     Pending: {
         iconName: 'FaRedo',
         color: 'bg-yellow-400',
         amountColor: 'text-yellow-400',
-        description: 'Pending payment for',
+        description: 'Pendiente de pago por',
     },
     Refunded: {
         iconName: 'FaRedo',
         color: 'bg-red-400',
         amountColor: 'text-red-400',
-        description: 'Refund to',
+        description: 'Reembolso a',
     }
 };
 

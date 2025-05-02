@@ -25,6 +25,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
         discount: props.discount,
         description: props.description,
         more_details: typeof props.more_details === "string" ? JSON.parse(props.more_details) : props.more_details || {},
+        publish: props?.publish
     })
 
     const [imageLoading, setImageLoading] = useState(false)
@@ -32,6 +33,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
     const allCategory = useSelector(state => state.product.allCategory)
     const allSubCategory = useSelector(state => state.product.allSubCategory)
     const [selectCategory, setSelectCategory] = useState("")
+    const [selectPublish, setSelectPublish] = useState("")
     const [selectSubCategory, setSelectSubCategory] = useState("")
 
 
@@ -134,7 +136,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                     image: [],
                     categoryId: [],
                     subCategoryId: [],
-                    unit: "",                   
+                    unit: "",
                     price: "",
                     discount: "",
                     description: "",
@@ -248,7 +250,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                             value={selectCategory}  // El valor seleccionado se guarda en selectCategory
                                             onChange={(e) => {
                                                 const value = e.target.value;
-                                                
+
 
                                                 // Agregar solo el ID de la categoría seleccionada
                                                 setData((prev) => ({
@@ -300,7 +302,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                             value={selectSubCategory}  // El valor seleccionado se guarda en selectSubCategory
                                             onChange={(e) => {
                                                 const value = e.target.value;
-                                               
+
 
                                                 // Agregar solo el ID de la subcategoría seleccionada
                                                 setData((prev) => ({
@@ -356,7 +358,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                         className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
                                         required
                                     />
-                                </div>                               
+                                </div>
 
                                 <div className='grid gap-1'>
                                     <label htmlFor="price" className='font-medium'>Price</label>
@@ -410,7 +412,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                                         })
                                                     }}
                                                     className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                                                    
+
                                                 />
                                             </div>
                                         )
@@ -420,6 +422,30 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                 <div onClick={() => setOpenAddField(true)} className='inline-block bg-white text-primary-Green hover:bg-primary-Green py-1 
           px-3 w-36 text-center font-semibold border border-primary-Green hover:text-white rounded cursor-pointer'>
                                     Add Fields
+                                </div>
+
+                                <div className='grid gap-1'>
+                                    <label htmlFor="unit" className='font-medium'>Publicar</label>
+
+                                    <select
+                                        className='bg-blue-50 border w-full p-2 rounded-md'
+                                        value={selectCategory}  // El valor seleccionado se guarda en selectCategory
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+
+
+                                            // Agregar solo el ID de la categoría seleccionada
+                                            setData((prev) => ({
+                                                ...prev,
+                                                categoryId: [...prev.categoryId, value]  // Almacenamos solo el ID
+                                            }));
+
+                                            setSelectCategory("");  // Limpiar la selección después de agregarla
+                                        }}
+                                    >                                      
+                                        <option value="true">Si</option>
+                                        <option value="false">No</option>
+                                    </select>                                  
                                 </div>
 
                                 <button

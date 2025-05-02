@@ -80,7 +80,7 @@ const CountryDistribution = ({ data }) => {
 
     return (
         <div className="bg-blue-50 rounded-xl shadow-md p-4">
-            <div className="font-semibold text-lg mb-4">City Distribution</div>
+            <div className="font-semibold text-lg mb-4">Distribución por Ciudad</div>
             <div className="flex justify-center mb-4">
                 <canvas ref={chartRef} width="300" height="300" />
             </div>

@@ -25,12 +25,15 @@ const StatsCard = ({ data }) => {
 
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-secundary p-4 rounded-xl">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 rounded-xl">
             {data.map((stat, idx) => (
-                <div key={idx} className={`relative p-5 rounded-xl shadow-lg ${stat.color}`}>
+                <div key={idx} className={`relative p-5 rounded-xl shadow-lg ${stat.color}
+                 ${stat.title === "Clientes" ? 'bg-purple-100 text-purple-600' : ''}
+                 ${stat.title === "Productos" ? 'bg-yellow-100 text-yellow-600' : ''}
+                 `}>
                     <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center space-x-2">
-                            <div className={`rounded-full p-2 bg-white`}>  {/* Icono sobre fondo blanco para mostrar color de texto */}
+                            <div className={`rounded-full p-2 bg-white`}>
                                 {iconMapping[stat.iconName]}
                             </div>
                             <span className="text-sm text-center font-medium text-current">{stat.title}</span>

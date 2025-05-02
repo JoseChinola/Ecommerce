@@ -37,7 +37,7 @@ export async function CashOnDeleveryOrderController(req, res) {
 
         const orderId = `ORD-${nanoid(10)}`;
 
-        const payload = list_items.map(item => {            
+        const payload = list_items.map(item => {
             const productDetails = {
                 name: item.productData.name,
                 image: item.productData.image,
@@ -321,6 +321,7 @@ export async function getOrderDetailsController(req, res) {
         const orders = await orderSchema.findAll({
             where: { userId },
             order: [['createdAt', 'DESC']],
+            attributes: ['discount', 'orderId', 'paymentStatus', 'quantity', 'subTotalAmt', 'totalAmt', 'createdAt', 'product_details'],
             include: [
                 {
                     model: addressSchema,

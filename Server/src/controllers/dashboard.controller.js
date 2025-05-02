@@ -3,6 +3,7 @@ import orderSchema from '../models/order.model.js';
 import userSchema from '../models/user.model.js';
 import productSchema from '../models/product.model.js';
 import addressSchema from '../models/address.model.js';
+import categorySchema from '../models/category.model.js';
 
 
 export const getDashboardController = async (req, res) => {
@@ -50,7 +51,7 @@ export const getDashboardController = async (req, res) => {
 
         // 4) Últimos 5 pedidos (timeline)
         const timeline = await orderSchema.findAll({
-            attributes: ['orderId', 'totalAmt', 'paymentStatus', 'createdAt'],        
+            attributes: ['orderId', 'totalAmt', 'paymentStatus', 'createdAt'],
             order: [['createdAt', 'DESC']],
             raw: true
         });
@@ -87,29 +88,68 @@ export const getDashboardController = async (req, res) => {
         });
 
         // 6) Ventas semanales
-        const weeklySalesRaw = await orderSchema.findAll({
+        // Mapeo de iconos por categorías
+        const iconKeyMap = {
+            Textiles: "textiles",
+            Carpa: "carpa",
+            Mobiliario: "mobiliario",
+            Decoración: "decoracion",
+        };
+
+        // Consulta de ventas semanales por categoría
+        const weeklySalesByCategoryRaw = await orderSchema.findAll({
             attributes: [
-                [Sequelize.literal('DATEPART(WEEK, createdAt)'), 'week'],
-                [Sequelize.fn('SUM', Sequelize.col('totalAmt')), 'sales'],
+                [Sequelize.literal("DATEPART(WEEK, [order].[createdAt])"), "week"],
+                [Sequelize.col("product.categories._id"), "categoryId"],    // Incluye _id
+                [Sequelize.col("product.categories.name"), "category"],
+                [Sequelize.fn("SUM", Sequelize.col("totalAmt")), "sales"],
             ],
-            where: {
-                createdAt: {
-                    [Op.between]: [new Date('2025-01-01'), new Date('2025-12-31')]
-                }
-            },
-            group: [Sequelize.literal('DATEPART(WEEK, createdAt)')],
-            order: [[Sequelize.literal('DATEPART(WEEK, createdAt)'), 'ASC']],
+            include: [{
+                model: productSchema, as: "product", attributes: [],
+                include: [{
+                    model: categorySchema, as: "categories",
+                    attributes: ["_id", "name"],      // Incluye _id y name
+                    through: { attributes: [] },
+                    required: true
+                }]
+            }],
+            where: { createdAt: { [Op.between]: [new Date("2025-01-01"), new Date("2025-12-31")] } },
+            group: [
+                Sequelize.literal("DATEPART(WEEK, [order].[createdAt])"),
+                Sequelize.col("product.categories._id"),    // Agrupar por _id
+                Sequelize.col("product.categories.name")    // Agrupar por nombre
+            ],
+            order: [
+                [Sequelize.literal("DATEPART(WEEK, [order].[createdAt])"), "ASC"],
+                [Sequelize.col("product.categories.name"), "ASC"]
+            ],
             raw: true
         });
 
-        // Procesar ventas semanales
-        const weeklySales = {
-            labels: weeklySalesRaw.map(r => `semana ${r.week}`),
-            sales: weeklySalesRaw.map(r => parseFloat(r.sales).toFixed(2)),
-        };
+        // Procesamiento de ventas semanales por categoría
+        const weeklySalesByCategory = weeklySalesByCategoryRaw.reduce((acc, curr) => {
+            const weekLabel = `semana ${curr.week}`;
+            if (!acc[weekLabel]) acc[weekLabel] = {};
+            acc[weekLabel][curr.category] = (acc[weekLabel][curr.category] || 0) + parseFloat(curr.sales);
+            return acc;
+        }, {});
 
-
-
+        // Formatear los datos para Recharts
+        const weeklySales = Object.entries(weeklySalesByCategory).map(([week, cats]) => {
+            // Generar el objeto 'icons' para cada semana
+            const icons = Object.keys(cats).reduce((o, catName) => {
+                // Mapeo de categorías con el icono correspondiente
+                o[catName] = iconKeyMap[catName] || catName.toLowerCase(); // Usar el valor de iconKeyMap o el nombre en minúsculas
+                return o;
+            }, {});
+        
+            return {
+                name: week,
+                ...cats,  // Agregar las ventas por categoría
+                icons     // Agregar los iconos para las categorías
+            };
+        });
+        
         // Montamos la respuesta
         return res.json({
             message: "Datos del panel recuperados correctamente",

@@ -15,8 +15,6 @@ const MyOrders = () => {
         return <Navigate to="/" />;
     }
 
-
-    // Agrupar órdenes por orderId
     const groupedOrders = orders?.reduce((acc, item) => {
         const key = item.orderId;
         if (!acc[key]) {
@@ -26,7 +24,8 @@ const MyOrders = () => {
                 totalAmt: 0,
                 products: [],
                 user: item.user,
-                deliveryAddress: item.address
+                deliveryAddress: item.address,
+                date: item.date
             };
         }
         acc[key].products.push(item);
@@ -40,6 +39,7 @@ const MyOrders = () => {
         setSelectedOrder(order);
         setModalOpen(true);
     };
+
     const closeModal = () => {
         setModalOpen(false);
         setSelectedOrder(null);
@@ -47,17 +47,12 @@ const MyOrders = () => {
 
     const parseImage = (imageString) => {
         try {
-            // limpia corchetes y comillas
-            const cleaned = imageString
-                .replace(/^\[|\]$/g, '')
-                .replace(/\\"/g, '"')
-                .replace(/"/g, '');
+            const cleaned = imageString.replace(/^\[|\]$/g, '').replace(/\\"/g, '"').replace(/"/g, '');
             return cleaned.split(',');
         } catch {
             return [];
         }
     };
-
 
     if (!orders || orders.length === 0) {
         return (
@@ -68,74 +63,65 @@ const MyOrders = () => {
     }
 
     return (
-        <div className="p-6 bg-white h-full rounded-lg">
-            <h1 className="text-3xl font-bold text-primary-Green rounded-lg py-2 px-2 mb-6 bg-secundary">
-                Mis Pedidos
-            </h1>
+        <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 min-h-[77vh] rounded-lg">
+            <h1 className="text-3xl font-bold text-blue-700 mb-4 text-center">Mis Pedidos</h1>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {groupedOrdersArray.map((order, idx) => (
                     <div
                         key={order.orderId + idx}
-                        className="bg-secundary rounded-2xl shadow-md hover:shadow-lg transition-all py-2 px-3 flex flex-col"
+                        className="bg-white rounded-3xl shadow-xl border border-gray-200 hover:shadow-2xl hover:scale-105 transition duration-300 ease-in-out p-4 flex flex-col"
                     >
-                        {/* Resumen del pedido */}
-                        <div className="bg-white rounded-lg px-4 py-3 mb-3">
-                            <dl className="grid grid-cols-2 gap-2 text-gray-700">
-                                <div>
-                                    <dt className="font-semibold">Pedido ID:</dt>
-                                    <dd className="text-sm">{order.orderId}</dd>
-                                </div>
-                                <div>
-                                    <dt className="font-semibold">Estado de pago:</dt>
-                                    <dd className="text-sm">{order.paymentStatus}</dd>
-                                </div>
-                                <div>
-                                    <dt className="font-semibold">Productos:</dt>
-                                    <dd className="text-sm">{order.products.length}</dd>
-                                </div>
-                                <div>
-                                    <dt className="font-semibold">Total:</dt>
-                                    <dd className="text-sm">{DisplayPriceDOP(order.totalAmt)}</dd>
-                                </div>
-                                <div>
-                                    <dt className="font-semibold">Fecha del pedido:</dt>
-                                    <dd className="text-sm">{moment(order.date).format('DD/MM/YYYY, HH:MM A')}</dd>
-                                </div>
-                            </dl>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-lg font-semibold text-gray-800">Pedido #{order.orderId}</h2>
+                            <span
+                                className={`px-2 py-1 text-xs rounded-full text-center ${
+                                    order.paymentStatus === 'Paid'
+                                        ? 'bg-green-100 text-green-700'
+                                        : 'bg-yellow-100 text-yellow-700'
+                                }`}
+                            >
+                                {order.paymentStatus}
+                            </span>
                         </div>
 
-                        {/* Miniaturas de productos */}
-                        <div className="bg-white rounded-lg px-2 py-2 mb-3">
-                            {order.products.map((product, i) => {
+                        <div className="space-y-3 mb-4">
+                            {order.products.slice(0, 2).map((product, i) => {
                                 const images = parseImage(product.product_details?.image || '[]');
                                 const thumb = images[0] || '';
                                 return (
-                                    <div key={i} className="flex items-center gap-4 mb-3">
-                                        {thumb && (
-                                            <img
-                                                src={thumb}
-                                                alt={product.product_details?.name}
-                                                className="w-12 h-12 rounded object-contain"
-                                            />
-                                        )}
-                                        <div>
-                                            <p className="text-gray-800 font-semibold text-sm">
-                                                {product.product_details?.name}
-                                            </p>
-                                            <p className="text-gray-500 text-xs">
-                                                Cantidad: {product.quantity || 1}
-                                            </p>
-                                            <p className="text-gray-500 text-xs">
-                                                Precio unidad: {DisplayPriceDOP(product.product_details?.unit_price || 0)}
+                                    <div key={i} className="flex items-center">
+                                        <img
+                                            src={thumb}
+                                            alt={product.product_details?.name}
+                                            className="w-12 h-12 rounded-lg object-cover bg-gray-100 p-1"
+                                        />
+                                        <div className="ml-3">
+                                            <p className="text-sm font-medium">{product.product_details?.name}</p>
+                                            <p className="text-xs text-gray-500">Cantidad: {product.quantity || 1}</p>
+                                            <p className="text-xs text-gray-500">
+                                                Precio: {DisplayPriceDOP(product.product_details?.unit_price || 0)}
                                             </p>
                                         </div>
                                     </div>
                                 );
                             })}
+                            {order.products.length > 2 && (
+                                <p className="text-xs text-gray-500">+ {order.products.length - 2} productos más</p>
+                            )}
                         </div>
 
-                        {/* Botón ver detalles */}
+                        <div className="text-sm text-gray-500 mb-4">
+                            <p>
+                                <span className="font-semibold">Fecha:</span>{' '}
+                                {moment(order.date).format('DD/MM/YYYY, hh:mm A')}
+                            </p>
+                            <p>
+                                <span className="font-semibold">Total:</span>{' '}
+                                {DisplayPriceDOP(order.totalAmt)}
+                            </p>
+                        </div>
+
                         <button
                             onClick={() => openModal(order)}
                             className="mt-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
@@ -146,7 +132,6 @@ const MyOrders = () => {
                 ))}
             </div>
 
-            {/* Modal de detalles */}
             <DetailsOrder
                 isOpen={modalOpen}
                 onClose={closeModal}

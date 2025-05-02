@@ -40,9 +40,9 @@ const Dashboard = () => {
                     D’RAF SERVICES
                 </span>
             </div>
-
+  
             {/* StatsCard Section */}
-            <div className="">
+            <div className="select-none bg-secundary p-1 rounded-lg">
                 <StatsCard data={data.stats} />
             </div>
 

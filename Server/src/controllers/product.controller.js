@@ -186,11 +186,7 @@ export const getProductByCategory = async (req, res) => {
                 success: false
             });
         }
-
-        // Asegura que `id` puede ser un array o un único ID
-        // const whereCondition = id
-        //     ? Sequelize.where(Sequelize.col('categories._id'), Array.isArray(id) ? { [Op.in]: id } : id)
-        //     : null;
+ 
 
         // Recupera los productos que pertenecen a las categorías especificadas
         const products = await productSchema.findAll({
