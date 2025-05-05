@@ -21,8 +21,6 @@ const DisplayCartItem = ({ close }) => {
     const user = useSelector(state => state.user)
     const navigate = useNavigate()
 
-    console.log(cartItem)
-
     const handleClearCart = () => {
         deleteCartItems()
         setOpenDeleteConfirmBox(false)

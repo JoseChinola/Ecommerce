@@ -63,7 +63,7 @@ const MyOrders = () => {
     }
 
     return (
-        <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 min-h-[77vh] rounded-xl">
+        <div className="p-6 bg-gradient-to-r from-secundary to-blue-200 min-h-[77vh] rounded-xl">
             <h1 className="text-3xl font-bold text-blue-700 mb-4 text-center">Mis Pedidos</h1>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

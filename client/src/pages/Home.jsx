@@ -115,17 +115,18 @@ const Home = () => {
             }
           </div>
         </div>
+
+        {/* display category product */}
+
+        {categoriesWithProductsList.length > 0 && categoriesWithProductsList.map((cat, idx) => (
+          <CategoryWiseProductDisplay
+            key={cat._id + idx}
+            id={cat._id}
+            name={cat.name}
+          />
+        ))}
       </div>
 
-      {/* display category product */}
-
-      {categoriesWithProductsList.length > 0 && categoriesWithProductsList.map((cat, idx) => (
-        <CategoryWiseProductDisplay
-          key={cat._id + idx}
-          id={cat._id}
-          name={cat.name}
-        />
-      ))}
 
     </section>
   )

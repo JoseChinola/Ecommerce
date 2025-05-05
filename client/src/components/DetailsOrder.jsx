@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { IoClose } from "react-icons/io5";
 import { FaBox, FaMapMarkerAlt, FaMoneyCheckAlt } from "react-icons/fa";
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 import moment from 'moment';
+import ViewImage from './ViewImage';
 
 const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
+  const [ImageURL, setImageURL] = useState("")
   if (!isOpen) return null;
 
   const parseImage = (imageString) => {
@@ -58,6 +60,7 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
                           <img
                             key={i}
                             src={url}
+                            onClick={() => setImageURL(url)}
                             alt={`product-${i}`}
                             className="w-28 h-28 object-contain rounded-lg border"
                           />
@@ -164,6 +167,10 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
         </div>
 
       </div>
+
+      {ImageURL && (
+        <ViewImage url={ImageURL} close={() => setImageURL(false)} />
+      )}
     </div>
   );
 };
