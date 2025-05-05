@@ -10,100 +10,84 @@ import { validaURLConvert } from '../utils/validaURLConvert'
 import { useSelector } from 'react-redux'
 
 const CategoryWiseProductDisplay = ({ id, name }) => {
-    const [data, setData] = useState([])
-    const [loading, setLoading] = useState(false)
-    const containerRef = useRef()
-    const loadingCardNumer = new Array(6).fill(null)
-    const subCategoryData = useSelector(state => state.product.allSubCategory)
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
+  const containerRef = useRef()
+  const loadingCards = Array.from({ length: 6 })
 
-    const fetChCategoryWiseProduct = async () => {
-        try {
-            setLoading(true)
-            const res = await Axios({
-                ...SummaryApi.getProductByCategory,
-                data: {
-                    id: id
-                }
-            })
+  const subCategoryData = useSelector(state => state.product.allSubCategory)
 
-            const { data: resData } = res
-            if (resData.success) {
-                setData(resData.data)
-            }
-
-        } catch (error) {
-            AxiosToastError(error)
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    useEffect(() => {
-        fetChCategoryWiseProduct()
-    }, [])
-
-    const handleScrollRight = () => {
-        containerRef.current.scrollLeft += 200
-    }
-
-    const handleScrollLeft = () => {
-        containerRef.current.scrollLeft -= 200
-    }
-
-    const handleRedirectProductListpage = () => {
-        const subcategory = subCategoryData.find(sub => {
-            return sub.categoryData && sub.categoryData._id === id
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const res = await Axios({
+          ...SummaryApi.getProductByCategory,
+          data: { id }
         })
-
-        if (!subcategory) {
-            return "/"
+        if (res.data.success) {
+          setData(res.data.data)
         }
-        return `/${validaURLConvert(name)}-${id}/${validaURLConvert(subcategory.name || "default")}-${subcategory._id}`
+      } catch (err) {
+        AxiosToastError(err)
+      } finally {
+        setLoading(false)
+      }
     }
+    fetchData()
+  }, [id])
 
-    return (
-        <div className='shadow-md p-2'>
-            <div className='container mx-auto p-3 flex items-center justify-between gap-4 bg-secundary rounded-lg'>
-                <h3 className='font-bold text-primary-Green text-sm md:text-xl'>{name}</h3>
-                <Link to={handleRedirectProductListpage()}
-                    className='hover:text-green-600 font-bold text-primary-Green'>Ver todo
-                </Link>
-            </div>
-            <div className='relative flex items-center'>
-                <div className='flex items-center gap-4 md:gap-6 lg:gap-8 container mx-auto px-4 py-2 overflow-x-auto scrollbar-none scroll-smooth' ref={containerRef}>
-                    {loading &&
-                        loadingCardNumer.map((_, index) => {
-                            return (
-                                <CardLoading key={"CategorywiseProducDisplay12" + index} />
-                            )
-                        })
-                    }
-                    {
-                        data.map((p, index) => {
-                            return (
-                                <CardProduct data={p} key={p._id + "CategorywiseProducDisplay" + index} />
-                            )
-                        })
-                    }
-                </div>
-                {/* Botones de scroll */}
-                <div className='absolute top-0 bottom-0 left-0 right-0 flex justify-between items-center px-4 pointer-events-none'>
-                    <button
-                        onClick={handleScrollLeft}
-                        className='z-10 relative bg-white hover:bg-gray-200 hover:text-primary-Green shadow-lg p-2 rounded-full text-lg sm:block pointer-events-auto'
-                    >
-                        <FaAngleLeft size={20} />
-                    </button>
-                    <button
-                        onClick={handleScrollRight}
-                        className='z-10 relative bg-white hover:bg-gray-200 hover:text-primary-Green shadow-lg p-2 rounded-full text-lg sm:block pointer-events-auto'
-                    >
-                        <FaAngleRight size={20} />
-                    </button>
-                </div>
-            </div>
+  const handleRedirect = () => {
+    const sub = subCategoryData.find(s => s.categoryData && s.categoryData._id === id)
+    if (!sub) return "/"
+    return `/${validaURLConvert(name)}-${id}/${validaURLConvert(sub.name)}-${sub._id}`
+  }
+
+  const scroll = dir => {
+    containerRef.current.scrollLeft += dir * 200
+  }
+
+  return (
+    <div className='shadow-md p-4 my-6'>
+      <div className='flex justify-between items-center p-3 rounded-lg bg-secundary'>
+        <h3 className='font-bold text-primary-Green'>{name}</h3>
+        <Link to={handleRedirect()} className='font-bold hover:text-green-600 text-primary-Green'>
+          Ver todo
+        </Link>
+      </div>
+      <div className='relative mt-2'>
+        <div
+          ref={containerRef}
+          className='flex gap-2 overflow-x-auto scrollbar-none scroll-smooth p-2'
+        >
+          {loading
+            ? loadingCards.map((_, i) => (
+              <div key={i} className='flex-none w-full sm:w-auto'>
+                <CardLoading />
+              </div>
+            ))
+            : data.map(p => (
+              <div key={p._id} className='flex-none w-full sm:w-auto'>
+                <CardProduct data={p} />
+              </div>
+            ))
+          }
         </div>
-    )
+        <button
+          onClick={() => scroll(-1)}
+          className='absolute left-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow '
+        >
+          <FaAngleLeft />
+        </button>
+        <button
+          onClick={() => scroll(1)}
+          className='absolute right-0 top-1/2 -translate-y-1/2 bg-white p-2 rounded-full shadow '
+        >
+          <FaAngleRight />
+        </button>
+      </div>
+    </div>
+  )
 }
 
 export default CategoryWiseProductDisplay

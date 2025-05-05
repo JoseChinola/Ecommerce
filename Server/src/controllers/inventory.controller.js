@@ -211,6 +211,7 @@ export const updateInventoryController = async (req, res) => {
 
 
         // Registrar movimiento solo si el nuevo stock es mayor al actual
+        // Registrar movimiento solo si el nuevo stock es diferente al actual
         if (stock > stockInventory.stock) {
             // Es una entrada
             const cantidadEntrante = stock - stockInventory.stock;
@@ -220,7 +221,7 @@ export const updateInventoryController = async (req, res) => {
                 userId: req.userId,
                 quantity: cantidadEntrante,
                 type: "entrada",
-                description: "Entrada al inventario aumentada (actualización)",
+                description: `Ajuste de Entrada: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, incremento: ${cantidadEntrante}`,
                 date: new Date(),
             });
         } else if (stock < stockInventory.stock) {
@@ -231,25 +232,46 @@ export const updateInventoryController = async (req, res) => {
                 productId,
                 userId: req.userId,
                 quantity: cantidadSaliente,
-                type: "entrada",
-                description: "Ajuste del inventario disminuye (actualización)",
+                type: "salida",
+                description: `Ajuste de Salida: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, decremento: ${cantidadSaliente}`,
                 date: new Date(),
             });
         }
 
 
-        const updatedInventory = await inventorySchema.update(
-            {
-                warehouseId,
-                productId,
-                stock,
-            },
-            {
-                where: {
-                    _id,
+        let updatedInventory;
+
+        if (stock > stockInventory.stock) {
+            updatedInventory = await inventorySchema.update(
+                {
+                    warehouseId,
+                    productId,
+                    stock,
+                    description: `Ajuste de Entrada: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, incremento: ${stock - stockInventory.stock}`
                 },
-            }
-        );
+                {
+                    where: {
+                        _id,
+                    },
+                }
+            );
+
+        } else if (stock < stockInventory.stock) {
+            updatedInventory = await inventorySchema.update(
+                {
+                    warehouseId,
+                    productId,
+                    stock,
+                    description: `Ajuste de Salida: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, decremento: ${stockInventory.stock - stock}`
+                },
+                {
+                    where: {
+                        _id,
+                    },
+                }
+            );
+        }
+
 
 
 

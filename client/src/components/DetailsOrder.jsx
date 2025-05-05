@@ -16,10 +16,9 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
     }
   };
 
-  console.log(moment(orderDetails?.products?.[0]?.createdAt).format('DD/MM/YYYY, hh:mm A'))
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-y-auto p-1">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl p-5 mt-4 mb-4 space-y-4">
 
         {/* Header */}
@@ -36,7 +35,7 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
             <h3 className="text-lg font-semibold text-blue-700 flex items-center gap-2">
               <FaBox /> Productos
             </h3>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-col md:flex-row">
               <span className="font-semibold text-blue-700">Total pago:</span>
               <span>{DisplayPriceDOP(orderDetails?.totalAmt || 0)}</span>
             </div>

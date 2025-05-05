@@ -3,13 +3,11 @@ import SummaryApi from '../cammon/SummaryApi'
 import AxiosToastError from '../utils/AxiosToastError'
 import Axios from '../utils/Axios'
 import ProductCardAdmin from '../components/ProductCardAdmin'
-import { MdNavigateNext } from "react-icons/md";
-import { MdNavigateBefore } from "react-icons/md";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 import { IoSearchOutline } from "react-icons/io5";
 import NoData from '../components/NoData'
 import UploadProductPage from './UploadProductPage'
 import { FaPlus } from 'react-icons/fa6'
-
 
 const ProductAdmin = () => {
     const [productData, setProductData] = useState([])
@@ -18,7 +16,6 @@ const ProductAdmin = () => {
     const [loading, setLoading] = useState(false)
     const [totalPageCount, setTotalPageCount] = useState(1)
     const [search, setSearch] = useState("")
-
 
     const fetchProductData = async () => {
         try {
@@ -31,7 +28,6 @@ const ProductAdmin = () => {
                     search: search
                 }
             })
-
             const { data: resData } = resp
             if (resData.success && resData.data) {
                 setProductData(resData.data);
@@ -40,14 +36,12 @@ const ProductAdmin = () => {
                 setProductData([]);
                 setTotalPageCount(1);
             }
-
         } catch (error) {
             AxiosToastError(error)
         } finally {
             setLoading(false)
         }
     }
-
 
     useEffect(() => {
         fetchProductData()
@@ -66,7 +60,7 @@ const ProductAdmin = () => {
     const handleOnChange = (e) => {
         const { value } = e.target;
         setSearch(value);
-        setPage(1); // Resetear página a la 1 cada vez que se realiza una nueva búsqueda
+        setPage(1);
     }
 
     useEffect(() => {
@@ -83,18 +77,17 @@ const ProductAdmin = () => {
         }
     }, [search])
 
-
     return (
         <section className='p-3'>
             <div className='p-4 bg-white rounded-lg grid m-auto shadow-lg'>
-                <div className='py-3 px-4 w-full rounded-md font-semibold bg-secundary shadow-md flex items-center justify-between'>
+                <div className='py-3 px-4 w-full rounded-lg font-semibold bg-secundary shadow-md flex items-center justify-between flex-col md:flex-row gap-3'>
                     <h2 className='font-extrabold uppercase text-primary-Green'>Mantenimiento Productos</h2>
 
-                    <div className='h-full w-full min-w-24 max-w-52 bg-white px-3 flex items-center gap-2 py-2 rounded-md border focus-within:border-primary-Green'>
+                    <div className='h-full w-full sm:max-w-xs md:max-w-md bg-white px-3 flex items-center gap-2 py-2 rounded-md border focus-within:border-primary-Green'>
                         <IoSearchOutline size={23} />
                         <input
                             type="text"
-                            placeholder='Buscar product...'
+                            placeholder='Buscar producto...'
                             className='h-full w-full bg-transparent outline-none'
                             value={search}
                             onChange={handleOnChange}
@@ -110,14 +103,14 @@ const ProductAdmin = () => {
                 </div>
 
                 <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary'>
-                    <div className='grid grid-cols-2 w-full sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4'>
+                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
                         {loading ? (
                             Array.from({ length: 12 }).map((_, index) => (
                                 <div
                                     key={index}
-                                    className="animate-pulse bg-white shadow rounded-lg p-4 h-[200px]"
+                                    className="animate-pulse bg-white shadow-lg rounded-lg p-6"
                                 >
-                                    <div className="bg-gray-300 h-24 w-full rounded mb-4"></div>
+                                    <div className="bg-gray-300 h-32 w-full rounded mb-4"></div>
                                     <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
                                     <div className="h-4 bg-gray-300 rounded w-1/2"></div>
                                 </div>
@@ -148,7 +141,6 @@ const ProductAdmin = () => {
                             </button>
                         </div>
                     )}
-
                 </div>
             </div>
 

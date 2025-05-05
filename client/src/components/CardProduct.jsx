@@ -14,13 +14,13 @@ const CardProduct = ({ data }) => {
     const stock = data?.inventories?.[0]?.stock ?? 0;
 
     return (
-        <div className="flex flex-col border p-2 sm:p-4 rounded-xl shadow bg-white select-none transition-all w-full max-w-[200px] sm:max-w-[220px] md:max-w-[230px] lg:max-w-[250px]">
+        <div className="flex flex-col border p-2 sm:p-4 rounded-xl shadow bg-white select-none transition-all w-full max-w-[220px] sm:max-w-[220px] md:max-w-[230px] lg:max-w-[250px]">
             {/* Imagen */}
             <Link to={url} className="aspect-auto rounded flex items-center justify-center overflow-hidden">
                 <img
                     src={images[0]}
                     alt="Product"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain aspect-square"
                 />
             </Link>
 
@@ -40,7 +40,7 @@ const CardProduct = ({ data }) => {
             </div>
 
             {/* Unidad */}
-            <div className="px-2 text-xs sm:text-sm text-gray-600 mb-2">
+            <div className="px-1 text-xs sm:text-sm text-gray-600 mb-2">
                 {data.unit}
             </div>
 

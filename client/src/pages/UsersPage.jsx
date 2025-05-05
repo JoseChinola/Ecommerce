@@ -47,8 +47,7 @@ const UsersPage = () => {
 
             const { data: resData } = response;
 
-            if (resData.success) {
-                toast.success(resData.message);
+            if (resData.success) {            
                 setUsers(resData.data);
             }
         } catch (error) {

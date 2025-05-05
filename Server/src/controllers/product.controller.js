@@ -128,11 +128,13 @@ export const getProductController = async (req, res) => {
                     model: categorySchema, // Relación con categorías (múltiples categorías posibles)
                     as: 'categories',  // El alias definido en la asociación
                     through: { attributes: [] },  // Ignorar la tabla intermedia en la respuesta
+                    attributes: ['_id', 'name']
                 },
                 {
                     model: subCategorySchema, // Relación con subcategorías (múltiples subcategorías posibles)
                     as: 'subcategories',  // El alias definido en la asociación
                     through: { attributes: [] },  // Ignorar la tabla intermedia en la respuesta
+                    attributes: ['_id', 'name']
                 },
                 {
                     model: inventorySchema, // Relación con inventarios
@@ -191,7 +193,7 @@ export const getProductByCategory = async (req, res) => {
 
         // Recupera los productos que pertenecen a las categorías especificadas
         const products = await productSchema.findAll({
-            //where: whereCondition || {},
+            where: { publish: true },
             limit: 15,
             include: [
                 {
@@ -254,6 +256,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
         // Consulta
         const [data, dataCount] = await Promise.all([
             productSchema.findAll({
+                where: { publish: true },
                 offset,
                 limit,
                 order: [['createdAt', 'DESC']],
@@ -396,9 +399,8 @@ export const getProductDetails = async (req, res) => {
 //update product
 export const updateProductDetails = async (req, res) => {
     try {
-        const { _id, name, image, categoryId, subCategoryId, unit, price, discount, description, more_details } = req.body;
+        const { _id, name, image, categoryId, subCategoryId, unit, price, discount, description, publish, more_details } = req.body;
 
-        // Verificar si se proporcionó el _id
         if (!_id) {
             return res.status(400).json({
                 message: "Provide product _id",
@@ -407,7 +409,6 @@ export const updateProductDetails = async (req, res) => {
             });
         }
 
-        // Verificar si al menos uno de los valores obligatorios está presente
         if (!name && !image && !categoryId && !subCategoryId && !unit && !price && !discount && !description) {
             return res.status(400).json({
                 message: "At least one field must be provided to update",
@@ -416,44 +417,45 @@ export const updateProductDetails = async (req, res) => {
             });
         }
 
-        // Validación de las imágenes
         const imageToSave = Array.isArray(image) && image.length > 0 ? JSON.stringify(image) : "[]";
 
-        // Validación de categoría y subcategoría
-        const category = categoryId ? categoryId[0]?._id : null;
-        const subCategory = subCategoryId ? subCategoryId[0]?._id : null;
-
-        // Actualización del producto en la base de datos
-        const updatedProduct = await productSchema.update(
-            {
-                name: name || undefined,  // Solo actualiza si el valor no es null o undefined
-                image: imageToSave,
-                categoryId: category || undefined, // Solo actualiza si hay categoría
-                subCategoryId: subCategory || undefined, // Solo actualiza si hay subcategoría
-                unit: unit || undefined,
-                price: price || undefined,
-                discount: discount || undefined,
-                description: description || undefined,
-                more_details: more_details || undefined
-            },
-            {
-                where: { _id: _id },
-                returning: true,  // Devuelve el objeto actualizado
-            }
-        );
-
-        // Verificar si se realizó la actualización
-        if (updatedProduct[0] === 0) {
+        // Buscamos el producto primero
+        const product = await productSchema.findByPk(_id);
+        if (!product) {
             return res.status(404).json({
-                message: "Product not found or no changes made",
+                message: "Product not found",
                 error: true,
                 success: false
             });
         }
 
+        // Actualizamos solo los campos enviados
+        await product.update({
+            name: name || product.name,
+            image: image ? imageToSave : product.image,
+            unit: unit || product.unit,
+            price: price || product.price,
+            discount: discount || product.discount,
+            description: description || product.description,
+            more_details: more_details || product.more_details,
+            publish: publish ?? product.publish
+        });
+
+        // Actualizamos las categorías si se enviaron
+        if (categoryId && categoryId.length > 0) {
+            const categories = categoryId.map(cat => (typeof cat === 'object' ? cat._id : cat));
+            await product.setCategories(categories);
+        }
+
+        // Actualizamos las subcategorías si se enviaron
+        if (subCategoryId && subCategoryId.length > 0) {
+            const subCategories = subCategoryId.map(sub => (typeof sub === 'object' ? sub._id : sub));
+            await product.setSubcategories(subCategories);
+        }
+
         return res.json({
-            message: "Product updated successfully",
-            data: updatedProduct[1][0],  // El primer elemento contiene el producto actualizado
+            message: "Producto Actualizado",
+            data: product,
             error: false,
             success: true
         });
@@ -467,6 +469,7 @@ export const updateProductDetails = async (req, res) => {
         });
     }
 };
+
 
 //delete product
 export const deleteProductDetails = async (req, res) => {
@@ -497,7 +500,7 @@ export const deleteProductDetails = async (req, res) => {
         await product.destroy();
 
         return res.json({
-            message: "Product deleted successfully",
+            message: "Producto eliminado",
             error: false,
             success: true
         });
