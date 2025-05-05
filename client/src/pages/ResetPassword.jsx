@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import logomv from '../assets/shopmix.png'
+import logomv from '../assets/logo.png'
 import { FaArrowLeft } from "react-icons/fa";
 import AxiosToastError from '../utils/AxiosToastError';
 import SummaryApi from '../cammon/SummaryApi';

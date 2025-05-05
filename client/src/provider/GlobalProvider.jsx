@@ -10,6 +10,8 @@ import { GlobalContext } from './useGlobalContext'
 import { handleAddAddress } from "../store/addressSlice";
 import { handleInventory } from "../store/inventorySlice";
 import { handleInventoryMovements } from "../store/inventoryMovements";
+import { setOrder } from "../store/orderSlice";
+
 
 const GlobalProvider = ({ children }) => {
     const dispatch = useDispatch()
@@ -32,7 +34,7 @@ const GlobalProvider = ({ children }) => {
                 dispatch(handleAddItemCart(resData.data))
             }
         } catch (error) {
-            console.log(error)
+            AxiosToastError(error)
         }
     }
 
@@ -97,6 +99,28 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+    useEffect(() => {
+        const qty = cartItem.reduce((preve, curr) => {
+            return preve + curr.quantity
+        }, 0)
+
+        setTotalQty(qty)
+
+        const tPrice = cartItem.reduce((preve, curr) => {
+            return preve + (pricewithDiscount(curr.productData.price, curr.productData.discount) * curr.quantity)
+        }, 0)
+
+        setTotalPrice(tPrice)
+
+        const notDiscountPrice = cartItem.reduce((preve, curr) => {
+            return preve + (curr.productData.price * curr.quantity)
+        }, 0)
+
+        setNotDiscountTotalPrice(notDiscountPrice)
+
+    }, [cartItem])
+
+
     const handleLogout = () => {
         localStorage.removeItem("accessToken")
         localStorage.removeItem("refreshToken")
@@ -148,27 +172,20 @@ const GlobalProvider = ({ children }) => {
     };
 
 
+    const fetchOrderItems = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getOrderItems
+            });
+            const { data: resData } = response;
+            if (resData.success) {
+                dispatch(setOrder(resData.data));
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    }
 
-    useEffect(() => {
-        const qty = cartItem.reduce((preve, curr) => {
-            return preve + curr.quantity
-        }, 0)
-
-        setTotalQty(qty)
-
-        const tPrice = cartItem.reduce((preve, curr) => {
-            return preve + (pricewithDiscount(curr.productData.price, curr.productData.discount) * curr.quantity)
-        }, 0)
-
-        setTotalPrice(tPrice)
-
-        const notDiscountPrice = cartItem.reduce((preve, curr) => {
-            return preve + (curr.productData.price * curr.quantity)
-        }, 0)
-
-        setNotDiscountTotalPrice(notDiscountPrice)
-
-    }, [cartItem])
 
     useEffect(() => {
         if (user?._id) {
@@ -177,6 +194,7 @@ const GlobalProvider = ({ children }) => {
             handleLogout()
             fetchInventario()
             fetchMovements()
+            fetchOrderItems()
         }
 
     }, [user])
@@ -193,7 +211,7 @@ const GlobalProvider = ({ children }) => {
             totalQty,
             notDiscountTotalPrice,
             fetchInventario,
-            fetchMovements
+            fetchMovements,
         }}>
             {children}
         </GlobalContext.Provider>

@@ -13,14 +13,13 @@ import { loadStripe } from '@stripe/stripe-js'
 
 
 const CheckoutPage = () => {
-    const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchMovements } = useGlobalContext()
+    const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchMovements, fetchAddress, fetchOrderItems } = useGlobalContext()
     const [openAddress, setOpenAddress] = useState(false)
     const addressList = useSelector(state => state.addresses.addressList)
     const cartItemsList = useSelector(state => state.cartItem.cart)
     const user = useSelector(state => state?.user)
     const [selectAddress, setSelectAddress] = useState(0)
     const navigate = useNavigate()
-
 
 
     const handleCashOndelivery = async () => {
@@ -30,7 +29,8 @@ const CheckoutPage = () => {
                 data: {
                     list_items: cartItemsList,
                     addressId: addressList[selectAddress]?._id,
-                    subTotalAmt: totalPrice,
+                    subTotalAmt: notDiscountTotalPrice,
+                    discount: notDiscountTotalPrice - totalPrice,
                     totalAmt: totalPrice,
                 }
             })
@@ -44,6 +44,13 @@ const CheckoutPage = () => {
                 if (fetchMovements) {
                     fetchMovements()
                 }
+                if (fetchAddress) {
+                    fetchAddress()
+                }
+                if (fetchOrderItems) {
+                    fetchOrderItems()
+                }
+                
                 navigate('/success', {
                     state: {
                         text: "Order"
@@ -68,7 +75,8 @@ const CheckoutPage = () => {
                 data: {
                     list_items: cartItemsList,
                     addressId: addressList[selectAddress]?._id,
-                    subTotalAmt: totalPrice,
+                    subTotalAmt: notDiscountTotalPrice,
+                    discount: notDiscountTotalPrice - totalPrice,
                     totalAmt: totalPrice,
                 }
             })
@@ -145,7 +153,6 @@ const CheckoutPage = () => {
                 </div>
 
                 {/* Summary Section */}
-                {/* Summary Section */}
                 <div className="w-full md:max-w-sm h-full py-4 px-3 rounded-xl border bg-[#aeddd2]">
                     <h3 className="text-lg font-semibold mb-2 text-primary-Green">Resumen</h3>
                     <div className="p-3 rounded-lg flex flex-col gap-1.5 border bg-white">
@@ -178,14 +185,27 @@ const CheckoutPage = () => {
                     </div>
 
                     <div className="w-full text-sm md:text-base flex flex-col sm:justify-between items-center gap-3 my-2 p-3 rounded-lg bg-white">
-                        <button onClick={handleOnlinePayment} className="py-2 px-4 w-full bg-primary-Green hover:bg-green-600 text-white font-semibold rounded-md">
+                        <button
+                            onClick={handleOnlinePayment}
+                            disabled={cartItemsList.length === 0 || addressList.length === 0}
+                            className={`py-2 px-4 w-full bg-primary-Green hover:bg-green-600 text-white font-semibold rounded-md 
+    ${cartItemsList.length === 0 || addressList.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+  `}
+                        >
                             Pago Online
                         </button>
-                        <button onClick={handleCashOndelivery} className="py-2 px-4 w-full border-2 capitalize border-primary-Green hover:bg-green-600 text-green-500 font-semibold rounded-md hover:text-white">
+
+                        <button
+                            onClick={handleCashOndelivery}
+                            disabled={cartItemsList.length === 0 || addressList.length === 0}
+                            className={`py-2 px-4 w-full border-2 capitalize border-primary-Green hover:bg-green-600 text-green-500 font-semibold rounded-md hover:text-white 
+    ${cartItemsList.length === 0 || addressList.length === 0 ? 'opacity-50 cursor-not-allowed' : ''}
+  `}
+                        >
                             Pago contra entrega
                         </button>
                     </div>
-                </div>  
+                </div>
             </div>
 
             {openAddress && <AddAddress close={() => setOpenAddress(false)} />}

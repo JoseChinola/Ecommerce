@@ -1,12 +1,15 @@
 import nodemailer from 'nodemailer'
-import { EMAIL_USER } from '../config.js';
+import { EMAIL_PASS, EMAIL_USER } from '../config.js';
 
 // Configurar el transporte de correo
 const transporter = nodemailer.createTransport({
-    service: "Gmail",
+    service: 'Gmail',
+    pool: true, // 🔥 Mantener conexiones abiertas
+    maxConnections: 5, // 🔥 Hasta 5 conexiones simultáneas
+    maxMessages: 100,  // 🔥 Hasta 100 emails antes de cerrar la conexión
     auth: {
         user: EMAIL_USER,
-        pass: "xnti osob kciz kccy",
+        pass: EMAIL_PASS,
     },
     tls: {
         rejectUnauthorized: false,
@@ -17,7 +20,7 @@ const transporter = nodemailer.createTransport({
 const sendEmail = async ({ sendTo, subject, html }) => {
     try {
         const response = await transporter.sendMail({
-            from: '"ShopMix" <ttestmateo@gmail.com>',
+            from: '"D’RAF SERVICES" <ttestmateo@gmail.com>',
             to: sendTo,
             subject: subject,
             html: html,

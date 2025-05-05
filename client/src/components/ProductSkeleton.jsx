@@ -2,7 +2,7 @@ import React from 'react'
 
 const ProductSkeleton = () => {
     return (
-        <section className="container mx-auto p-4 grid lg:grid-cols-2 animate-pulse">
+        <section className="container mx-auto p-4 grid lg:grid-cols-2 animate-pulse bg-white rounded-lg">
             {/* Imagen principal */}
             <div>
                 <div className="bg-gray-300 lg:min-h-[50vh] lg:max-h-[50vh] rounded-md min-h-56 max-h-56 w-full"></div>

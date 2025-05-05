@@ -1,29 +1,49 @@
 import React from 'react';
 import rate from '../assets/rate.svg';
 import { FaDollarSign, FaShoppingCart, FaUsers, FaBoxOpen } from 'react-icons/fa';
+import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 
-const stats = [
-    { title: 'Ventas Totales', value: '$10,200', icon: <FaDollarSign />, color: 'bg-green-100 text-green-600' },
-    { title: 'Pedidos', value: '240', icon: <FaShoppingCart />, color: 'bg-blue-100 text-blue-600' },
-    { title: 'Clientes', value: '180', icon: <FaUsers />, color: 'bg-purple-100 text-purple-600' },
-    { title: 'Productos', value: '320', icon: <FaBoxOpen />, color: 'bg-yellow-100 text-yellow-600' },
-];
+// Mapeo de iconos
+const iconMapping = {
+    FaDollarSign: <FaDollarSign />,
+    FaShoppingCart: <FaShoppingCart />,
+    FaUsers: <FaUsers />,
+    FaBoxOpen: <FaBoxOpen />
+};
 
-const StatsCard = () => {
+const StatsCard = ({ data }) => {
+    // Si 'data' no es un arreglo, mostramos un esqueleto
+    if (!data || !Array.isArray(data)) {
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-blue-50 p-4 rounded-xl animate-pulse">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                    <div key={idx} className="relative p-5 rounded-xl shadow-lg bg-gray-200 h-32"></div>
+                ))}
+            </div>
+        );
+    }
+
+
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 bg-blue-50 p-4 rounded-xl">
-            {stats.map((stat, idx) => (
-                <div key={idx} className={`relative p-5 rounded-xl shadow-lg ${stat.color}`}>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 rounded-xl">
+            {data.map((stat, idx) => (
+                <div key={idx} className={`relative p-5 rounded-xl shadow-lg ${stat.color}
+                 ${stat.title === "Clientes" ? 'bg-purple-100 text-purple-600' : ''}
+                 ${stat.title === "Productos" ? 'bg-yellow-100 text-yellow-600' : ''}
+                 `}>
                     <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center space-x-2">
-                            <div className={`rounded-full ${stat.color}`}>
-                                {stat.icon}
+                            <div className={`rounded-full p-2 bg-white`}>
+                                {iconMapping[stat.iconName]}
                             </div>
-                            <span className="text-sm text-center font-medium">{stat.title}</span>
+                            <span className="text-sm text-center font-medium text-current">{stat.title}</span>
                         </div>
-                        <div className="text-3xl font-semibold">{stat.value}</div>
+                        <div className="text-lg font-semibold text-current">{stat.title === "Ventas"
+                            ? DisplayPriceDOP(stat.value)
+                            : stat.value}
+                        </div>
                     </div>
-                    {/* Aquí puedes agregar algún contenido adicional si lo deseas */}
+
                     <img
                         className="absolute bottom-4 right-4 opacity-20"
                         src={rate}

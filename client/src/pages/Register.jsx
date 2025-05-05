@@ -5,7 +5,6 @@ import { MdOutlineMail } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { FaRegEye } from "react-icons/fa6";
-import { FaArrowLeft } from "react-icons/fa";
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
@@ -40,44 +39,30 @@ const Register = () => {
 
     const valideValue = Object.values(data).every(el => el)
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-
-        if (data.password !== data.confirmPassword) {
-            toast.error(
-                "Password and confirm password must be same"
-            )
-
-            return
-        }
-
-        try {
-            const res = await Axios({
-                ...SummaryApi.register,
-                data: data
-            })
-
-            if (res.data.error) {
-                toast.error(res.data.message)
-            }
-
-            if (res.data.success) {
-                toast.success(res.data.message)
-                setData({
-                    name: "",
-                    email: "",
-                    password: "",
-                    confirmPassword: ""
-                })
-                navigate("/login")
-            }
-
-        } catch (error) {
-            AxiosToastError(error)
-        }
-
-
+    const handleSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+        toast.error("Password and confirm password must be same");
+        return;
     }
+
+    try {
+        const res = await Axios({
+            ...SummaryApi.register,
+            data: data
+        });
+
+        if (res.data.error) {
+            toast.error(res.data.message);
+        }
+
+        if (res.data.success) {
+            toast.success(res.data.message);
+            navigate("/verifyEmail-register");
+        }
+    } catch (error) {
+        AxiosToastError(error);
+    }
+};
 
     const redirectToHomePage = () => {
         navigate("/")
@@ -85,26 +70,20 @@ const Register = () => {
 
     return (
         <section className='w-full container mx-auto px-4'>
-            <div className='bg-white w-full max-w-lg mx-auto rounded p-6'>
-              
+            <div className='bg-white w-full max-w-lg mx-auto rounded p-4'>
 
-                <div onClick={redirectToHomePage} className='flex justify-center items-center flex-col cursor-pointer'>
-                    <img
-                        src={logomv}
-                        width={90}
-                        height={40}
-                        alt='logo'
-                        className='lg:block'
-                    />
-                    <p className='text-center text-base md:text-xl flex items-center gap-1 flex-col'>
-                        Bienvenido
-                        <span className='text-primary-green font-bold text-sm md:text-2xl'>
-                            D’RAF SERVICES
+                <div onClick={redirectToHomePage} className='flex justify-center items-center flex-row cursor-pointer'>
+                    <h2 to={"/"} className="flex flex-col items-center gap-1 justify-center focus:ring-blue-500 font-semibold text-gray-900 w-full">
+                        <img className="w-20 h-20" src={logomv} alt="logo" />
+                        <span className="text-gray-500 font-bold text-sm md:text-xl flex items-center flex-col gap-2">
+                            Bienvenido <Link to={"/"} className="text-primary-Green font-bold text-sm md:text-xl">D’RAF SERVICES</Link>
                         </span>
-                    </p>
+                    </h2>
                 </div>
 
-                <form action="" className='grid gap-2 mt-2' onSubmit={handleSubmit}>
+                <form action="" className='flex flex-col gap-3' onSubmit={handleSubmit}>
+
+
                     {/* name input */}
                     <div className='grid gap-1'>
                         <label htmlFor="name" className='font-semibold'>Name: </label>
@@ -142,64 +121,65 @@ const Register = () => {
                         </div>
 
                     </div>
+                    <div className='grid grid-cols-2 gap-5'>
+                        {/* password input */}
+                        <div className='grid gap-1'>
+                            <label htmlFor="password" className='font-semibold'>Password: </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    dir='password'
+                                    autoFocus
+                                    className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                    name='password'
+                                    value={data.password}
+                                    onChange={handleChange}
+                                    placeholder='Enter your password'
+                                />
+                                <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                <div onClick={() => setShowPassword(preve => !preve)} className='cursor-pointer'>
+                                    {
+                                        showPassword ? (
+                                            <FaRegEye className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                        ) : (
+                                            <FaRegEyeSlash className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                        )
+                                    }
+                                </div>
 
-                    {/* password input */}
-                    <div className='grid gap-1'>
-                        <label htmlFor="password" className='font-semibold'>Password: </label>
-                        <div className="relative">
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                dir='password'
-                                autoFocus
-                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
-                                name='password'
-                                value={data.password}
-                                onChange={handleChange}
-                                placeholder='Enter your password'
-                            />
-                            <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
-                            <div onClick={() => setShowPassword(preve => !preve)} className='cursor-pointer'>
-                                {
-                                    showPassword ? (
-                                        <FaRegEye className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
-                                    ) : (
-                                        <FaRegEyeSlash className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
-                                    )
-                                }
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {/* Confirm Password input */}
-                    <div className='grid gap-1'>
-                        <label htmlFor="confirmPassword" className='font-semibold'>Confirm Password: </label>
-                        <div className="relative">
-                            <input
-                                type={showPasswordConfirm ? "text" : "password"}
-                                id='confirmPassword'
-                                autoFocus
-                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
-                                name='confirmPassword'
-                                value={data.confirmPassword}
-                                onChange={handleChange}
-                                placeholder='Enter your password'
-                            />
-                            <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
-                            <div onClick={() => setShowPasswordConfirm(preve => !preve)} className='cursor-pointer'>
-                                {
-                                    showPasswordConfirm ? (
-                                        <FaRegEye className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
-                                    ) : (
-                                        <FaRegEyeSlash className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
-                                    )
-                                }
                             </div>
                         </div>
 
-                    </div>
+                        {/* Confirm Password input */}
+                        <div className='grid gap-1'>
+                            <label htmlFor="confirmPassword" className='font-semibold'>Confirm Password: </label>
+                            <div className="relative">
+                                <input
+                                    type={showPasswordConfirm ? "text" : "password"}
+                                    id='confirmPassword'
+                                    autoFocus
+                                    className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                    name='confirmPassword'
+                                    value={data.confirmPassword}
+                                    onChange={handleChange}
+                                    placeholder='Enter your password'
+                                />
+                                <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                <div onClick={() => setShowPasswordConfirm(preve => !preve)} className='cursor-pointer'>
+                                    {
+                                        showPasswordConfirm ? (
+                                            <FaRegEye className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                        ) : (
+                                            <FaRegEyeSlash className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                                        )
+                                    }
+                                </div>
+                            </div>
 
-                    <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"}  text-white py-2 rounded font-semibold mt-1 tracking-wide`}>
+                        </div>
+
+                    </div>
+                    <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"}  text-white py-1 rounded font-semibold mt-1 tracking-wide w-full`}>
                         Register
                     </button>
                 </form>

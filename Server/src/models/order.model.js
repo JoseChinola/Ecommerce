@@ -1,6 +1,7 @@
-
 import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
+import productSchema from "./product.model.js";
+import addressSchema from "./address.model.js";
 
 
 const orderSchema = sequelize.define(
@@ -14,7 +15,6 @@ const orderSchema = sequelize.define(
     orderId: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     userId: {
       type: DataTypes.UUID,
@@ -27,13 +27,24 @@ const orderSchema = sequelize.define(
     productId: {
       type: DataTypes.UUID,
       references: {
-        model: "product",  // Nombre de la tabla relacionada
-        key: "_id",        // Clave primaria en la tabla relacionada
+        model: "product",
+        key: "_id",
       },
     },
+    quantity: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     product_details: {
-      type: DataTypes.TEXT,  // Usamos TEXT en lugar de JSON
-      defaultValue: '{}',    // Almacenamos el JSON como cadena de texto
+      type: DataTypes.TEXT,
+      defaultValue: '{}',
+      get() {
+        const rawValue = this.getDataValue('product_details');
+        return JSON.parse(rawValue);
+      },
+      set(value) {
+        this.setDataValue('product_details', JSON.stringify(value));
+      }
     },
     paymentId: {
       type: DataTypes.STRING,
@@ -54,6 +65,11 @@ const orderSchema = sequelize.define(
       type: DataTypes.FLOAT,
       defaultValue: 0,
     },
+    discount: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+      allowNull: false,  // No permite que sea null
+    },
     totalAmt: {
       type: DataTypes.FLOAT,
       defaultValue: 0,
@@ -69,6 +85,22 @@ const orderSchema = sequelize.define(
   }
 );
 
-// await orderSchema.sync({ force: true });
+orderSchema.belongsTo(productSchema, {
+  foreignKey: 'productId',
+  targetKey: '_id',
+  as: 'product'
+});
+
+orderSchema.belongsTo(addressSchema, {
+  foreignKey: 'deliveryAddress',
+  targetKey: '_id',
+  as: 'address'
+});
+
+// orderSchema.belongsTo(userSchema, {
+//   foreignKey: 'userId',
+//   targetKey: '_id',
+//   as: 'users'
+// });
 
 export default orderSchema

@@ -70,7 +70,7 @@ function App() {
 
         <main className={`flex-1 min-h-screen overflow-x-hidden overflow-y-hidden transition-all duration-300 ${isUserLoggedIn ? 'md:ml-56' : ''}`}>
           <Header toggleAside={() => setIsAsideOpen(!isAsideOpen)} />
-          <div className="p-4">
+          <div className="p-3">
             <Outlet />
           </div>
           <Footer />

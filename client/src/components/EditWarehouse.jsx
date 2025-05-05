@@ -13,6 +13,7 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
         defaultValues: {
             _id: data._id,
             name: data.name,
+            address: data.address,
             description: data.description
         }
     })
@@ -28,6 +29,7 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                 data: {
                     _id: data._id,
                     name: data.name,
+                    address: data.address,
                     description: data.description
                 }
             })
@@ -51,8 +53,8 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
     return (
         <section className='bg-black fixed top-0 bottom-0 left-0 right-0 z-50 bg-opacity-70 flex items-center h-screen overflow-auto sm:p-4 p-2'>
             <div className='bg-white p-4 w-full sm:max-w-2xl mx-auto rounded-md'>
-                <div className='py-3 flex justify-between items-center border bg-blue-50 rounded-md px-2'>
-                    <h2 className='font-extrabold italic sm:text-lg sm:uppercase'>Editar Almacen</h2>
+                <div className='py-3 flex justify-between items-center border bg-secundary rounded-md px-2'>
+                    <h2 className='font-extrabold text-primary-Green italic sm:text-lg sm:uppercase'>Editar Almacen</h2>
                     <button onClick={close} className="w-fit ml-auto hover:text-red-600 hidden sm:block">
                         <IoClose size={30} />
                     </button>
@@ -64,10 +66,10 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                     </div>
                 )}
 
-                <form className='mt-4 flex flex-col gap-4 border p-3 rounded-lg ' onSubmit={handleSubmit(onSubmit)}>
+                <form className='mt-4 flex flex-col gap-4 border p-3 rounded-lg bg-secundary ' onSubmit={handleSubmit(onSubmit)}>
                     <div className='grid sm:grid-cols-1 gap-4'>
                         <div className='grid gap-1 relative'>
-                            <label htmlFor="name" className='font-bold'>Nombre Almacén:</label>
+                            <label htmlFor="name" className='font-bold text-primary-Green'>Nombre Almacén:</label>
                             <input
                                 type="text"
                                 id='name'
@@ -78,9 +80,21 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                         </div>
 
 
+                        <div className='grid gap-1 relative'>
+                            <label htmlFor="address">Dirrecion Almacén:</label>
+                            <input
+                                type="text"
+                                id='address'
+                                placeholder='nombre de almacen'
+                                className='bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer'
+                                {...register('address', { required: true })}
+                            />
+                            <FaLocationArrow className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                        </div>
+
 
                         <div className='grid gap-1'>
-                            <label htmlFor="description" className='font-bold'>Description</label>
+                            <label htmlFor="description" className='font-bold text-primary-Green'>Description</label>
 
                             <textarea type="text"
                                 id='description'

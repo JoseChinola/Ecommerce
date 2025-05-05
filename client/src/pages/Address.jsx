@@ -10,16 +10,20 @@ import AxiosToastError from '../utils/AxiosToastError';
 import toast from 'react-hot-toast';
 import { useGlobalContext } from '../provider/useGlobalContext';
 import ConfirmBox from '../components/ConfirmBox';
+import { Navigate } from 'react-router-dom';
 
 
 const Address = () => {
     const addressList = useSelector(state => state.addresses.addressList)
+    const user = useSelector(state => state.user);
     const [openAddress, setOpenAddress] = useState(false)
     const [openEdit, setOpenEdit] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
     const [editData, setEditData] = useState({})
     const [deleteAddress, setDeleteAddress] = useState({ _id: '' });
     const { fetchAddress } = useGlobalContext()
+
+    
 
     const handleDisableAddress = async () => {
         try {
@@ -30,6 +34,7 @@ const Address = () => {
                 }
             })
             const { data: resData } = response
+            
             if (resData.success) {
                 toast.success(resData.message)
                 if (fetchAddress) {
@@ -42,21 +47,25 @@ const Address = () => {
         }
     }
 
+    if (!user || !user._id) {
+        return <Navigate to="/" />;
+    }
+
     return (
         <div className='grid gap-4 p-3'>
             <div className='bg-white shadow-lg px-4 my-2 py-3  rounded-lg'>
-                <h2 className='font-semibold'>Address</h2>
+                <h2 className='font-semibold'>Dirección</h2>
             </div>
             {/* Section Address */}
             <div className="w-full bg-blue-50 p-4 rounded-xl border">
                 <div className="flex justify-between items-center w-full mb-4">
-                    <h3 className="text-2xl font-bold px-2 capitalize">Your addresses</h3>
+                    <h3 className="text-2xl font-bold px-2 capitalize">Tus Dirreciones</h3>
                     <div
                         onClick={() => setOpenAddress(true)}
                         className="flex items-center gap-2 bg-white rounded-lg border-2 border-dashed border-blue-300 p-2 hover:bg-blue-100 transition-colors cursor-pointer"
                     >
                         <FaPlus className="text-blue-600" />
-                        <span className="text-blue-600 font-medium">Add address</span>
+                        <span className="text-blue-600 font-medium">Añadir Dirección</span>
                     </div>
                 </div>
 

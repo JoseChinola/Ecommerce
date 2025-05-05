@@ -9,6 +9,14 @@ const SummaryApi = {
         url: "/api/user/login",
         method: "post"
     },
+    verify_email: {
+        url: "/api/user/verify-email",
+        method: "post"
+    },
+    resend_verification_email: {
+        url: "/api/user/resend-verification-email",
+        method: "post"
+    },
     forgotPassword: {
         url: "/api/user/forgot-password",
         method: "put"
@@ -33,6 +41,10 @@ const SummaryApi = {
         url: "/api/user/user-details",
         method: "get"
     },
+    getsAllUsers: {
+        url: "/api/user/users-get",
+        method: "get"
+    },
     logout: {
         url: "/api/user/logout",
         method: "get"
@@ -43,6 +55,10 @@ const SummaryApi = {
     },
     updateUserDetails: {
         url: "/api/user/update-user",
+        method: "put"
+    },
+    updateAdminUserDetails: {
+        url: "/api/user/update-user-admin",
         method: "put"
     },
     addCategory: {
@@ -157,6 +173,10 @@ const SummaryApi = {
         url: "/api/order/checkout",
         method: "post"
     },
+    getOrderItems: {
+        url: "/api/order/order-list",
+        method: "get"
+    },
     createStore: {
         url: "/api/store/create",
         method: "post"
@@ -190,6 +210,11 @@ const SummaryApi = {
         url: "/api/inventory-movement/gets-movement",
         method: "get"
     },
+    getDashboard: {
+        url: "/api/dashboard",
+        method: "get"
+    },
+
 }
 
 

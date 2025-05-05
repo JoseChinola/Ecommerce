@@ -6,7 +6,7 @@ import { addInventoryController, getInventoryController, updateInventoryControll
 
 const inventoryRouter = Router()
 inventoryRouter.post("/create", auth, admin, addInventoryController)
-inventoryRouter.get("/get", auth, admin, getInventoryController)
+inventoryRouter.get("/get", auth, getInventoryController)
 inventoryRouter.put("/update", auth, admin, updateInventoryController)
 
 export default inventoryRouter

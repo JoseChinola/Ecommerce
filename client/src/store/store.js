@@ -5,6 +5,7 @@ import cartReducer from './cartProduct'
 import addressReducer from './addressSlice'
 import inventoryReducer from './inventorySlice'
 import inventoryMovementsReducer from './inventoryMovements'
+import orderReducer from './orderSlice'
 
 export const store = configureStore({
     reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
         addresses: addressReducer,
         inventory: inventoryReducer,
         inventoryMovements: inventoryMovementsReducer,
+        orders: orderReducer,
     },
 })
 

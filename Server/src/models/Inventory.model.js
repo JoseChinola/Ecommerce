@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
 import warehouseSchema from "./warehouse.model.js";
+import productSchema from "./product.model.js";
 
 
 const inventorySchema = sequelize.define('inventory', {
@@ -61,6 +62,7 @@ inventorySchema.belongsTo(warehouseSchema, {
     foreignKey: 'warehouseId',
     as: 'warehouse'
 });
+
 
 
 export default inventorySchema;

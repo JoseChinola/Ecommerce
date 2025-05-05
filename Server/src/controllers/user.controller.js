@@ -47,14 +47,16 @@ export async function registerUserController(req, res) {
             verifyEmail: false
         });
 
+
+
         // URL de verificación de email
-        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${newUser.id}`;
+        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${newUser._id}`;
 
         try {
             // Enviar email de verificación
-            await sendEmail({
+            const verify = await sendEmail({
                 sendTo: email,
-                subject: "Verify your email - ShopMix",
+                subject: "Verify your email - D’RAF SERVICES",
                 html: verifyEmailTemplate({
                     name,
                     url: verifyEmailUrl
@@ -69,8 +71,9 @@ export async function registerUserController(req, res) {
             });
         }
 
+
         return res.status(201).json({
-            message: "User registered successfully. Check your email to verify your account.",
+            message: "Usuario registrado correctamente. verificar su correo.",
             error: false,
             success: true,
             data: newUser
@@ -93,7 +96,7 @@ export async function verifyEmailController(req, res) {
         // Verificar si se envió el código
         if (!code) {
             return res.status(400).json({
-                message: "Verification code is required",
+                message: "Se requiere código de verificación",
                 error: true,
                 success: false
             });
@@ -104,17 +107,25 @@ export async function verifyEmailController(req, res) {
 
         if (!user) {
             return res.status(400).json({
-                message: "Invalid verification code",
+                message: "Código de verificación no válido",
+                error: true,
+                success: false
+            });
+        }
+
+        if (user.verify_email === true) {
+            return res.status(400).json({
+                message: "Correo verificado",
                 error: true,
                 success: false
             });
         }
 
         // Actualizar el estado de verificación del email
-        await userSchema.update({ verifyEmail: true }, { where: { _id: code } });
+        await userSchema.update({ verify_email: true }, { where: { _id: code } });
 
         return res.json({
-            message: "Email verified successfully",
+            message: "Correo verificado exitosamente",
             success: true,
             error: false
         });
@@ -127,6 +138,61 @@ export async function verifyEmailController(req, res) {
         });
     }
 }
+
+export async function resendVerificationEmail(req, res) {
+    const { email } = req.body
+
+    if (!email) {
+        return res.status(400).json({
+            message: "El email es obligatorio.",
+            error: true
+        })
+    }
+
+    try {
+        const user = await userSchema.findOne({ where: { email } })
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado.",
+                error: true
+            })
+        }
+
+        if (user.verify_email === true) {
+            return res.status(400).json({
+                message: "Este correo ya está verificado.",
+                error: true,
+                success: false
+            });
+        }
+
+        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${user._id}`
+
+        await sendEmail({
+            sendTo: user.email,
+            subject: "Verifica tu correo - D’RAF SERVICES",
+            html: verifyEmailTemplate({
+                name: user.name,
+                url: verifyEmailUrl
+            })
+        })
+
+        res.json({
+            message: "Correo de verificación reenviado correctamente.",
+            success: true,
+            error: false
+        })
+    } catch (err) {
+        console.error("Error reenviando correo:", err)
+        res.status(500).json({
+            message: "Error interno al reenviar el correo.",
+            success: false,
+            error: true
+        })
+    }
+}
+
 
 //Login controller 
 export async function loginController(req, res) {
@@ -157,6 +223,14 @@ export async function loginController(req, res) {
         if (user.status !== "Active") {
             return res.status(400).json({
                 message: "Contact to Admin",
+                error: true,
+                success: false
+            });
+        }
+
+        if (user.verify_email !== true) {
+            return res.status(400).json({
+                message: "Email no verificado",
                 error: true,
                 success: false
             });
@@ -205,6 +279,7 @@ export async function loginController(req, res) {
             }
         });
     } catch (error) {
+
         return res.status(500).json({
             message: error.message || "Internal Server Error",
             error: true,
@@ -229,9 +304,9 @@ export async function logoutController(req, res) {
         res.clearCookie("accessToken", cookiesOption)
         res.clearCookie("refreshToken", cookiesOption)
 
-        const removeRefreshToken = await userSchema.update({ refresh_token: "" }, { where: { _id: userid } })
-        
-        
+        await userSchema.update({ refresh_token: "" }, { where: { _id: userid } })
+
+
         return res.json({
             message: "Logout success",
             error: false,
@@ -252,7 +327,7 @@ export async function uploadAvatar(req, res) {
     try {
         const userId = req.userId
         const image = req.file;
-           
+
         if (!image) {
             return res.status(400).json({
                 message: "No image file provided.",
@@ -313,7 +388,46 @@ export async function updateUserDetails(req, res) {
         const updatedUser = await userSchema.findOne({ where: { _id: userId } });
 
         return res.json({
-            message: "Update successfully",
+            message: "Usuario Actualizado",
+            error: false,
+            success: true,
+            data: updatedUser
+        })
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+}
+
+// update user details Admin
+export async function updateAdminUserDetails(req, res) {
+    try {
+        const userId = req.userId // auth middleware
+
+        const { _id, name, email, role, status } = req.body
+
+
+
+        await userSchema.update(
+            {
+                ...(name && { name: name }),
+                ...(email && { email: email }),
+                ...(status && { status: status }),
+                ...(role && { mobile: role })
+
+            },
+            { where: { _id: _id } })
+
+        // Después de la actualización, obtenemos los datos actualizados
+        const updatedUser = await userSchema.findOne({ where: { _id: _id } });
+
+        return res.json({
+            message: "Usuario Actualizado",
             error: false,
             success: true,
             data: updatedUser
@@ -608,4 +722,28 @@ export async function userDetailsController(req, res) {
             success: false,
         });
     }
+}
+
+export async function getsUsersController(req, res) {
+    try {
+
+        const user = await userSchema.findAll({
+            attributes: ['_id', 'name', 'email', 'role', 'mobile', 'verify_email', 'status', 'createdAt']
+        })
+
+
+        return res.json({
+            message: "Usuarios ",
+            data: user,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+
 }

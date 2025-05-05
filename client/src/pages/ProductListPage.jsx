@@ -11,149 +11,116 @@ import SkeletonSubCategory from '../components/SkeletonSubCategory'
 
 const ProductListPage = () => {
     const params = useParams()
-    const [data, setData] = useState([])
+    const [products, setProducts] = useState([])
     const [page, setPage] = useState(1)
-    const [loading, setloading] = useState(false)
-    const [totalPage, setTotalPage] = useState(1)
-    const AllsubCategory = useSelector(state => state.product.allSubCategory)
-    const [DisplaySubCategory, setDisplaySubCategory] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [totalCount, setTotalCount] = useState(1)
 
+    const allSubCategories = useSelector(state => state.product.allSubCategory)
+    const [filteredSubCategories, setFilteredSubCategories] = useState([])
 
-    const subCategoryName = params?.subCategory
-        ?.split("-") // Dividimos en un array
-        .slice(0, -5) // Tomamos todo excepto los últimos 5 elementos (ID)
-        .join(" ") || null;
+    const getLastFiveParts = (str) => str?.split('-')?.slice(-5)?.join('-') || null
+    const getNameFromSlug = (str) => str?.split('-')?.slice(0, -5)?.join(' ') || null
 
-    const CategoryName = params?.category
-        ?.split("-") // Dividimos en un array
-        .slice(0, -5) // Tomamos todo excepto los últimos 5 elementos (ID)
-        .join(" ") || null;
-
-
-    const categoryParts = params?.category?.split("-");
-    const categoryId = categoryParts?.slice(-5).join("-") || null;
-
-    const subCategoryParts = params?.subCategory?.split("-");
-    const subCategoryId = subCategoryParts?.slice(-5).join("-") || null;
-
+    const categoryId = getLastFiveParts(params?.category)
+    const subCategoryId = getLastFiveParts(params?.subCategory)
+    const categoryName = getNameFromSlug(params?.category)
+    const subCategoryName = getNameFromSlug(params?.subCategory)
 
     const fetchProductData = async () => {
-
-
         try {
-            setloading(true)
+            setLoading(true)
 
             const response = await Axios({
                 ...SummaryApi.getProductByCategoryAndSubCategory,
                 data: {
-                    categoryId: categoryId,
-                    subCategoryId: subCategoryId,
-                    page: page,
+                    categoryId,
+                    subCategoryId,
+                    page,
                     limit: 8
                 }
             })
 
-            const { data: resDanta } = response
-            if (resDanta.success) {
-                if (resDanta.page == 1) {
-                    setData(resDanta.data)
-                } else {
-                    setData([...data, ...resDanta.data])
-                }
-                setTotalPage(resDanta.data.totalCount)
+            const { data: resData } = response
+            if (resData.success) {
+                setProducts(page === 1 ? resData.data : [...products, ...resData.data])
+                setTotalCount(resData.data.totalCount)
             }
         } catch (error) {
             AxiosToastError(error)
         } finally {
-            setloading(false)
+            setLoading(false)
         }
     }
 
     useEffect(() => {
+        setPage(1)
         fetchProductData()
     }, [params])
 
-
     useEffect(() => {
-        const sub = AllsubCategory.filter(s => {
-            const filterData = s.category === categoryId
-
-            return filterData ? filterData : null
-        })
-        setDisplaySubCategory(sub)
-
-    }, [params, AllsubCategory])
-
+        const subCategories = allSubCategories.filter(s => s.category === categoryId)
+        setFilteredSubCategories(subCategories)
+    }, [allSubCategories, categoryId])
 
     return (
-        <section className='sticky top-28 lg:top-20'>
-            <div className='container sticky top-28 mx-auto grid grid-cols-[90px,1fr] md:grid-cols-[200px,1fr] lg:grid-cols-[250px,1fr]'>
-                {/** Sub category **/}
-                <div className='min-h-[78vh] max-h-[78vh] overflow-y-scroll grid gap-2 shadow-md scrollbarCustom bg-white py-4' >
-
-                    <div className='shadow-md p-1 rounded-md'>
-                        <h3 className='font-semibold text-center capitalize'>{CategoryName}</h3>
+        <section className=''>
+            <div className='container mx-auto grid grid-cols-[100px,1fr] lg:grid-cols-[250px,1fr] gap-2'>
+                {/* Subcategory Menu */}
+                <aside className='bg-white rounded-lg shadow-md py-4 lg:min-h-[78vh] lg:max-h-[78vh] lg:overflow-y-scroll scrollbarCustom'>
+                    <div className='shadow-md p-2 rounded-md'>
+                        <h3 className='font-semibold text-center capitalize'>{categoryName}</h3>
                     </div>
 
-                    {
-                        loading ? (
-                            // Mostrar 6 Skeletons mientras se cargan las subcategorías
-                            Array(6).fill(null).map((_, index) => (
-                                <SkeletonSubCategory key={index} />
-                            ))
+                    <div className='grid gap-2'>
+                        {loading ? (
+                            Array.from({ length: 6 }, (_, i) => <SkeletonSubCategory key={i} />)
                         ) : (
-                            DisplaySubCategory.map((s, index) => {
-                                const link = `/${validaURLConvert(s?.categoryData.name)}-${s?.category}/${validaURLConvert(s.name)}-${s._id}`;
+                            filteredSubCategories.map((sub, index) => {
+                                const link = `/${validaURLConvert(sub?.categoryData?.name)}-${sub?.category}/${validaURLConvert(sub.name)}-${sub._id}`
+                                const isActive = subCategoryId === sub._id
 
                                 return (
-                                    <Link key={s?._id + "displayProduct" + index} to={link} className={`w-full p-2 rounded lg:flex items-center lg:w-full lg:h-16 box-border lg:gap-4 border-b
-                                            hover:bg-green-100 cursor-pointer
-                                            ${subCategoryId === s?._id ? "bg-green-500" : ""}
-                                        `}>
-                                        <div className='w-fit max-w-28 mx-auto lg:mx-0 rounded box-border'>
-                                            <img
-                                                src={s?.image}
-                                                alt='sub-Category'
-                                                className='w-14 lg:h-14 lg:w-12 h-full object-scale-down'
-                                            />
-                                        </div>
-                                        <p className='mt-3 lg:mt-0 text-xs text-center lg:text-left lg:text-base'>{s.name}</p>
+                                    <Link
+                                        key={sub._id + "displayProduct" + index}
+                                        to={link}
+                                        className={`w-full p-2 rounded-lg flex items-center justify-center md:justify-start gap-3 shadow-md cursor-pointer ${isActive ? "bg-green-500 text-white" : "hover:bg-green-100"
+                                            }`}
+                                    >
+                                        <img
+                                            src={sub.image}
+                                            alt='Subcategory'
+                                            className='sm:w-14 sm:h-14 w-full h-full object-scale-down rounded-lg'
+                                        />
+                                        <p className='text-sm lg:text-base hidden md:block line-clamp-2'>{sub.name}</p>
                                     </Link>
-                                );
+                                )
                             })
-                        )
-                    }
-                </div>
+                        )}
+                    </div>
+                </aside>
 
-
-                {/** Product **/}
-                <div className=''>
-                    <div className='bg-white shadow-md m-2 p-2 rounded-md text-primary-Green'>
+                {/* Products List */}
+                <main className='w-full'>
+                    <div className='bg-white shadow-md m-1 p-2 rounded-md text-primary-Green'>
                         <h3 className='font-semibold capitalize'>{subCategoryName}</h3>
                     </div>
 
-                    <div className='mt-3'>
-                        <div className='min-h-[69vh] max-h-[68vh] overflow-y-scroll w-full scrollbarCustom '>
-                            <div className='grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 p-3 gap-4'>
-                                {
-                                    loading ? (
-                                        // Muestra 8 Skeletons cuando los datos aún están cargando
-                                        Array(8).fill(null).map((_, index) => (
-                                            <CardLoading key={index} />
-                                        ))
-                                    ) : (
-                                        data.map((p, index) => (
-                                            <CardProduct data={p} key={p._id + "productSubCategory" + index} />
-                                        ))
-                                    )
-                                }
-                            </div>
+                    <div className='mt-1'>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 p-2 gap-4'>
+                            {loading ? (
+                                Array.from({ length: 8 }, (_, i) => <CardLoading key={i} />)
+                            ) : (
+                                products.map((p, index) => (
+                                    <CardProduct data={p} key={p._id + "productSubCategory" + index} />
+                                ))
+                            )}
                         </div>
-
                     </div>
-                </div>
+                </main>
             </div>
         </section>
+
     )
 }
 

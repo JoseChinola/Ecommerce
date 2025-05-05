@@ -14,7 +14,7 @@ import SubCategoryPage from "../pages/SubCategoryPage";
 import UploadProductPage from "../pages/UploadProductPage";
 import ProductAdmin from "../pages/ProductAdmin";
 import AdminPermissions from "../layouts/AdminPermissions";
-import { LoginRedirect, RegisterRedirect } from "../components/AuthRedirect";
+import { LoginRedirect, RegisterRedirect, VerifyEmailRedirect } from "../components/AuthRedirect";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
 import CartMobile from "../pages/CartMobile";
@@ -25,7 +25,7 @@ import Inventario from "../layouts/Inventario";
 import Warehouse from "../layouts/Warehouse";
 import InventoryMovements from "../pages/InventoryMovements";
 import UsersPage from "../pages/UsersPage";
-
+import VerifyEmailRegister from "../components/VerifyEmailRegister";
 
 
 const Router = createBrowserRouter([
@@ -49,6 +49,11 @@ const Router = createBrowserRouter([
                 path: "register",
                 element: <RegisterRedirect />
             },
+            {
+                path: "verifyEmail-register",
+                element: <VerifyEmailRegister />
+            }
+            ,
             {
                 path: "forgot-password",
                 element: <ForgotPassword />
@@ -75,7 +80,7 @@ const Router = createBrowserRouter([
             },
             {
                 path: "inventory-movements",
-                element: < AdminPermissions > <InventoryMovements /></ AdminPermissions>
+                element: <AdminPermissions > <InventoryMovements /></ AdminPermissions>
             },
             {
                 path: "profile",
@@ -96,11 +101,7 @@ const Router = createBrowserRouter([
             {
                 path: "subcategory",
                 element: <AdminPermissions><SubCategoryPage /></AdminPermissions>
-            },
-            {
-                path: "upload-product",
-                element: <AdminPermissions><UploadProductPage /></AdminPermissions>
-            },
+            },           
             {
                 path: "product",
                 element: <AdminPermissions><ProductAdmin /></AdminPermissions>
@@ -141,7 +142,11 @@ const Router = createBrowserRouter([
             {
                 path: "cancel",
                 element: <Cancel />
-            }
+            },
+            {
+                path: "/verify-email",
+                element: <VerifyEmailRedirect />
+            },
         ]
     }
 ])

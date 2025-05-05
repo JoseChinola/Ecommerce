@@ -75,14 +75,14 @@ const Inventario = () => {
                     <table className='min-w-full table-auto border'>
                         <thead className='bg-gray-100 text-gray-700 '>
                             <tr>
-                                <th className="py-2 px-4 border">#</th>
-                                <th className='px-4 py-2 border'>Almacén</th>
-                                <th className='px-4 py-2 border'>Producto</th>
-                                <th className='px-4 py-2 border'>Imagen</th>
-                                <th className='px-4 py-2 border'>Cantidad</th>
-                                <th className='px-4 py-2 border'>Usuario</th>
-                                <th className='px-4 py-2 border'>Descripción</th>
-                                <th className='px-4 py-2 border'>Acciones</th>
+                                <th className="py-2 px-4 border font-bold">#</th>
+                                <th className='px-4 py-2 border font-bold'>Almacén</th>
+                                <th className='px-4 py-2 border font-bold'>Producto</th>
+                                <th className='px-4 py-2 border font-bold'>Imagen</th>
+                                <th className='px-4 py-2 border font-bold'>Cantidad</th>
+                                <th className='px-4 py-2 border font-bold'>Usuario</th>
+                                <th className='px-4 py-2 border font-bold'>Descripción</th>
+                                <th className='px-4 py-2 border font-bold'>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -97,7 +97,7 @@ const Inventario = () => {
                                                 <img
                                                     src={inventory.productData?.image || 'default-image.png'}
                                                     alt={inventory.productData?.name || `Producto #${inventory.productId}`}
-                                                    className="w-8 h-8 object-cover rounded"
+                                                    className="w-10 h-10 object-contain rounded"
                                                     onClick={() => setImageURL(inventory.productData?.image)}
                                                 />
                                             </div>

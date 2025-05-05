@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import logomv from '../assets/shopmix.png'
+import logomv from '../assets/logo.png'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
@@ -50,12 +50,6 @@ const OtpVerification = () => {
                     }
                 })
             }
-
-
-
-
-
-
 
         } catch (error) {
             AxiosToastError(error)

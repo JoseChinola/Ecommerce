@@ -1,21 +1,35 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useEffect, useState } from 'react';
 import Timeline from '../components/Timeline';
 import CountryDistribution from '../components/CountryDistribution';
-import VisitorGraph from '../components/VisitorGraph';
 import StatsCard from '../components/ConversionRate';
+import SalesData from '../components/SalesData';
+import AxiosToastError from '../utils/AxiosToastError';
+import SummaryApi from '../cammon/SummaryApi';
+import Axios from '../utils/Axios';
+import TopProductsTable from '../components/VisitorGraph';
+
 
 const Dashboard = () => {
+    const [data, setData] = useState([]);
 
-    const ventasData = [
-        { name: 'Lun', ventas: 300 },
-        { name: 'Mar', ventas: 500 },
-        { name: 'Mié', ventas: 400 },
-        { name: 'Jue', ventas: 600 },
-        { name: 'Vie', ventas: 800 },
-        { name: 'Sáb', ventas: 300 },
-        { name: 'Dom', ventas: 400 },
-    ];
+    const fetchDashboardData = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getDashboard
+            })
+            const { data: resData } = response
+            if (resData.success) {
+                setData(resData.data)
+            }
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
+
+    useEffect(() => {
+        fetchDashboardData()
+    }, [])
+
 
     return (
         <div className="p-6 space-y-6 bg-white rounded-xl">
@@ -26,22 +40,22 @@ const Dashboard = () => {
                     D’RAF SERVICES
                 </span>
             </div>
-
+  
             {/* StatsCard Section */}
-            <div className="">
-                <StatsCard />
+            <div className="select-none bg-secundary p-1 rounded-lg">
+                <StatsCard data={data.stats} />
             </div>
 
             {/* VisitorGraph & Timeline Section */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                {/* Distribución por País (2/3 del ancho en md) */}
-                <div className="md:col-span-2 rounded-2xl">
-                    <VisitorGraph />
+            <div className="grid grid-cols-1 md:grid-cols-[65%_35%] gap-4 mt-6">
+                {/* Producto más vendido */}
+                <div className="rounded-2xl">
+                    <TopProductsTable data={data.topProducts} />
                 </div>
 
-                {/* Transacciones (1/3 del ancho en md) */}
-                <div className="md:col-span-1 rounded-2xl">
-                    <Timeline />
+                {/* Transacciones */}
+                <div className="rounded-2xl px-4">
+                    <Timeline data={data.timeline} />
                 </div>
             </div>
 
@@ -49,22 +63,12 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                 {/* Ventas Semanales */}
                 <div className="md:col-span-2 rounded-2xl">
-                    <div className="bg-blue-50 rounded-2xl p-6 shadow-md h-full">
-                        <h2 className="text-xl font-semibold text-[#13bd24] mb-4">Ventas Semanales</h2>                       
-                        <ResponsiveContainer width="100%" height={500}>
-                            <BarChart data={ventasData}>
-                                <XAxis dataKey="name" />
-                                <YAxis />
-                                <Tooltip />
-                                <Bar dataKey="ventas" fill="#13bd24" radius={[8, 8, 0, 0]} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+                    <SalesData data={data.weeklySales} />
                 </div>
 
                 {/* Country Distribution */}
                 <div className="md:col-span-1 rounded-2xl">
-                    <CountryDistribution />
+                    <CountryDistribution data={data.cityDistribution} />
                 </div>
             </div>
         </div>

@@ -2,97 +2,91 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../Db.js";
 import categorySchema from "./category.model.js";
 import subCategorySchema from "./subCategory.model.js";
-import inventorySchema from "./Inventory.model.js";
 
 
 // Definir el modelo de Product
 const productSchema = sequelize.define('product', {
     _id: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,  // Genera UUID de forma automática
-        primaryKey: true,
-        allowNull: false,  // No permite que sea null
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
     },
     name: {
         type: DataTypes.STRING,
-        defaultValue: "",
-        allowNull: false,  // No permite que sea null
+        allowNull: false
     },
     image: {
-        type: DataTypes.JSONB,  // Permite almacenar arrays u objetos JSON directamente
+        type: DataTypes.JSONB,
         defaultValue: [],
-        allowNull: false,
-    },
-    categoryId: {
-        type: DataTypes.UUID,
-        references: {
-            model: categorySchema,
-            key: "_id",
-        },
-        allowNull: true,  // No permite que sea null
-    },
-    subCategoryId: {
-        type: DataTypes.UUID,
-        references: {
-            model: subCategorySchema,
-            key: "_id",
-        },
-        allowNull: true,  // No permite que sea null
+        allowNull: false
     },
     unit: {
         type: DataTypes.STRING,
-        defaultValue: "",
-        allowNull: false,  // No permite que sea null
+        allowNull: false
     },
     price: {
         type: DataTypes.FLOAT,
-        defaultValue: 0,
-        allowNull: false,  // No permite que sea null
+        allowNull: false
     },
     discount: {
         type: DataTypes.FLOAT,
         defaultValue: 0,
-        allowNull: false,  // No permite que sea null
+        allowNull: false
     },
     description: {
         type: DataTypes.TEXT,
-        defaultValue: "",
-        allowNull: false,  // No permite que sea null
+        allowNull: false
     },
     more_details: {
-        type: DataTypes.JSON,  // Usamos STRING (equivalente a NVARCHAR en SQL Server)
-        defaultValue: {},  // Almacenamos un objeto JSON vacío como una cadena
-        allowNull: true,
+        type: DataTypes.JSON,
+        defaultValue: {},
+        allowNull: true
     },
     publish: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
-        allowNull: false,  // No permite que sea null
+        allowNull: false
     }
 }, {
     tableName: 'product',
-    timestamps: true,
-    indexes: [
-        {
-            name: 'text', 
-            type: 'FULLTEXT',
-            fields: ['name', 'description'],
-        }
-    ]
+    timestamps: true
 });
 
 
+// Tablas intermedias para las relaciones muchos a muchos
+const ProductCategory = sequelize.define('product_category', {}, { timestamps: false });
+const ProductSubCategory = sequelize.define('product_subcategory', {}, { timestamps: false });
 
-// Sincronizar el modelo con la base de datos
-productSchema.belongsTo(categorySchema, {
-    foreignKey: "categoryId",
-    as: "categoryData",
+// Relaciones muchos a muchos
+productSchema.belongsToMany(categorySchema, {
+    through: ProductCategory,
+    foreignKey: 'productId',
+    otherKey: 'categoryId',
+    as: 'categories'
 });
 
-productSchema.belongsTo(subCategorySchema, {
-    foreignKey: "subCategoryId",
-    as: "subcategoryData",
+productSchema.belongsToMany(subCategorySchema, {
+    through: ProductSubCategory,
+    foreignKey: 'productId',
+    otherKey: 'subCategoryId',
+    as: 'subcategories'
 });
+
+categorySchema.belongsToMany(productSchema, {
+    through: ProductCategory,
+    foreignKey: 'categoryId',
+    otherKey: 'productId',
+    as: 'products'
+});
+
+subCategorySchema.belongsToMany(productSchema, {
+    through: ProductSubCategory,
+    foreignKey: 'subCategoryId',
+    otherKey: 'productId',
+    as: 'products'
+});
+
 
 
 export default productSchema;
+

@@ -5,15 +5,18 @@ import orderSchema from "../models/order.model.js";
 import { nanoid } from 'nanoid';
 import userSchema from "../models/user.model.js";
 import { FRONTEND_URL, STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY } from "../config.js";
-import { where } from "sequelize";
 import inventorySchema from "../models/Inventory.model.js";
+import addressSchema from "../models/address.model.js";
+import { where } from "sequelize";
+import productSchema from "../models/product.model.js";
 
 
 //pago contra entrega efectivo
 export async function CashOnDeleveryOrderController(req, res) {
     try {
         const userId = req.userId;
-        const { list_items, totalAmt, addressId, subTotalAmt } = req.body;
+        const { list_items, totalAmt, addressId, subTotalAmt, discount } = req.body;
+
 
         if (!list_items || !Array.isArray(list_items) || list_items.length === 0) {
             return res.status(400).json({
@@ -31,12 +34,14 @@ export async function CashOnDeleveryOrderController(req, res) {
             });
         }
 
+
         const orderId = `ORD-${nanoid(10)}`;
 
         const payload = list_items.map(item => {
             const productDetails = {
                 name: item.productData.name,
-                image: item.productData.image
+                image: item.productData.image,
+                unit_price: item.productData.price,
             };
 
             return {
@@ -44,9 +49,11 @@ export async function CashOnDeleveryOrderController(req, res) {
                 orderId,
                 productId: item.productId,
                 product_details: JSON.stringify(productDetails),
+                quantity: item.quantity,
                 paymentId: "",
                 paymentStatus: "CASH ON DELIVERY",
                 deliveryAddress: addressId,
+                discount,
                 subTotalAmt,
                 totalAmt,
             };
@@ -115,23 +122,21 @@ export const pricewithDiscount = (price, dis = 1) => {
 export async function paymentController(req, res) {
     try {
         const userId = req.userId
-        const { list_items, totalAmt, addressId, subTotalAmt } = req.body;
-
+        const { list_items, totalAmt, addressId, subTotalAmt, discount } = req.body;
 
 
         const user = await userSchema.findOne({ where: { _id: userId } })
+
+
         const line_items = list_items.map(item => {
             let imageArray = [];
 
             if (typeof item.productData.image === 'string') {
                 try {
                     let parsed = JSON.parse(item.productData.image);
-
-                    // Si sigue siendo string (doble escapado), parsear otra vez
                     if (typeof parsed === 'string') {
                         parsed = JSON.parse(parsed);
                     }
-
                     if (Array.isArray(parsed)) {
                         imageArray = parsed.filter(url => typeof url === 'string');
                     }
@@ -142,9 +147,10 @@ export async function paymentController(req, res) {
                 imageArray = item.productData.image.filter(url => typeof url === 'string');
             }
 
+
             return {
                 price_data: {
-                    currency: 'inr',
+                    currency: 'DOP',
                     product_data: {
                         name: item.productData.name,
                         images: imageArray,
@@ -169,7 +175,9 @@ export async function paymentController(req, res) {
             customer_email: user.email,
             metadata: {
                 userId: userId,
-                addressId: addressId
+                addressId: addressId,
+                discount: discount.toString(),
+                subTotalAmt: subTotalAmt.toString()
             },
             line_items: line_items,
             success_url: `${FRONTEND_URL}/success`,
@@ -196,18 +204,28 @@ const getOrderProductItems = async (lineItems, userId, session) => {
         for (const item of lineItems.data) {
             const product = await Stripe.products.retrieve(item.price.product);
 
+            if (!product.metadata?.productId) {
+                console.warn(`⚠️ Producto ${product.id} no tiene metadata.productId`);
+                continue;
+            }
+
+
+            const orderId = `ORD-${nanoid(10)}`;
+
             const payload = {
                 userId: userId,
-                orderId: `ORD-${nanoid(10)}`,
+                orderId: orderId,
                 productId: product.metadata.productId,
                 product_details: JSON.stringify({
                     name: product.name,
                     image: product.images
                 }),
+                quantity: item.quantity,
                 paymentId: session.payment_intent,
                 paymentStatus: session.payment_status,
-                deliveryAddress: product.metadata.addressId,
-                subTotalAmt: (item.amount_subtotal || 0) / 100,
+                deliveryAddress: session.metadata.addressId,
+                subTotalAmt: parseFloat(session.metadata.subTotalAmt), // ✅ aquí lo usas
+                discount: parseFloat(session.metadata.discount),        // ✅ y aquí también
                 totalAmt: (item.amount_total || 0) / 100,
             };
 
@@ -217,6 +235,7 @@ const getOrderProductItems = async (lineItems, userId, session) => {
 
     return productList;
 };
+
 
 // webhook para recibir la confirmación de pago de stripe
 // http://localhost:3000/api/order/webhook
@@ -231,7 +250,12 @@ export async function stripeWebhook(req, res) {
                 const lineItems = await Stripe.checkout.sessions.listLineItems(session.id);
                 const userId = session.metadata.userId;
 
+
+                // Extraemos los precios
+
                 const orderproduct = await getOrderProductItems(lineItems, userId, session);
+
+
                 const order = await orderSchema.bulkCreate(orderproduct);
 
                 if (!order) {
@@ -282,6 +306,70 @@ export async function stripeWebhook(req, res) {
 
     } catch (error) {
         console.error("Error in webhook:", error);
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+}
+
+
+export async function getOrderDetailsController(req, res) {
+    try {
+        const userId = req.userId;
+        const orders = await orderSchema.findAll({
+            where: { userId },
+            order: [['createdAt', 'DESC']],
+            attributes: ['discount', 'orderId', 'paymentStatus', 'quantity', 'subTotalAmt', 'totalAmt', 'createdAt', 'product_details'],
+            include: [
+                {
+                    model: addressSchema,
+                    as: 'address',
+                    where: { userId, status: true },
+                    attributes: ['address_line', 'city', 'state', 'country', 'pincode', 'mobile'],
+                },
+                {
+                    model: userSchema,
+                    where: { _id: userId, status: 'Active' },
+                    attributes: ['name'],
+                }
+            ]
+        });
+
+        // Mapear y parsear el product_details
+        const parsedOrders = orders.map(order => {
+            let productDetails = order.product_details;
+
+            // Si es string, lo parseamos
+            if (typeof productDetails === 'string') {
+                try {
+                    productDetails = JSON.parse(productDetails);
+
+                    // A veces la propiedad image todavía está como string de array, así que la parseamos también
+                    if (typeof productDetails.image === 'string') {
+                        productDetails.image = JSON.parse(productDetails.image);
+                    }
+                } catch (e) {
+                    console.error("Error parsing product_details:", e.message);
+                    productDetails = {};
+                }
+            }
+
+            return {
+                ...order.toJSON(), // Convertimos el modelo a objeto
+                product_details: productDetails
+            };
+        });
+
+        return res.json({
+            message: "Lista de Ordenes",
+            error: false,
+            success: true,
+            data: parsedOrders
+        });
+    } catch (error) {
+        console.error("Error fetching orders:", error);
         return res.status(500).json({
             message: error.message || "Internal Server Error",
             error: true,
