@@ -56,30 +56,22 @@ const Login = () => {
 
 
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         try {
             const res = await Axios({
                 ...SummaryApi.login,
                 data: data
-            })
-
-            if (res.data.error) {
-                toast.error(res.data.message);
-                if (res.data.message === "Email no verificado") {
-                    setShowVerifyEmailPrompt(true);
-                }
-                return;
-            }
+            });
 
             if (res.data.success) {
-                toast.success(res.data.message)
-                localStorage.setItem('accessToken', res.data.data.accessToken)
-                localStorage.setItem('refreshToken', res.data.data.refreshToken)
+                toast.success(res.data.message); // Mensaje de éxito
+                localStorage.setItem('accessToken', res.data.data.accessToken);
+                localStorage.setItem('refreshToken', res.data.data.refreshToken);
 
-                const userDatails = await fetchUserDetails()
+                const userDetails = await fetchUserDetails();
 
-                dispatch(setUserDetails(userDatails.data))
+                dispatch(setUserDetails(userDetails.data));
 
                 if (rememberMe) {
                     localStorage.setItem("rememberedEmail", data.email);
@@ -90,23 +82,24 @@ const Login = () => {
                 setData({
                     email: "",
                     password: ""
-                })
+                });
 
-                navigate("/")
+                navigate("/"); // Redirige al usuario después del login
             }
 
         } catch (error) {
-            if (error) {
-                if (error.response.data.message === "Email no verificado") {
+            if (error.response && error.response.data) {
+                const message = error.response.data.message;
+                toast.error(message);
+
+                if (message.toLowerCase().includes("email") && message.toLowerCase().includes("verificado")) {
                     setShowVerifyEmailPrompt(true);
                 }
-                return;
+            } else {
+                AxiosToastError(error);
             }
-            AxiosToastError(error)
         }
-
-
-    }
+    };
 
 
     const handleResendVerificationEmail = async () => {
@@ -120,7 +113,7 @@ const Login = () => {
             if (res.data.error) {
                 toast.error(res.data.message);
             }
-            
+
             if (res.data.success) {
                 toast.success("Correo de verificación reenviado");
                 setResendSuccess(true);

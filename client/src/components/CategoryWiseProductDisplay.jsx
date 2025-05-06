@@ -1,41 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { Link } from 'react-router-dom'
-import AxiosToastError from '../utils/AxiosToastError'
-import Axios from '../utils/Axios'
-import SummaryApi from '../cammon/SummaryApi'
 import CardLoading from '../pages/CardLoading'
 import CardProduct from './CardProduct'
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa"
 import { validaURLConvert } from '../utils/validaURLConvert'
 import { useSelector } from 'react-redux'
 
-const CategoryWiseProductDisplay = ({ id, name }) => {
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(false)
+const CategoryWiseProductDisplay = ({ id, name, products }) => {
   const containerRef = useRef()
-  const loadingCards = Array.from({ length: 6 })
-
   const subCategoryData = useSelector(state => state.product.allSubCategory)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true)
-        const res = await Axios({
-          ...SummaryApi.getProductByCategory,
-          data: { id }
-        })
-        if (res.data.success) {
-          setData(res.data.data)
-        }
-      } catch (err) {
-        AxiosToastError(err)
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchData()
-  }, [id])
 
   const handleRedirect = () => {
     const sub = subCategoryData.find(s => s.categoryData && s.categoryData._id === id)
@@ -46,6 +19,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
   const scroll = dir => {
     containerRef.current.scrollLeft += dir * 200
   }
+  
 
   return (
     <div className='shadow-md p-4 my-6'>
@@ -60,18 +34,17 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
           ref={containerRef}
           className='flex gap-2 overflow-x-auto scrollbar-none scroll-smooth p-2'
         >
-          {loading
-            ? loadingCards.map((_, i) => (
-              <div key={i} className='flex-none w-full sm:w-auto'>
-                <CardLoading />
-              </div>
-            ))
-            : data.map(p => (
+          {products.length === 0 ? (
+            <div className='flex-none w-full sm:w-auto'>
+              <CardLoading />
+            </div>
+          ) : (
+            products.map(p => (
               <div key={p._id} className='flex-none w-full sm:w-auto'>
                 <CardProduct data={p} />
               </div>
             ))
-          }
+          )}
         </div>
         <button
           onClick={() => scroll(-1)}

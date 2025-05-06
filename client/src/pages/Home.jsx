@@ -16,12 +16,10 @@ const Home = () => {
 
   const [categoriesWithProductsList, setCategoriesWithProductsList] = useState([])
 
-
   useEffect(() => {
     if (loadingCategory || categoryData.length === 0) return
 
     // Guardamos último ID list
-
     const currentIds = categoryData.map(c => c._id).join(',')
     if (prevCategoryIdsRef.current === currentIds) {
       return // No hacemos nada si no cambió
@@ -32,23 +30,18 @@ const Home = () => {
 
     const loadCategoriesWithProducts = async () => {
       try {
-        const checks = await Promise.all(
-          categoryData.map(async cat => {
-            try {
-              const res = await Axios({
-                ...SummaryApi.getProductByCategory,
-                data: { id: cat._id },
-                signal: controller.signal
-              })
+        // Petición única con todos los IDs de las categorías
+        const res = await Axios({
+          ...SummaryApi.getProductByCategory,
+          data: { id: categoryData.map(c => c._id) },
+          signal: controller.signal
+        })
 
-              return res.data.success && res.data.data.length > 0 ? cat : null
-            } catch {
-              return null
-            }
-          })
-        )
-
-        setCategoriesWithProductsList(checks.filter(Boolean))
+        if (res.data.success) {
+          // Filtra solo las categorías con productos
+          const categoriesWithProducts = res.data.data.filter(category => category.products.length > 0)
+          setCategoriesWithProductsList(categoriesWithProducts)
+        }
       } catch (err) {
         if (err.name !== 'CanceledError') {
           console.error("Error cargando categorías con productos", err)
@@ -61,7 +54,6 @@ const Home = () => {
     return () => controller.abort()
   }, [loadingCategory, categoryData])
 
-
   const handleRedirectProductListpage = (id, cat) => {
     const subcategory = subCategoryData.find(sub => sub.categoryData && sub.categoryData._id === id)
     if (!subcategory) return
@@ -71,7 +63,7 @@ const Home = () => {
 
   return (
     <section className='bg-white rounded-lg'>
-      <div className='container mx-auto rounded my-4 px-3 p-2'>
+      <div className='container mx-auto rounded my-4 px-2 py-2'>
         {/* Banner container */}
         <div className='w-full h-full grid items-center border bg-white gap-2 p-2 rounded-md'>
           <p className='font-semibold lg:text-xl italic px-4 py-2'>Ofertas hasta <span className='text-white bg-red-500 rounded-full w-fit text-center px-2'>-5%</span></p>
@@ -116,18 +108,16 @@ const Home = () => {
           </div>
         </div>
 
-        {/* display category product */}
-
+        {/* Display category products */}
         {categoriesWithProductsList.length > 0 && categoriesWithProductsList.map((cat, idx) => (
           <CategoryWiseProductDisplay
-            key={cat._id + idx}
-            id={cat._id}
-            name={cat.name}
+            key={cat.category._id + idx}
+            id={cat.category._id}
+            name={cat.category.name}
+            products={cat.products}  // Enviar los productos aquí
           />
         ))}
       </div>
-
-
     </section>
   )
 }
