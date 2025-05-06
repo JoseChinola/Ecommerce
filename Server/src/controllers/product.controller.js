@@ -181,25 +181,24 @@ export const getProductByCategory = async (req, res) => {
     try {
         const { id } = req.body;
 
-        // Verifica si se proporcionó un ID de categoría
         if (!id) {
             return res.status(400).json({
-                message: "Please provide category ID",
+                message: "Please provide category ID(s)",
                 error: true,
                 success: false
             });
         }
 
+        const isArray = Array.isArray(id);
 
-        // Recupera los productos que pertenecen a las categorías especificadas
         const products = await productSchema.findAll({
             where: { publish: true },
-            limit: 15,
+            limit: 100,  // puedes ajustar este límite si quieres
             include: [
                 {
-                    model: inventorySchema, // Relación con inventarios
+                    model: inventorySchema,
                     as: 'inventories',
-                    attributes: ["_id", "stock"], // Solo atributos necesarios
+                    attributes: ["_id", "stock"],
                 },
                 {
                     model: categorySchema,
@@ -207,20 +206,44 @@ export const getProductByCategory = async (req, res) => {
                     attributes: ["_id", "name"],
                     through: { attributes: [] },
                     required: true,
-                    where: Array.isArray(id)
+                    where: isArray
                         ? { _id: { [Op.in]: id } }
                         : { _id: id }
                 }
             ]
         });
 
-        // Respuesta con los productos obtenidos
+        if (isArray) {
+            // Agrupar productos por categoría
+            const grouped = products.reduce((acc, product) => {
+                product.categories.forEach(cat => {
+                    if (!acc[cat._id]) {
+                        acc[cat._id] = {
+                            category: cat,
+                            products: []
+                        };
+                    }
+                    acc[cat._id].products.push(product);
+                });
+                return acc;
+            }, {});
+
+            return res.json({
+                message: "Grouped product list by categories",
+                data: Object.values(grouped),
+                error: false,
+                success: true
+            });
+        }
+
+        // Si no es array, responde como antes
         return res.json({
             message: "Product list by category",
             data: products,
             error: false,
             success: true
         });
+
     } catch (error) {
         console.error("Error fetching products by category:", error);
         return res.status(500).json({
@@ -230,6 +253,7 @@ export const getProductByCategory = async (req, res) => {
         });
     }
 };
+
 
 //get product by categoro and sub category
 export const getProductByCategoryAndSubCategory = async (req, res) => {
