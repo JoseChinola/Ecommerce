@@ -260,24 +260,25 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
     try {
         let { categoryId, subCategoryId, page, limit } = req.body;
 
-        if (!categoryId || !subCategoryId) {
+        // Validación de parámetros
+        if (!categoryId || categoryId === 'null' || !subCategoryId || subCategoryId === 'null') {
             return res.status(400).json({
-                message: "Provide category and subCategory",
+                message: "Provide valid category and subCategory",
                 error: true,
                 success: false
             });
         }
 
-        // Convertir en arrays por si vienen como string único
-        categoryId = [].concat(categoryId);
-        subCategoryId = [].concat(subCategoryId);
+        // Convertir los parámetros en arrays por si son enviados como cadenas
+        categoryId = Array.isArray(categoryId) ? categoryId : [categoryId];
+        subCategoryId = Array.isArray(subCategoryId) ? subCategoryId : [subCategoryId];
 
         // Paginación
         page = parseInt(page) || 1;
         limit = parseInt(limit) || 10;
         const offset = (page - 1) * limit;
 
-        // Consulta
+        // Consulta de productos
         const [data, dataCount] = await Promise.all([
             productSchema.findAll({
                 where: { publish: true },
@@ -302,7 +303,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
                     },
                     {
                         model: subCategorySchema,
-                        as: 'subcategories', // Asegúrate que este alias coincida con el del modelo
+                        as: 'subcategories',
                         attributes: ['_id', 'name'],
                         through: { attributes: [] },
                         required: true,
@@ -337,6 +338,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
             })
         ]);
 
+        // Responder con los productos y el conteo total
         return res.status(200).json({
             message: "Product list by category and subcategory",
             data,
@@ -356,6 +358,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
         });
     }
 };
+
 
 //get Details product
 export const getProductDetails = async (req, res) => {

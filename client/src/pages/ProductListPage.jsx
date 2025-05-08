@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Axios from '../utils/Axios'
@@ -19,15 +19,35 @@ const ProductListPage = () => {
     const allSubCategories = useSelector(state => state.product.allSubCategory)
     const [filteredSubCategories, setFilteredSubCategories] = useState([])
 
-    const getLastFiveParts = (str) => str?.split('-')?.slice(-5)?.join('-') || null
-    const getNameFromSlug = (str) => str?.split('-')?.slice(0, -5)?.join(' ') || null
+    const productCache = useRef({}) // ✅ Cache local
 
-    const categoryId = getLastFiveParts(params?.category)
-    const subCategoryId = getLastFiveParts(params?.subCategory)
+    const getIdFromSlug = (str) => {
+        const parts = str?.split('-') || []
+        return parts.slice(-5).join('-')
+    }
+
+    const getNameFromSlug = (str) => {
+        const parts = str?.split('-') || []
+        return parts.slice(0, parts.length - 5).join(' ')
+    }
+
+    const categoryId = getIdFromSlug(params?.category)
+    const subCategoryId = getIdFromSlug(params?.subCategory)
     const categoryName = getNameFromSlug(params?.category)
     const subCategoryName = getNameFromSlug(params?.subCategory)
 
     const fetchProductData = async () => {
+        if (!categoryId || !subCategoryId || categoryId === 'null' || subCategoryId === 'null') return
+
+        const cacheKey = `${subCategoryId}-page-${page}`
+
+        // ✅ Si ya está en cache, usarlo
+        if (productCache.current[cacheKey]) {
+            setProducts(productCache.current[cacheKey].data)
+            setTotalCount(productCache.current[cacheKey].totalCount)
+            return
+        }
+
         try {
             setLoading(true)
 
@@ -43,8 +63,16 @@ const ProductListPage = () => {
 
             const { data: resData } = response
             if (resData.success) {
-                setProducts(page === 1 ? resData.data : [...products, ...resData.data])
+                const newProducts = page === 1 ? resData.data : [...products, ...resData.data]
+
+                setProducts(newProducts)
                 setTotalCount(resData.data.totalCount)
+
+                // ✅ Guardar en cache
+                productCache.current[cacheKey] = {
+                    data: newProducts,
+                    totalCount: resData.data.totalCount
+                }
             }
         } catch (error) {
             AxiosToastError(error)
@@ -64,9 +92,8 @@ const ProductListPage = () => {
     }, [allSubCategories, categoryId])
 
     return (
-        <section className=''>
+        <section>
             <div className='container mx-auto grid grid-cols-[100px,1fr] lg:grid-cols-[250px,1fr] gap-2'>
-                {/* Subcategory Menu */}
                 <aside className='bg-white rounded-lg shadow-md py-4 lg:min-h-[78vh] lg:max-h-[78vh] lg:overflow-y-scroll scrollbarCustom'>
                     <div className='shadow-md p-2 rounded-md'>
                         <h3 className='font-semibold text-center capitalize'>{categoryName}</h3>
@@ -84,8 +111,7 @@ const ProductListPage = () => {
                                     <Link
                                         key={sub._id + "displayProduct" + index}
                                         to={link}
-                                        className={`w-full p-2 rounded-lg flex items-center justify-center md:justify-start gap-3 shadow-md cursor-pointer ${isActive ? "bg-green-500 text-white" : "hover:bg-green-100"
-                                            }`}
+                                        className={`w-full p-2 rounded-lg flex items-center justify-center md:justify-start gap-3 shadow-md cursor-pointer ${isActive ? "bg-green-500 text-white" : "hover:bg-green-100"}`}
                                     >
                                         <img
                                             src={sub.image}
@@ -100,7 +126,6 @@ const ProductListPage = () => {
                     </div>
                 </aside>
 
-                {/* Products List */}
                 <main className='w-full'>
                     <div className='bg-white shadow-md m-1 p-2 rounded-md text-primary-Green'>
                         <h3 className='font-semibold capitalize'>{subCategoryName}</h3>
@@ -120,7 +145,6 @@ const ProductListPage = () => {
                 </main>
             </div>
         </section>
-
     )
 }
 

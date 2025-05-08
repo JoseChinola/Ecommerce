@@ -15,24 +15,34 @@ import { setUserDetails } from '../store/userSlice';
 import { FaCheckCircle } from 'react-icons/fa';
 
 const Login = () => {
+    // Estado para almacenar los datos del formulario (email y contraseña)
     const [data, setData] = useState({
         email: "",
         password: "",
     })
+
+    // Estado para mostrar u ocultar la contraseña
     const [showPassword, setShowPassword] = useState(false)
+
+    // Estado para saber si se debe recordar el correo del usuario
     const [rememberMe, setRememberMe] = useState(false);
+
+    // Estado para mostrar el mensaje de verificación de correo
     const [showVerifyEmailPrompt, setShowVerifyEmailPrompt] = useState(false);
+
+    // Estado para indicar si el reenvío de correo fue exitoso
     const [resendSuccess, setResendSuccess] = useState(false)
 
+    // Hooks de Redux y navegación
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
-
-
+    // Manejador del cambio en el checkbox "Remember me"
     const handleRememberMeChange = () => {
         setRememberMe(prev => !prev);
     };
 
+    // Manejador de cambios en los inputs del formulario
     const handleChange = (e) => {
         const { name, value } = e.target
 
@@ -44,8 +54,10 @@ const Login = () => {
         })
     }
 
+    // Valida si todos los campos están llenos
     const valideValue = Object.values(data).every(el => el)
 
+    // Al cargar el componente, si el usuario eligió "remember me", se rellena el campo de email
     useEffect(() => {
         const savedEmail = localStorage.getItem("rememberedEmail");
         if (savedEmail) {
@@ -54,23 +66,24 @@ const Login = () => {
         }
     }, []);
 
-
+    // Manejador del envío del formulario de login
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
+            // Llama al backend para hacer login
             const res = await Axios({
                 ...SummaryApi.login,
                 data: data
             });
 
             if (res.data.success) {
-                toast.success(res.data.message); // Mensaje de éxito
+                // Si login exitoso: guarda tokens, obtiene datos del usuario, los guarda en redux y redirige
+                toast.success(res.data.message);
                 localStorage.setItem('accessToken', res.data.data.accessToken);
                 localStorage.setItem('refreshToken', res.data.data.refreshToken);
 
                 const userDetails = await fetchUserDetails();
-
                 dispatch(setUserDetails(userDetails.data));
 
                 if (rememberMe) {
@@ -84,10 +97,11 @@ const Login = () => {
                     password: ""
                 });
 
-                navigate("/"); // Redirige al usuario después del login
+                navigate("/");
             }
 
         } catch (error) {
+            // Si el correo no ha sido verificado, muestra mensaje especial
             if (error.response && error.response.data) {
                 const message = error.response.data.message;
                 toast.error(message);
@@ -101,7 +115,7 @@ const Login = () => {
         }
     };
 
-
+    // Manejador para reenviar el correo de verificación
     const handleResendVerificationEmail = async () => {
         try {
             const { email } = data
@@ -127,6 +141,7 @@ const Login = () => {
     };
 
     return (
+        // Sección principal del formulario
         <section className="w-full container mx-auto px-4 min-h-[80vh]">
             <div className="flex flex-col items-center justify-center mx-auto">
                 <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
@@ -134,6 +149,7 @@ const Login = () => {
 
                         <h2 className="flex flex-col items-center gap-1 justify-center font-semibold text-gray-900 w-full">
                             <img className="w-20 h-20" src={logomv} alt="logo" />
+                            {/* Encabezado del formulario con logo y mensaje de bienvenida */}
                             {!showVerifyEmailPrompt ? (
                                 <span className="text-gray-500 font-bold text-sm md:text-xl flex items-center flex-col gap-2">
                                     Bienvenido <Link to="/" className="text-primary-Green font-bold text-sm md:text-xl">D’RAF SERVICES</Link>
@@ -146,6 +162,7 @@ const Login = () => {
                         </h2>
 
                         {!showVerifyEmailPrompt ? (
+                            /* Formulario principal (si no se requiere verificación de correo) */
                             <form className="space-y-4 md:space-y-5" onSubmit={handleSubmit}>
                                 <div className='relative'>
                                     <label htmlFor="email"
@@ -234,6 +251,7 @@ const Login = () => {
                                 </p>
                             </form>
                         ) : (
+                            /* Si el correo no está verificado, se muestra opción para reenviar */
                             <div className="space-y-4 text-center p-4 mx-auto container">
                                 <p className="text-gray-700 text-sm md:text-lg">
                                     Tu correo electrónico aún no ha sido verificado.

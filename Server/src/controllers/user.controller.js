@@ -167,7 +167,7 @@ export async function resendVerificationEmail(req, res) {
             });
         }
 
-        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${user._id}`
+        const verifyEmailUrl = `${FRONTEND_URL}`
 
         await sendEmail({
             sendTo: user.email,
@@ -696,7 +696,6 @@ export async function refreshTokenController(req, res) {
         });
     }
 }
-
 
 // get login user details 
 export async function userDetailsController(req, res) {

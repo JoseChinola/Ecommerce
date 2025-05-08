@@ -114,7 +114,7 @@ const Home = () => {
             key={cat.category._id + idx}
             id={cat.category._id}
             name={cat.category.name}
-            products={cat.products}  // Enviar los productos aquí
+            products={cat.products}
           />
         ))}
       </div>
