@@ -38,16 +38,16 @@ const CheckoutPage = () => {
             const { data: resData } = response
             if (resData.success) {
                 toast.success(resData.message)
-                fetchCartItem()
-                fetchMovements()
-                fetchAddress()
-                fetchOrderItems()
-
                 navigate('/success', {
                     state: {
                         text: "Order"
                     }
                 })
+
+                fetchCartItem()
+                fetchMovements()
+                fetchAddress()
+                fetchOrderItems()
             }
 
         } catch (error) {

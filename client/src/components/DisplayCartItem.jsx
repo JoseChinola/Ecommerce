@@ -41,7 +41,7 @@ const DisplayCartItem = ({ close }) => {
 
     return (
         <section className='bg-neutral-900 fixed top-0 bottom-0 left-0 right-0 bg-opacity-70 z-50'>
-            <div className='bg-secundary md:space-y-5 space-y-2 p-1.5 w-full max-w-sm min-h-screen max-h-screen ml-auto rounded-lg'>
+            <div className='bg-secundary space-y-2 p-1.5 w-full max-w-sm min-h-screen max-h-screen ml-auto rounded-lg overflow-auto'>
 
                 <div className="flex items-center justify-between p-3 rounded-md shadow-md bg-white">
                     <h1 className="font-semibold uppercase italic">Carrito</h1>
@@ -53,16 +53,16 @@ const DisplayCartItem = ({ close }) => {
                     </button>
                 </div>
 
-                <div className='h-full max-h-[calc(100vh-120px)] bg-blue-50 p-2 flex flex-col gap-4 rounded-lg'>
+                <div className='h-full max-h-[calc(100vh-120px)] bg-blue-50 p-2 flex flex-col gap-3 rounded-lg'>
                     {/** display items  */}
                     {
                         cartItem[0] ? (
                             <>
-                                <div className='flex items-center justify-between px-4 py-2 bg-blue-100 text-blue-500 gap-2 rounded-full'>
+                                <div className='flex items-center justify-between text-sm px-4 py-1.5 bg-blue-100 text-blue-500 gap-2 rounded-full'>
                                     <p>Tu ahorro total</p>
                                     <p className='font-bold'>{DisplayPriceDOP(notDiscountTotalPrice - totalPrice)}</p>
                                 </div>
-                                <div className='bg-white rounded-lg p-3 grid gap-5 overflow-auto'>
+                                <div className='bg-white rounded-lg p-2 grid gap-5 overflow-y-auto scrollbarCustom'>
                                     {
                                         cartItem[0] && (
                                             cartItem.map((item, index) => {
@@ -79,12 +79,14 @@ const DisplayCartItem = ({ close }) => {
                                                             <p className='text-sm text-ellipsis line-clamp-2'>
                                                                 {item?.productData?.name}
                                                             </p>
-                                                            <div className='flex flex-wrap gap-2'>
-                                                                <p className='text-neutral-400'>{item?.productData?.unit}</p>
-                                                                <p className='text-sm text-red-500 font-semibold'>
-                                                                   Descuento -{item?.productData?.discount}%
-                                                                </p>
-                                                                <p className='font-semibold text-blue-500'>{DisplayPriceDOP(pricewithDiscount(item?.productData?.price, item?.productData?.discount))}</p>
+                                                            <div className='flex flex-col gap-1 '>
+                                                                <p className='text-neutral-400 text-xs'>{item?.productData?.unit}</p>
+                                                                <div className='flex-col'>
+                                                                    <p className='text-xs text-red-500 font-semibold'>
+                                                                        Descuento -{item?.productData?.discount}%
+                                                                    </p>
+                                                                    <p className='font-semibold text-blue-500 text-xs'>{DisplayPriceDOP(pricewithDiscount(item?.productData?.price, item?.productData?.discount))}</p>
+                                                                </div>
                                                             </div>
 
                                                         </div>
@@ -100,7 +102,7 @@ const DisplayCartItem = ({ close }) => {
                                         )
                                     }
                                 </div>
-                                <div className='bg-white p-2 rounded-lg flex flex-col gap-1.5 border'>
+                                <div className='bg-white p-2 rounded-lg flex flex-col gap-1.5 border text-sm'>
                                     <div className="flex justify-between items-center relative group">
                                         <h3 className="font-semibold">Detalles de la factura</h3>
 

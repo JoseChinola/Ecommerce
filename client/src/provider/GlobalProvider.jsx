@@ -212,6 +212,7 @@ const GlobalProvider = ({ children }) => {
             notDiscountTotalPrice,
             fetchInventario,
             fetchMovements,
+            fetchOrderItems
         }}>
             {children}
         </GlobalContext.Provider>

@@ -17,7 +17,6 @@ export async function CashOnDeleveryOrderController(req, res) {
         const userId = req.userId;
         const { list_items, totalAmt, addressId, subTotalAmt, discount } = req.body;
 
-
         if (!list_items || !Array.isArray(list_items) || list_items.length === 0) {
             return res.status(400).json({
                 message: "No items in order list",
@@ -59,7 +58,7 @@ export async function CashOnDeleveryOrderController(req, res) {
             };
         });
 
-        // Crear órdenes
+        //Crear órdenes
         const generatedOrder = await orderSchema.bulkCreate(payload);
 
         // Registrar movimientos en el inventario por cada ítem
@@ -96,7 +95,7 @@ export async function CashOnDeleveryOrderController(req, res) {
         });
 
         return res.json({
-            message: "Order Created Successfully",
+            message: "Pedido creado",
             error: false,
             success: true,
             data: generatedOrder

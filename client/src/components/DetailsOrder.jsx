@@ -20,8 +20,8 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
 
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-y-auto p-1">
-      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl p-5 mt-4 mb-4 space-y-4">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-y-auto p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl p-5 space-y-2">
 
         {/* Header */}
         <div className="flex justify-between items-center border-b pb-3">
