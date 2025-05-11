@@ -51,7 +51,11 @@ const AddToCartButton = ({ data, fetchProductData }) => {
 
             }
         } catch (error) {
-            AxiosToastError(error)
+            if (error.response && error.response.status === 401) {                
+                toast.error('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+            } else {
+                AxiosToastError(error);
+            }
         } finally {
             setLoading(false)
         }
@@ -96,7 +100,6 @@ const AddToCartButton = ({ data, fetchProductData }) => {
             if (qty === 1) {
                 // Si era 1, eliminamos el ítem
                 await deleteCartItem(cartItemDetails._id);
-                toast.success("Producto eliminado");
             } else {
                 // Si era >1, solo bajamos en 1
                 await updateCartItem(cartItemDetails._id, qty - 1);

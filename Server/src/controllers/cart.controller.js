@@ -23,7 +23,7 @@ export const addToCartItemController = async (req, res) => {
 
         if (existingCartItem) {
             return res.status(400).json({
-                message: "Product already in cart",
+                message: "Producto ya en la carrito",
                 error: true,
                 success: false
             });
@@ -53,7 +53,7 @@ export const addToCartItemController = async (req, res) => {
 
         return res.json({
             data: user,
-            message: "Item add successfully",
+            message: "Producto agregado",
             error: false,
             success: true
         });
