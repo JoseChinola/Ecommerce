@@ -89,19 +89,13 @@ export const getProductController = async (req, res) => {
     try {
         let { page, limit, search } = req.body;
 
-        // Default page and limit values
-        if (!page) {
-            page = 1;  // La página debe empezar desde 1
-        }
+        // Asegurar que page y limit sean números enteros válidos
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 10;
 
-        if (!limit) {
-            limit = 10;  // Valor predeterminado de 10 productos por página
-        }
-
-        // Lógica para la paginación
         const offset = (page - 1) * limit;
 
-        // Query de búsqueda con Sequelize (usando operador Op.like)
+        // Filtro de búsqueda
         const query = search ? {
             [Sequelize.Op.or]: [
                 {
@@ -117,55 +111,74 @@ export const getProductController = async (req, res) => {
             ]
         } : {};
 
-        // Recupera los productos y cuenta el total
-        const { rows: data, count: totalCount } = await productSchema.findAndCountAll({
+        // Contar el total antes de aplicar offset
+        const totalCount = await productSchema.count({ where: query });
+        const totalPages = Math.ceil(totalCount / limit);
+
+        // Evitar páginas fuera de rango
+        if (offset >= totalCount && totalCount > 0) {
+            return res.json({
+                message: "Página fuera de rango",
+                error: false,
+                success: true,
+                totalCount,
+                totalNoPage: totalPages,
+                pageActual: page,
+                data: []
+            });
+        }
+
+        // Obtener productos con paginación
+        const { rows: data } = await productSchema.findAndCountAll({
             where: query,
-            offset: offset,
-            limit: limit,
+            offset,
+            limit,
             order: [['createdAt', 'DESC']],
             include: [
                 {
-                    model: categorySchema, // Relación con categorías (múltiples categorías posibles)
-                    as: 'categories',  // El alias definido en la asociación
-                    through: { attributes: [] },  // Ignorar la tabla intermedia en la respuesta
+                    model: categorySchema,
+                    as: 'categories',
+                    through: { attributes: [] },
                     attributes: ['_id', 'name']
                 },
                 {
-                    model: subCategorySchema, // Relación con subcategorías (múltiples subcategorías posibles)
-                    as: 'subcategories',  // El alias definido en la asociación
-                    through: { attributes: [] },  // Ignorar la tabla intermedia en la respuesta
+                    model: subCategorySchema,
+                    as: 'subcategories',
+                    through: { attributes: [] },
                     attributes: ['_id', 'name']
                 },
                 {
-                    model: inventorySchema, // Relación con inventarios
+                    model: inventorySchema,
                     as: 'inventories',
-                    attributes: ["_id", "stock"],  // Incluye solo los atributos necesarios
+                    attributes: ["_id", "stock"]
                 }
             ]
         });
 
-        // Procesar las imágenes y convertirlas en un array
+        // Procesar imágenes
         const processedData = data.map(product => {
             if (product.image) {
                 try {
-                    product.image = JSON.parse(product.image);  // Convierte la imagen almacenada en JSON a un array
+                    product.image = JSON.parse(product.image);
                 } catch (error) {
                     console.error("Error parsing image JSON", error);
-                    product.image = [];  // Si hay error en el parseo, lo dejamos vacío
+                    product.image = [];
                 }
             }
             return product;
         });
 
-        // Respuesta con los datos procesados
+        // Enviar respuesta
         return res.json({
             message: "Product data fetched successfully",
             error: false,
             success: true,
-            totalCount: totalCount,
-            totalNoPage: Math.ceil(totalCount / limit),  // Total de páginas
+            totalCount,
+            totalNoPage: totalPages,
+            pageActual: page,
             data: processedData
         });
+
     } catch (error) {
         console.log("error: ", error)
         return res.status(500).json({

@@ -2,8 +2,9 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import helmet from "helmet";
+import dotenv from 'dotenv'
+dotenv.config()
 import userRouter from './routes/user.routes.js';
-import { FRONTEND_URL } from './config.js';
 import cookieParser from 'cookie-parser';
 import categoryRouter from './routes/category.routes.js';
 import uploadRouter from './routes/upload.routes.js';
@@ -21,7 +22,7 @@ import dashboardRouter from './routes/dashboard.routes.js';
 const app = express();
 app.use(cors({
     credentials: true,
-    origin: FRONTEND_URL
+    origin: process.env.FRONTEND_URL
 }))
 app.use(express.json());
 app.use(cookieParser())
@@ -33,10 +34,6 @@ app.use(helmet({
 app.get('/', (req, res) => {
     res.send('<h1>Welcomen</h1>')
 })
-
-// Webhook de Stripe necesita raw body
-//app.post('/api/order/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
-
 
 app.use('/api/user', userRouter)
 app.use('/api/category', categoryRouter)

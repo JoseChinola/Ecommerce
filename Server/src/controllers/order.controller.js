@@ -4,11 +4,9 @@ import InventoryMovementSchema from "../models/inventoryMovementSchema.js ";
 import orderSchema from "../models/order.model.js";
 import { nanoid } from 'nanoid';
 import userSchema from "../models/user.model.js";
-import { FRONTEND_URL, STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY } from "../config.js";
 import inventorySchema from "../models/Inventory.model.js";
 import addressSchema from "../models/address.model.js";
-import { where } from "sequelize";
-import productSchema from "../models/product.model.js";
+
 
 
 //pago contra entrega efectivo
@@ -179,8 +177,8 @@ export async function paymentController(req, res) {
                 subTotalAmt: subTotalAmt.toString()
             },
             line_items: line_items,
-            success_url: `${FRONTEND_URL}/success`,
-            cancel_url: `${FRONTEND_URL}/cancel`
+            success_url: `${process.env.FRONTEND_URL}/success`,
+            cancel_url: `${process.env.FRONTEND_URL}/cancel`
         }
 
         const session = await Stripe.checkout.sessions.create(params)
@@ -240,7 +238,7 @@ const getOrderProductItems = async (lineItems, userId, session) => {
 // http://localhost:3000/api/order/webhook
 export async function stripeWebhook(req, res) {
     const event = req.body;
-    const endpointSecret = STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY;
+    const endpointSecret = process.env.STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY;
 
     try {
         switch (event.type) {
