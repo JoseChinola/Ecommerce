@@ -32,7 +32,7 @@ const CategoryWiseProductDisplay = ({ id, name, products }) => {
       <div className='relative mt-2'>
         <div
           ref={containerRef}
-          className='flex gap-2 overflow-x-auto scrollbar-none scroll-smooth p-2'
+          className='flex sm:gap-2 overflow-x-auto scrollbar-none scroll-smooth p-1'
         >
           {products.length === 0 ? (
             <div className='flex-none w-full sm:w-auto'>
