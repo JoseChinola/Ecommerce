@@ -63,7 +63,7 @@ const MyOrders = () => {
     }
 
     return (
-        <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 min-h-[77vh] rounded-xl">
+        <div className="p-6 bg-gradient-to-r from-secundary to-blue-200 min-h-[77vh] rounded-xl">
             <h1 className="text-3xl font-bold text-blue-700 mb-4 text-center">Mis Pedidos</h1>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -73,7 +73,7 @@ const MyOrders = () => {
                         className="bg-white rounded-3xl shadow-xl border border-gray-200 hover:shadow-2xl hover:scale-105 transition duration-300 ease-in-out p-4 flex flex-col"
                     >
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-lg font-semibold text-gray-800">Pedido #{order.orderId}</h2>
+                            <h2 className="text-base font-semibold text-gray-800">Pedido #{order.orderId}</h2>
                             <span
                                 className={`px-2 py-1 text-xs rounded-full text-center ${
                                     order.paymentStatus === 'Paid'

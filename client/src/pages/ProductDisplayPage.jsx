@@ -21,8 +21,8 @@ const ProductDisplayPage = () => {
         description: "",
         unit: "",
         more_details: {},
-        stock: 0,
         price: 0,
+        inventories: [],
         discount: 0
     })
     const [imageData, setImageData] = useState([])
@@ -66,6 +66,8 @@ const ProductDisplayPage = () => {
     }, [params])
 
     if (loading) return <ProductSkeleton />
+
+    const totalStock = data.inventories.reduce((acc, inv) => acc + inv.stock, 0);
 
     return (
         <section className='container mx-auto p-4 grid lg:grid-cols-2 gap-4'>
@@ -128,7 +130,7 @@ const ProductDisplayPage = () => {
 
             {/* Sección de información del producto */}
             <div className='p-3 lg:px-4 lg:py-2 text-base bg-white rounded-lg h-fit'>
-                
+
                 <p className='bg-green-300 w-fit rounded-full px-2 mb-1'>{moment(data.createdAt).fromNow()}</p>
                 <div className='flex gap-4 items-center'>
                     <h2 className='lg:text-3xl font-semibold capitalize'>{data.name}</h2>
@@ -136,7 +138,7 @@ const ProductDisplayPage = () => {
                 </div>
                 <Divider />
                 <div>
-                    <p className='font-bold'>Price:</p>
+                    <p className='font-bold mb-1'>Price:</p>
                     <div className='flex items-center gap-5'>
                         <div className='border border-primary-Green px-2 rounded-md bg-green-200 w-fit'>
                             <p className='font-semibold md:text-lg text-center'>{DisplayPriceDOP(pricewithDiscount(data.price, data.discount))}</p>
@@ -150,9 +152,9 @@ const ProductDisplayPage = () => {
                             <p className='font-bold text-red-500'>{data.discount}% <span className='text-sm text-neutral-500'>Discount</span></p>
                         )}
                     </div>
-                    {data.stock === 0 ? (
+                    {totalStock === 0 ? (
                         <div className='my-3'>
-                            <p className='text-lg text-red-500'>Out of Stock</p>
+                            <p className='text-lg text-red-500 bg-red-100 w-fit px-1 py-1 rounded-lg'>Agotado</p>
                         </div>
                     ) : (
                         <div className='my-4 w-36 text-xl'>

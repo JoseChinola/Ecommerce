@@ -6,7 +6,6 @@ import AxiosToastError from '../utils/AxiosToastError';
 import SummaryApi from '../cammon/SummaryApi';
 import Axios from '../utils/Axios';
 import toast from 'react-hot-toast';
-import { MdOutlineMail } from 'react-icons/md';
 import { RiLockPasswordLine } from 'react-icons/ri';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 

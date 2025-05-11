@@ -23,8 +23,6 @@ const Address = () => {
     const [deleteAddress, setDeleteAddress] = useState({ _id: '' });
     const { fetchAddress } = useGlobalContext()
 
-    
-
     const handleDisableAddress = async () => {
         try {
             const response = await Axios({

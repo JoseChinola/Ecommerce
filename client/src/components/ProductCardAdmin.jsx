@@ -44,8 +44,8 @@ const ProductCardAdmin = ({ data, fetchData }) => {
       </div>
 
       {/* Contenido */}
-      <div className="px-2 py-1 flex flex-col justify-between flex-1">
-        <h2 className="text-lg md:text-xl font-semibold text-gray-800 break-words">
+      <div className="px-2 py-1 flex flex-col justify-between flex-1 gap-2">
+        <h2 className="text-base md:text-base line-clamp-2 font-semibold text-gray-800 break-words">
           {data.name}
         </h2>
 

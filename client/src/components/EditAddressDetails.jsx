@@ -59,7 +59,6 @@ const EditAddressDetails = ({ close, data }) => {
     )
     if (!prov) return
 
-    console.log(prov)
     setMunicipios(rdData[prov].municipios)
     setPincodes(rdData[prov].codigos_postales)
     // no limpiamos selects para respetar defaultValues

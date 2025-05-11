@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken'
-import { SECRETE_KEY_ACCESS_TOKEN } from '../config.js'
 
 const auth = async (req, res, next) => {
     try {
@@ -7,17 +6,17 @@ const auth = async (req, res, next) => {
 
         if (!token) {
             return res.status(401).json({
-                message: "You have not login",
+                message: "No access token provided. Please log in.",
                 error: true,
                 success: false
             })
         }
 
-        const decode = await jwt.verify(token, SECRETE_KEY_ACCESS_TOKEN)
+        const decode = await jwt.verify(token, process.env.SECRETE_KEY_ACCESS_TOKEN)
 
         if (!decode) {
             return res.status(401).json({
-                message: "unauthorized access",
+                message: "Invalid or expired token. Unauthorized access.",
                 error: true,
                 success: false
             })
@@ -29,7 +28,7 @@ const auth = async (req, res, next) => {
 
     } catch (error) {
         return res.status(500).json({
-            message: "You have not login" || error,
+            message: "Inicia Session" || error,
             error: true,
             success: false
         })

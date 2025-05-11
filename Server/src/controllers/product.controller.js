@@ -89,19 +89,13 @@ export const getProductController = async (req, res) => {
     try {
         let { page, limit, search } = req.body;
 
-        // Default page and limit values
-        if (!page) {
-            page = 1;  // La página debe empezar desde 1
-        }
+        // Asegurar que page y limit sean números enteros válidos
+        page = parseInt(page) || 1;
+        limit = parseInt(limit) || 10;
 
-        if (!limit) {
-            limit = 10;  // Valor predeterminado de 10 productos por página
-        }
-
-        // Lógica para la paginación
         const offset = (page - 1) * limit;
 
-        // Query de búsqueda con Sequelize (usando operador Op.like)
+        // Filtro de búsqueda
         const query = search ? {
             [Sequelize.Op.or]: [
                 {
@@ -117,55 +111,74 @@ export const getProductController = async (req, res) => {
             ]
         } : {};
 
-        // Recupera los productos y cuenta el total
-        const { rows: data, count: totalCount } = await productSchema.findAndCountAll({
+        // Contar el total antes de aplicar offset
+        const totalCount = await productSchema.count({ where: query });
+        const totalPages = Math.ceil(totalCount / limit);
+
+        // Evitar páginas fuera de rango
+        if (offset >= totalCount && totalCount > 0) {
+            return res.json({
+                message: "Página fuera de rango",
+                error: false,
+                success: true,
+                totalCount,
+                totalNoPage: totalPages,
+                pageActual: page,
+                data: []
+            });
+        }
+
+        // Obtener productos con paginación
+        const { rows: data } = await productSchema.findAndCountAll({
             where: query,
-            offset: offset,
-            limit: limit,
+            offset,
+            limit,
             order: [['createdAt', 'DESC']],
             include: [
                 {
-                    model: categorySchema, // Relación con categorías (múltiples categorías posibles)
-                    as: 'categories',  // El alias definido en la asociación
-                    through: { attributes: [] },  // Ignorar la tabla intermedia en la respuesta
+                    model: categorySchema,
+                    as: 'categories',
+                    through: { attributes: [] },
                     attributes: ['_id', 'name']
                 },
                 {
-                    model: subCategorySchema, // Relación con subcategorías (múltiples subcategorías posibles)
-                    as: 'subcategories',  // El alias definido en la asociación
-                    through: { attributes: [] },  // Ignorar la tabla intermedia en la respuesta
+                    model: subCategorySchema,
+                    as: 'subcategories',
+                    through: { attributes: [] },
                     attributes: ['_id', 'name']
                 },
                 {
-                    model: inventorySchema, // Relación con inventarios
+                    model: inventorySchema,
                     as: 'inventories',
-                    attributes: ["_id", "stock"],  // Incluye solo los atributos necesarios
+                    attributes: ["_id", "stock"]
                 }
             ]
         });
 
-        // Procesar las imágenes y convertirlas en un array
+        // Procesar imágenes
         const processedData = data.map(product => {
             if (product.image) {
                 try {
-                    product.image = JSON.parse(product.image);  // Convierte la imagen almacenada en JSON a un array
+                    product.image = JSON.parse(product.image);
                 } catch (error) {
                     console.error("Error parsing image JSON", error);
-                    product.image = [];  // Si hay error en el parseo, lo dejamos vacío
+                    product.image = [];
                 }
             }
             return product;
         });
 
-        // Respuesta con los datos procesados
+        // Enviar respuesta
         return res.json({
             message: "Product data fetched successfully",
             error: false,
             success: true,
-            totalCount: totalCount,
-            totalNoPage: Math.ceil(totalCount / limit),  // Total de páginas
+            totalCount,
+            totalNoPage: totalPages,
+            pageActual: page,
             data: processedData
         });
+
     } catch (error) {
         console.log("error: ", error)
         return res.status(500).json({
@@ -181,25 +194,24 @@ export const getProductByCategory = async (req, res) => {
     try {
         const { id } = req.body;
 
-        // Verifica si se proporcionó un ID de categoría
         if (!id) {
             return res.status(400).json({
-                message: "Please provide category ID",
+                message: "Please provide category ID(s)",
                 error: true,
                 success: false
             });
         }
 
+        const isArray = Array.isArray(id);
 
-        // Recupera los productos que pertenecen a las categorías especificadas
         const products = await productSchema.findAll({
             where: { publish: true },
-            limit: 15,
+            limit: 100,  // puedes ajustar este límite si quieres
             include: [
                 {
-                    model: inventorySchema, // Relación con inventarios
+                    model: inventorySchema,
                     as: 'inventories',
-                    attributes: ["_id", "stock"], // Solo atributos necesarios
+                    attributes: ["_id", "stock"],
                 },
                 {
                     model: categorySchema,
@@ -207,20 +219,44 @@ export const getProductByCategory = async (req, res) => {
                     attributes: ["_id", "name"],
                     through: { attributes: [] },
                     required: true,
-                    where: Array.isArray(id)
+                    where: isArray
                         ? { _id: { [Op.in]: id } }
                         : { _id: id }
                 }
             ]
         });
 
-        // Respuesta con los productos obtenidos
+        if (isArray) {
+            // Agrupar productos por categoría
+            const grouped = products.reduce((acc, product) => {
+                product.categories.forEach(cat => {
+                    if (!acc[cat._id]) {
+                        acc[cat._id] = {
+                            category: cat,
+                            products: []
+                        };
+                    }
+                    acc[cat._id].products.push(product);
+                });
+                return acc;
+            }, {});
+
+            return res.json({
+                message: "Grouped product list by categories",
+                data: Object.values(grouped),
+                error: false,
+                success: true
+            });
+        }
+
+        // Si no es array, responde como antes
         return res.json({
             message: "Product list by category",
             data: products,
             error: false,
             success: true
         });
+
     } catch (error) {
         console.error("Error fetching products by category:", error);
         return res.status(500).json({
@@ -231,29 +267,31 @@ export const getProductByCategory = async (req, res) => {
     }
 };
 
+
 //get product by categoro and sub category
 export const getProductByCategoryAndSubCategory = async (req, res) => {
     try {
         let { categoryId, subCategoryId, page, limit } = req.body;
 
-        if (!categoryId || !subCategoryId) {
+        // Validación de parámetros
+        if (!categoryId || categoryId === 'null' || !subCategoryId || subCategoryId === 'null') {
             return res.status(400).json({
-                message: "Provide category and subCategory",
+                message: "Provide valid category and subCategory",
                 error: true,
                 success: false
             });
         }
 
-        // Convertir en arrays por si vienen como string único
-        categoryId = [].concat(categoryId);
-        subCategoryId = [].concat(subCategoryId);
+        // Convertir los parámetros en arrays por si son enviados como cadenas
+        categoryId = Array.isArray(categoryId) ? categoryId : [categoryId];
+        subCategoryId = Array.isArray(subCategoryId) ? subCategoryId : [subCategoryId];
 
         // Paginación
         page = parseInt(page) || 1;
         limit = parseInt(limit) || 10;
         const offset = (page - 1) * limit;
 
-        // Consulta
+        // Consulta de productos
         const [data, dataCount] = await Promise.all([
             productSchema.findAll({
                 where: { publish: true },
@@ -278,7 +316,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
                     },
                     {
                         model: subCategorySchema,
-                        as: 'subcategories', // Asegúrate que este alias coincida con el del modelo
+                        as: 'subcategories',
                         attributes: ['_id', 'name'],
                         through: { attributes: [] },
                         required: true,
@@ -313,6 +351,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
             })
         ]);
 
+        // Responder con los productos y el conteo total
         return res.status(200).json({
             message: "Product list by category and subcategory",
             data,
@@ -332,6 +371,7 @@ export const getProductByCategoryAndSubCategory = async (req, res) => {
         });
     }
 };
+
 
 //get Details product
 export const getProductDetails = async (req, res) => {

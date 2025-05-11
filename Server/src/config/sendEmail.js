@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer'
-import { EMAIL_PASS, EMAIL_USER } from '../config.js';
 
 // Configurar el transporte de correo
 const transporter = nodemailer.createTransport({
@@ -8,8 +7,8 @@ const transporter = nodemailer.createTransport({
     maxConnections: 5, // 🔥 Hasta 5 conexiones simultáneas
     maxMessages: 100,  // 🔥 Hasta 100 emails antes de cerrar la conexión
     auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS,
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
     },
     tls: {
         rejectUnauthorized: false,

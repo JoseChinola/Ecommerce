@@ -2,7 +2,6 @@ import sendEmail from "../config/sendEmail.js";
 import userSchema from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
-import { FRONTEND_URL, SECRETE_KEY_REFRESH_TOKEN } from "../config.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import uploadImageClodinary from "../utils/uploadImageClodinary.js";
@@ -50,7 +49,7 @@ export async function registerUserController(req, res) {
 
 
         // URL de verificación de email
-        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${newUser._id}`;
+        const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${newUser._id}`;
 
         try {
             // Enviar email de verificación
@@ -167,7 +166,7 @@ export async function resendVerificationEmail(req, res) {
             });
         }
 
-        const verifyEmailUrl = `${FRONTEND_URL}/verify-email?code=${user._id}`
+        const verifyEmailUrl = `${process.env.FRONTEND_URL}`
 
         await sendEmail({
             sendTo: user.email,
@@ -655,7 +654,7 @@ export async function refreshTokenController(req, res) {
             });
         }
 
-        const verifyToken = await jwt.verify(refreshToken, SECRETE_KEY_REFRESH_TOKEN);
+        const verifyToken = await jwt.verify(refreshToken, process.env.SECRETE_KEY_REFRESH_TOKEN);
 
 
 
@@ -696,7 +695,6 @@ export async function refreshTokenController(req, res) {
         });
     }
 }
-
 
 // get login user details 
 export async function userDetailsController(req, res) {

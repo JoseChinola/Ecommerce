@@ -59,7 +59,6 @@ export const addAddressController = async (req, res) => {
     }
 };
 
-
 export const getAddressController = async (req, res) => {
     try {
         const userId = req.userId

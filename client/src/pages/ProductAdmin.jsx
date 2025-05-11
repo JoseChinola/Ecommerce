@@ -15,6 +15,7 @@ const ProductAdmin = () => {
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [totalPageCount, setTotalPageCount] = useState(1)
+    const [totalProducts, setTotalProducts] = useState(0);
     const [search, setSearch] = useState("")
 
     const fetchProductData = async () => {
@@ -24,7 +25,7 @@ const ProductAdmin = () => {
                 ...SummaryApi.getProduct,
                 data: {
                     page: page,
-                    limit: 12,
+                    limit: 10,
                     search: search
                 }
             })
@@ -32,9 +33,11 @@ const ProductAdmin = () => {
             if (resData.success && resData.data) {
                 setProductData(resData.data);
                 setTotalPageCount(resData.totalNoPage || 1);
+                setTotalProducts(resData.totalCount);
             } else {
                 setProductData([]);
                 setTotalPageCount(1);
+                setTotalProducts(0);
             }
         } catch (error) {
             AxiosToastError(error)
@@ -102,7 +105,10 @@ const ProductAdmin = () => {
                     </button>
                 </div>
 
-                <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary'>
+                <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary space-y-2'>
+                    <p className="text-lg text-end font-bold text-primary-Green">
+                        Total de Productos: {totalProducts}
+                    </p>
                     <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
                         {loading ? (
                             Array.from({ length: 12 }).map((_, index) => (
@@ -129,7 +135,7 @@ const ProductAdmin = () => {
                     </div>
 
                     {totalPageCount > 1 && (
-                        <div className='flex justify-between items-center my-4 bg-white py-2 px-2 rounded-lg'>
+                        <div className='flex justify-between items-center bg-white py-2 px-2 rounded-lg'>
                             <button onClick={handlePrevious} className='border rounded-full border-primary-Green bg-gray-50 px-2 py-2 text-primary-Green hover:bg-primary-Green hover:text-white select-none'>
                                 <MdNavigateBefore />
                             </button>
