@@ -76,7 +76,7 @@ const Home = () => {
           <div className='container mx-auto px-2 py-4 flex flex-wrap gap-4'>
             {
               loadingCategory ? (
-                new Array(12).fill(null).map((_, index) => (
+                new Array(8).fill(null).map((_, index) => (
                   <div key={index} className='bg-white rounded p-4 min-h-36 grid gap-2 shadow animate-pulse'>
                     <div className='bg-blue-100 min-h-24 rounded'></div>
                     <div className='bg-blue-100 h-8 rounded'></div>

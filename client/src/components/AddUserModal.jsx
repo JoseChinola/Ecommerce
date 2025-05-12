@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { IoClose, IoEye, IoEyeOff } from 'react-icons/io5';
+import { IoClose, IoEye, IoEyeOff, IoLockClosed } from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
 import AxiosToastError from '../utils/AxiosToastError';
+import { FaUser, FaEnvelope, FaUserShield } from 'react-icons/fa';
 
 const AddUserModal = ({ onClose }) => {
     const [name, setName] = useState('');
@@ -11,7 +12,9 @@ const AddUserModal = ({ onClose }) => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [role, setRole] = useState('ADMIN');
-    const [showPassword, setShowPassword] = useState(false); // 👈 para alternar visibilidad
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -46,68 +49,84 @@ const AddUserModal = ({ onClose }) => {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4 bg-secundary py-4 px-4 rounded-lg">
-                    <input
-                        type="text"
-                        placeholder="Nombre"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
-                        required
-                    />
-                    <input
-                        type="email"
-                        placeholder="Correo"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
-                        required
-                    />
+                <form onSubmit={handleSubmit} className="space-y-4 bg-secundary py-4 px-2 rounded-lg">
+                    <div className='relative'>
+                       
+                            <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        
+                        <input
+                            type="text"
+                            placeholder="Nombre"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full border rounded-lg px-10 py-2"
+                            required
+                        />
+                    </div>
+
+                    <div className='relative'>                    
+                        <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                        <input
+                            type="email"
+                            placeholder="Correo"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full border rounded-lg px-10 py-2"
+                            required
+                        />
+                    </div>
 
                     <div className="relative">
+                        <IoLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         <input
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Contraseña"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full border rounded-lg px-10 py-2" // Aumentar padding para íconos
                             required
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-500"
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         >
                             {showPassword ? <IoEyeOff /> : <IoEye />}
                         </button>
                     </div>
 
-                    <div className="relative">
+                    <div className="relative mt-1">
+                        <IoLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         <input
-                            type={showPassword ? 'text' : 'password'}
+                            type={showConfirmPassword ? 'text' : 'password'}
                             placeholder="Confirmar Contraseña"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full border rounded-lg px-10 py-2"
                             required
                         />
                         <button
                             type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            className="absolute right-3 top-3 text-gray-500"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                         >
-                            {showPassword ? <IoEyeOff /> : <IoEye />}
+                            {showConfirmPassword ? <IoEyeOff /> : <IoEye />}
                         </button>
                     </div>
 
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
-                    >
-                        <option value="USER">USER</option>
-                        <option value="ADMIN">ADMIN</option>
-                    </select>
+                    <div className='border px-2 py-2 rounded-lg space-y-1'>
+                        <label htmlFor="role" className='font-bold text-primary-Green flex items-center gap-2'>
+                            <FaUserShield /> Rol
+                        </label>
+                        <select
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            className="w-full border rounded-lg px-2 py-2"
+                        >
+                            <option value="USER">USER</option>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
+                    </div>
 
                     <button
                         type="submit"
