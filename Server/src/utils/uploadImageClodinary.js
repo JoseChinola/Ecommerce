@@ -21,7 +21,7 @@ const uploadImageClodinary = async (image) => {
                         console.error('Error en upload_stream:', error);
                         return reject(error);
                     }
-                    resolve(result); // <== Aquí se devuelve `secure_url`, `public_id`, etc.
+                    resolve(result);
                 }
             );
 
