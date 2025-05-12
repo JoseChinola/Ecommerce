@@ -1,5 +1,7 @@
 
 import { v2 as cloudinary } from 'cloudinary';
+import dotenv from 'dotenv'
+dotenv.config()
 
 cloudinary.config({
     cloud_name: process.env.CLODINARY_CLOUD_NAME,
@@ -8,16 +10,29 @@ cloudinary.config({
 })
 
 const uploadImageClodinary = async (image) => {
-    const buffer = image?.buffer || Buffer.from(await image.arrayBuffer());
+    try {
+        const buffer = image?.buffer || Buffer.from(await image.arrayBuffer?.());
 
-    const uploadImage = await new Promise((resolve, reject) => {
-        cloudinary.uploader.upload_stream({ folder: "ShopMix" }, (error, uploadResult) => {
-            return resolve(uploadResult)
-        }).end(buffer)
-    })
+        return await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: 'ShopMix' },
+                (error, result) => {
+                    if (error) {
+                        console.error('Error en upload_stream:', error);
+                        return reject(error);
+                    }
+                    resolve(result); // <== Aquí se devuelve `secure_url`, `public_id`, etc.
+                }
+            );
 
-    return uploadImage
-}
+            uploadStream.end(buffer);
+        });
+    } catch (err) {
+        console.error('Error en uploadImageClodinary:', err);
+        throw err;
+    }
+};
+
 
 
 export default uploadImageClodinary;
