@@ -49,8 +49,4 @@ app.use("/api/inventory-movement", inventoryMovementRouter)
 app.use("/api", dashboardRouter)
 
 
-
-
-
-
 export default app;
