@@ -50,7 +50,7 @@ const Router = createBrowserRouter([
                 element: <RegisterRedirect />
             },
             {
-                path: "verifyEmail-register",
+                path: "verify-email-register",
                 element: <VerifyEmailRegisterRedirect />
             }
             ,
