@@ -22,13 +22,14 @@ import dashboardRouter from './routes/dashboard.routes.js';
 const app = express();
 app.use(cors({
     origin: (origin, callback) => {
-        console.log('origin: ', origin)
-        callback(null, origin);
+        const fallbackOrigin = process.env.FRONTEND_URL;
+        console.log('origin header received:', origin);
+        callback(null, origin || fallbackOrigin); 
     },
     credentials: true
 }));
 
-//console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
+console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
 app.use(express.json());
 app.use(cookieParser())
 app.use(morgan("dev"));
