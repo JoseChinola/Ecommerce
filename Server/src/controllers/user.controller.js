@@ -29,7 +29,7 @@ export async function registerUserController(req, res) {
 
         if (existingUser) {
             return res.status(400).json({
-                message: "Email is already registered",
+                message: "El correo electrónico ya está registrado.",
                 error: true,
                 success: false
             });
@@ -65,7 +65,7 @@ export async function registerUserController(req, res) {
         } catch (emailError) {
             console.error("Error sending verification email:", emailError);
             return res.status(500).json({
-                message: "User registered, but email verification failed",
+                message: "Usuario registrado, pero la verificación de correo electrónico falló",
                 error: true,
                 success: false
             });
@@ -358,7 +358,6 @@ export async function uploadAvatar(req, res) {
     }
 }
 
-
 // udate user details 
 export async function updateUserDetails(req, res) {
     try {
@@ -435,6 +434,7 @@ export async function updateAdminUserDetails(req, res) {
 
 
     } catch (error) {
+        console.log('error users update ', error)
         return res.status(500).json({
             message: error.message || "Internal server error",
             error: true,
@@ -443,6 +443,39 @@ export async function updateAdminUserDetails(req, res) {
     }
 }
 
+//delete users admin 
+export async function deleteAdminUsers(req, res) {
+    try {
+        const userId = req.userId // auth middleware
+        const { _id } = req.body
+        console.log('_id', _id)
+
+        const user = await userSchema.findOne({ where: { _id: _id } })
+        if (!user) {
+            return res.status(401).json({
+                message: "Usuario no encontrado",
+                error: true,
+                success: false,
+            });
+        }
+        const userDelete = await userSchema.destroy({ where: { _id } })
+        res.json({
+            message: "Usuario eliminado",
+            data: userDelete,
+            error: false,
+            success: true
+        })
+
+    } catch (error) {
+        console.log('error users delete ', error)
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+
+}
 
 //forgot password not login
 export async function forgotPasswordController(req, res) {

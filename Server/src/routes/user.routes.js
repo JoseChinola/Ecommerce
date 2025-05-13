@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+    deleteAdminUsers,
     forgotPasswordController, getsUsersController, loginController,
     logoutController, refreshTokenController, registerUserController,
     resendVerificationEmail,
@@ -28,6 +29,7 @@ userRouter.post('/refresh-token', refreshTokenController)
 userRouter.get('/user-details', auth, userDetailsController)
 userRouter.get('/users-get', auth, getsUsersController)
 userRouter.put('/update-user-admin', auth, admin, updateAdminUserDetails)
+userRouter.delete('/delete-user-admin', auth, admin, deleteAdminUsers)
 
 
 

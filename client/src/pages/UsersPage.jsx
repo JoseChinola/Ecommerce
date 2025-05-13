@@ -10,10 +10,11 @@ import {
 import AddUserModal from '../components/AddUserModal';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
-import toast from 'react-hot-toast';
 import AxiosToastError from '../utils/AxiosToastError';
 import moment from 'moment';
 import EditUserModal from '../components/EditUserModal';
+import toast from 'react-hot-toast';
+import ConfirmBox from '../components/ConfirmBox';
 
 
 const UsersPage = () => {
@@ -22,7 +23,10 @@ const UsersPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [users, setUsers] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+
+
 
     const usersPerPage = 6;
 
@@ -47,7 +51,7 @@ const UsersPage = () => {
 
             const { data: resData } = response;
 
-            if (resData.success) {            
+            if (resData.success) {
                 setUsers(resData.data);
             }
         } catch (error) {
@@ -58,6 +62,25 @@ const UsersPage = () => {
     useEffect(() => {
         fetchUsers();
     }, []);
+
+
+    const handleDelete = async () => {
+        try {
+            console.log('selectedUser ', selectedUser._id)
+            const response = await Axios({
+                ...SummaryApi.delete_user_Admin,
+                data: { _id: selectedUser._id }
+            });
+            const { data: resData } = response;
+            if (resData.success) {
+                toast.success(resData.message);
+                fetchUsers()
+                setOpenDelete(false);
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    };
 
     return (
         <section className='bg-white p-4 rounded-lg shadow min-h-[75vh]'>
@@ -126,7 +149,12 @@ const UsersPage = () => {
                                         }}>
                                             <FaEdit />
                                         </button>
-                                        <button className='text-red-500 hover:text-red-700'>
+                                        <button className='text-red-500 hover:text-red-700'
+                                            onClick={() => {
+                                                setSelectedUser(user);
+                                                setOpenDelete(true);
+                                            }}
+                                        >
                                             <FaTrashAlt />
                                         </button>
                                     </td>
@@ -181,6 +209,14 @@ const UsersPage = () => {
                             u._id === selectedUser._id ? { ...u, ...updatedData } : u
                         ));
                     }}
+                />
+            )}
+
+            {openDelete && (
+                <ConfirmBox
+                    close={() => setOpenDelete(false)}
+                    cancel={() => setOpenDelete(false)}
+                    confirm={handleDelete}
                 />
             )}
         </section>
