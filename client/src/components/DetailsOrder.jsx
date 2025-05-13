@@ -67,7 +67,7 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
             {products.map((product, index) => {
               const images = parseImage(product.image || '[]');
               const imageFallback = "/no-image.png";
-              
+              console.log(product)
 
               return (
                 <div
