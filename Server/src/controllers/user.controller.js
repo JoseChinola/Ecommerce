@@ -410,14 +410,12 @@ export async function updateAdminUserDetails(req, res) {
 
         const { _id, name, email, role, status } = req.body
 
-
-
         await userSchema.update(
             {
                 ...(name && { name: name }),
                 ...(email && { email: email }),
                 ...(status && { status: status }),
-                ...(role && { mobile: role })
+                ...(role && { role: role })
 
             },
             { where: { _id: _id } })

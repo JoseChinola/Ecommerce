@@ -81,6 +81,8 @@ const UsersPage = () => {
         }
     };
 
+    console.log(users)
+    
     return (
         <section className='bg-white p-4 rounded-lg shadow min-h-[75vh]'>
             <div className=' bg-secundary py-2 rounded-lg px-4 flex flex-col sm:flex-row justify-between items-center gap-4 mb-5'>

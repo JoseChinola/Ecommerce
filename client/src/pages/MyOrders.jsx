@@ -7,33 +7,13 @@ import moment from 'moment';
 
 const MyOrders = () => {
     const orders = useSelector((state) => state?.orders?.order);
-    const user = useSelector(state => state.user);
+    const user = useSelector((state) => state.user);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     if (!user || !user._id) {
         return <Navigate to="/" />;
     }
-
-    const groupedOrders = orders?.reduce((acc, item) => {
-        const key = item.orderId;
-        if (!acc[key]) {
-            acc[key] = {
-                orderId: item.orderId,
-                paymentStatus: item.paymentStatus,
-                totalAmt: 0,
-                products: [],
-                user: item.user,
-                deliveryAddress: item.address,
-                date: item.date
-            };
-        }
-        acc[key].products.push(item);
-        acc[key].totalAmt += Number(item.totalAmt) || 0;
-        return acc;
-    }, {});
-
-    const groupedOrdersArray = Object.values(groupedOrders || {});
 
     const openModal = (order) => {
         setSelectedOrder(order);
@@ -47,8 +27,7 @@ const MyOrders = () => {
 
     const parseImage = (imageString) => {
         try {
-            const cleaned = imageString.replace(/^\[|\]$/g, '').replace(/\\"/g, '"').replace(/"/g, '');
-            return cleaned.split(',');
+            return JSON.parse(imageString);
         } catch {
             return [];
         }
@@ -64,10 +43,10 @@ const MyOrders = () => {
 
     return (
         <div className="p-6 bg-gradient-to-r from-secundary to-blue-200 min-h-[77vh] rounded-xl">
-            <h1 className="text-3xl font-bold text-blue-700 mb-4 text-center">Mis Pedidos</h1>
+            <h1 className="text-3xl font-bold text-blue-700 mb-6 text-center">Mis Pedidos</h1>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {groupedOrdersArray.map((order, idx) => (
+                {orders.map((order, idx) => (
                     <div
                         key={order.orderId + idx}
                         className="bg-white rounded-3xl shadow-xl border border-gray-200 hover:shadow-2xl hover:scale-105 transition duration-300 ease-in-out p-4 flex flex-col"
@@ -75,46 +54,55 @@ const MyOrders = () => {
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-base font-semibold text-gray-800">Pedido #{order.orderId}</h2>
                             <span
-                                className={`px-2 py-1 text-xs rounded-full text-center ${
-                                    order.paymentStatus === 'Paid'
+                                className={`px-2 py-1 text-xs rounded-full text-center ${order.paymentStatus === 'Paid'
                                         ? 'bg-green-100 text-green-700'
-                                        : 'bg-yellow-100 text-yellow-700'
-                                }`}
+                                        : order.paymentStatus === 'CASH ON DELIVERY'
+                                            ? 'bg-blue-100 text-blue-700'
+                                            : 'bg-yellow-100 text-yellow-700'
+                                    }`}
                             >
-                                {order.paymentStatus}
+                                {order.paymentStatus === 'Paid'
+                                    ? 'Pagado'
+                                    : order.paymentStatus === 'CASH ON DELIVERY'
+                                        ? 'Pago contra entrega'
+                                        : 'Pendiente'}
                             </span>
                         </div>
 
                         <div className="space-y-3 mb-4">
-                            {order.products.slice(0, 2).map((product, i) => {
-                                const images = parseImage(product.product_details?.image || '[]');
-                                const thumb = images[0] || '';
+                            {order.items?.slice(0, 1).map((item, i) => {
+                                const images = parseImage(item?.image || '[]');
+                                const thumb = images[0]?.trim() || '/no-image.png';
+
                                 return (
                                     <div key={i} className="flex items-center">
                                         <img
                                             src={thumb}
-                                            alt={product.product_details?.name}
+                                            alt={item?.name || 'Producto'}
                                             className="w-12 h-12 rounded-lg object-cover bg-gray-100 p-1"
                                         />
                                         <div className="ml-3">
-                                            <p className="text-sm font-medium">{product.product_details?.name}</p>
-                                            <p className="text-xs text-gray-500">Cantidad: {product.quantity || 1}</p>
+                                            <p className="text-sm font-medium line-clamp-1">{item?.name}</p>
+                                            <p className="text-xs text-gray-500">Cantidad: {item.quantity || 1}</p>
                                             <p className="text-xs text-gray-500">
-                                                Precio: {DisplayPriceDOP(product.product_details?.unit_price || 0)}
+                                                Precio: {DisplayPriceDOP(item?.unit_price || 0)}
                                             </p>
                                         </div>
                                     </div>
                                 );
                             })}
-                            {order.products.length > 2 && (
-                                <p className="text-xs text-gray-500">+ {order.products.length - 2} productos más</p>
+
+                            {order.items?.length > 1 && (
+                                <p className="text-xs text-gray-500">
+                                    + {order.items.length - 1} producto{order.items.length - 1 > 1 ? 's' : ''} más
+                                </p>
                             )}
                         </div>
 
                         <div className="text-sm text-gray-500 mb-4">
                             <p>
                                 <span className="font-semibold">Fecha:</span>{' '}
-                                {moment(order.date).format('DD/MM/YYYY, hh:mm A')}
+                                {moment(order.createdAt).format('DD/MM/YYYY, hh:mm A')}
                             </p>
                             <p>
                                 <span className="font-semibold">Total:</span>{' '}
@@ -136,7 +124,7 @@ const MyOrders = () => {
                 isOpen={modalOpen}
                 onClose={closeModal}
                 orderDetails={selectedOrder}
-            />  
+            />
         </div>
     );
 };
