@@ -20,15 +20,14 @@ import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
 import dashboardRouter from './routes/dashboard.routes.js';
 
 const app = express();
-app.use(cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true
-}))
+app.use(cors())
 
 console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
+
 app.use(express.json());
 app.use(cookieParser())
 app.use(morgan("dev"));
+
 app.use(helmet({
     crossOriginResourcePolicy: false,
 }));
