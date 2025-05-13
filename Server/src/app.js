@@ -20,26 +20,10 @@ import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
 import dashboardRouter from './routes/dashboard.routes.js';
 
 const app = express();
-
-
-// app.options('*', cors({
-//     origin: process.env.FRONTEND_URL,
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     allowedHeaders: ['Content-Type', 'Authorization'],
-//     credentials: true,
-//     optionsSuccessStatus: 200
-// }));
-
-// —————— 2. Aplica CORS a todas las peticiones ——————
 app.use(cors({
     origin: process.env.FRONTEND_URL,
-    // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    //allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    //optionsSuccessStatus: 200
 }));
-
-
 app.use(express.json());
 app.use(cookieParser())
 app.use(morgan("dev"));
