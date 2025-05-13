@@ -560,19 +560,31 @@ export const searchProduct = async (req, res) => {
     try {
         let { search, page, limit } = req.body;
 
+        // Verificar si el término de búsqueda es válido
+        if (!search || search.trim().length < 3) {
+            return res.json({
+                message: "Search term too short or empty",
+                error: false,
+                success: true,
+                data: [],
+                totalCount: 0,
+                totalPage: 0,
+                page,
+                limit
+            });
+        }
+
         // Definir valores por defecto para la paginación
         page = page || 1;
         limit = limit || 10;
 
         // Construir la consulta de búsqueda
-        const query = search
-            ? {
-                [Op.or]: [
-                    { name: { [Op.like]: `%${search}%` } },
-                    { description: { [Op.like]: `%${search}%` } }
-                ]
-            }
-            : {};
+        const query = {
+            [Op.or]: [
+                { name: { [Op.like]: `%${search}%` } },
+                { description: { [Op.like]: `%${search}%` } }
+            ]
+        };
 
         // Cálculo de la paginación (offset)
         const offset = (page - 1) * limit;
@@ -585,8 +597,8 @@ export const searchProduct = async (req, res) => {
                 offset: offset,
                 order: [['createdAt', 'DESC']],
                 include: [
-                    { model: categorySchema, as: 'categoryData' },
-                    { model: subCategorySchema, as: 'subcategoryData' }
+                    { model: categorySchema, as: 'categories' },
+                    { model: subCategorySchema, as: 'subcategories' }
                 ]
             }),
             productSchema.count({ where: query })

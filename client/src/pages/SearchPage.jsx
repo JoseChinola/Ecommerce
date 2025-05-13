@@ -56,7 +56,7 @@ const SearchPage = () => {
     const debouncedFetchData = debounce(fetchData, 500)
 
     useEffect(() => {
-        if (searchText) {
+        if (searchText && searchText.length >= 3) {  // Solo llamar si hay texto válido
             debouncedFetchData()
         }
     }, [page, searchText])
