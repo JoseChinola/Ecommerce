@@ -21,27 +21,22 @@ import dashboardRouter from './routes/dashboard.routes.js';
 
 const app = express();
 
-// —————— 0. Loggea el Origin de cada petición ——————
-app.use((req, res, next) => {
-    console.log('🔥 Incoming request Origin header:', req.headers.origin);
-    next();
-});
 
+// app.options('*', cors({
+//     origin: process.env.FRONTEND_URL,
+//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+//     allowedHeaders: ['Content-Type', 'Authorization'],
+//     credentials: true,
+//     optionsSuccessStatus: 200
+// }));
 
-app.options('*', cors({
-    origin: process.env.FRONTEND_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200
-}));
 // —————— 2. Aplica CORS a todas las peticiones ——————
 app.use(cors({
     origin: process.env.FRONTEND_URL,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    // methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    //allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
-    optionsSuccessStatus: 200
+    //optionsSuccessStatus: 200
 }));
 
 
