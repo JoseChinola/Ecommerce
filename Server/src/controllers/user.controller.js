@@ -14,6 +14,7 @@ export async function registerUserController(req, res) {
     try {
         const { name, email, password } = req.body;
 
+
         // Validar que todos los campos estén presentes
         if (!name || !email || !password) {
             return res.status(400).json({

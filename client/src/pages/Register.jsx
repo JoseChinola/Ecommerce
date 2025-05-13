@@ -39,30 +39,32 @@ const Register = () => {
 
     const valideValue = Object.values(data).every(el => el)
 
-    const handleSubmit = async (data) => {
-    if (data.password !== data.confirmPassword) {
-        toast.error("Password and confirm password must be same");
-        return;
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    try {
-        const res = await Axios({
-            ...SummaryApi.register,
-            data: data
-        });
-
-        if (res.data.error) {
-            toast.error(res.data.message);
+        if (data.password !== data.confirmPassword) {
+            toast.error("Password and confirm password must be same");
+            return;
         }
 
-        if (res.data.success) {
-            toast.success(res.data.message);
-            navigate("/verifyEmail-register");
+        try {
+            const res = await Axios({
+                ...SummaryApi.register,
+                data: data
+            });
+
+            if (res.data.error) {
+                toast.error(res.data.message);
+            }
+
+            if (res.data.success) {
+                toast.success(res.data.message);
+                navigate("/verifyEmail-register");
+            }
+        } catch (error) {
+            AxiosToastError(error);
         }
-    } catch (error) {
-        AxiosToastError(error);
-    }
-};
+    };
 
     const redirectToHomePage = () => {
         navigate("/")
@@ -86,7 +88,7 @@ const Register = () => {
 
                     {/* name input */}
                     <div className='grid gap-1'>
-                        <label htmlFor="name" className='font-semibold'>Name: </label>
+                        <label htmlFor="name" className='font-semibold'>Nombre: </label>
                         <div className="relative">
                             <input
                                 type="text"
@@ -96,7 +98,7 @@ const Register = () => {
                                 name='name'
                                 value={data.name}
                                 onChange={handleChange}
-                                placeholder='Enter your name'
+                                placeholder='introduce tu nombre'
                             />
                             <FaRegUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
@@ -105,7 +107,7 @@ const Register = () => {
 
                     {/* email input */}
                     <div className='grid gap-1'>
-                        <label htmlFor="email" className='font-semibold'>Email: </label>
+                        <label htmlFor="email" className='font-semibold'>Correo: </label>
                         <div className="relative">
                             <input
                                 type="email"
@@ -115,7 +117,7 @@ const Register = () => {
                                 name='email'
                                 value={data.email}
                                 onChange={handleChange}
-                                placeholder='Enter your email'
+                                placeholder='Introduce tu correo'
                             />
                             <MdOutlineMail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
@@ -124,7 +126,7 @@ const Register = () => {
                     <div className='grid grid-cols-2 gap-5'>
                         {/* password input */}
                         <div className='grid gap-1'>
-                            <label htmlFor="password" className='font-semibold'>Password: </label>
+                            <label htmlFor="password" className='font-semibold'>Contraseña: </label>
                             <div className="relative">
                                 <input
                                     type={showPassword ? "text" : "password"}
@@ -134,7 +136,7 @@ const Register = () => {
                                     name='password'
                                     value={data.password}
                                     onChange={handleChange}
-                                    placeholder='Enter your password'
+                                    placeholder='Introduce tu contraseña'
                                 />
                                 <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                                 <div onClick={() => setShowPassword(preve => !preve)} className='cursor-pointer'>
@@ -152,7 +154,7 @@ const Register = () => {
 
                         {/* Confirm Password input */}
                         <div className='grid gap-1'>
-                            <label htmlFor="confirmPassword" className='font-semibold'>Confirm Password: </label>
+                            <label htmlFor="confirmPassword" className='font-semibold'>Confirmar Contraseña: </label>
                             <div className="relative">
                                 <input
                                     type={showPasswordConfirm ? "text" : "password"}
@@ -162,7 +164,7 @@ const Register = () => {
                                     name='confirmPassword'
                                     value={data.confirmPassword}
                                     onChange={handleChange}
-                                    placeholder='Enter your password'
+                                    placeholder='confirma tu contraseña'
                                 />
                                 <RiLockPasswordLine className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                                 <div onClick={() => setShowPasswordConfirm(preve => !preve)} className='cursor-pointer'>
@@ -180,12 +182,12 @@ const Register = () => {
 
                     </div>
                     <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"}  text-white py-1 rounded font-semibold mt-1 tracking-wide w-full`}>
-                        Register
+                        Registrar
                     </button>
                 </form>
 
                 <p className="text-sm font-medium tracking-wide text-black mt-1">
-                    Already have account? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
+                    ¿Ya tienes cuenta? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
                 </p>
             </div>
         </section>
