@@ -144,7 +144,7 @@ const Router = createBrowserRouter([
                 element: <Cancel />
             },
             {
-                path: "/verify-email",
+                path: "verify-email",
                 element: <VerifyEmailRedirect />
             },
         ]
