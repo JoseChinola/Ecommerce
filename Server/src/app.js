@@ -20,10 +20,13 @@ import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
 import dashboardRouter from './routes/dashboard.routes.js';
 
 const app = express();
-app.use(cors({
+app.options('*', cors({
     origin: process.env.FRONTEND_URL,
-    credentials: true
-}))
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
 
 console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
 app.use(express.json());
