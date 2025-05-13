@@ -623,7 +623,7 @@ export async function resetPassord(req, res) {
 
         if (!email || !newPassword || !confirmPassword) {
             return res.status(500).json({
-                message: "Provide requeried fields email, new password, confirm passowrd",
+                message: "Proporcione los campos requeridos: correo electrónico, nueva contraseña, confirmar contraseña",
                 error: true,
                 success: false,
             });
@@ -633,7 +633,7 @@ export async function resetPassord(req, res) {
 
         if (!user) {
             return res.status(400).json({
-                message: "Email not available",
+                message: "Correo electrónico no disponible",
                 error: true,
                 success: false,
             });
@@ -641,7 +641,7 @@ export async function resetPassord(req, res) {
 
         if (newPassword !== confirmPassword) {
             return res.status(400).json({
-                message: "passowrd and confirm password must be same",
+                message: "La contraseña y la contraseña de confirmación deben ser las mismas",
                 error: true,
                 success: false
             })
@@ -659,7 +659,7 @@ export async function resetPassord(req, res) {
             { where: { _id: user._id } })
 
         return res.json({
-            message: "Password update successfully",
+            message: "Contraseña Actualizada",
             error: false,
             success: true
         })

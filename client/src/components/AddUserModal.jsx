@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { IoClose, IoEye, IoEyeOff } from 'react-icons/io5';
+import {
+    IoClose,
+    IoEye,
+    IoEyeOff,
+    IoPersonOutline,
+    IoMailOutline,
+    IoPersonCircleOutline
+} from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -10,8 +17,8 @@ const AddUserModal = ({ onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState('ADMIN');
-    const [showPassword, setShowPassword] = useState(false); // 👈 para alternar visibilidad
+    const [role, setRole] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -47,30 +54,41 @@ const AddUserModal = ({ onClose }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 bg-secundary py-4 px-4 rounded-lg">
-                    <input
-                        type="text"
-                        placeholder="Nombre"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
-                        required
-                    />
-                    <input
-                        type="email"
-                        placeholder="Correo"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
-                        required
-                    />
+                    
+                    {/* Nombre */}
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Nombre"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full border rounded-lg px-10 py-2"
+                            required
+                        />
+                        <IoPersonOutline className="absolute left-3 top-3 text-gray-500" size={20} />
+                    </div>
 
+                    {/* Correo */}
+                    <div className="relative">
+                        <input
+                            type="email"
+                            placeholder="Correo"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full border rounded-lg px-10 py-2"
+                            required
+                        />
+                        <IoMailOutline className="absolute left-3 top-3 text-gray-500" size={20} />
+                    </div>
+
+                    {/* Contraseña */}
                     <div className="relative">
                         <input
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Contraseña"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full border rounded-lg px-10 py-2"
                             required
                         />
                         <button
@@ -82,13 +100,14 @@ const AddUserModal = ({ onClose }) => {
                         </button>
                     </div>
 
+                    {/* Confirmar contraseña */}
                     <div className="relative">
                         <input
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Confirmar Contraseña"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full border rounded-lg px-3 py-2"
+                            className="w-full border rounded-lg px-10 py-2"
                             required
                         />
                         <button
@@ -100,14 +119,20 @@ const AddUserModal = ({ onClose }) => {
                         </button>
                     </div>
 
-                    <select
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                        className="w-full border rounded-lg px-3 py-2"
-                    >
-                        <option value="USER">USER</option>
-                        <option value="ADMIN">ADMIN</option>
-                    </select>
+                    {/* Rol */}
+                    <div className="relative">
+                        <select
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                            className="w-full border rounded-lg px-10 py-2"
+                            required
+                        >
+                            <option value="">Selecciona rol</option>
+                            <option value="USER">USER</option>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
+                        <IoPersonCircleOutline className="absolute left-3 top-2 text-gray-500" size={20} />
+                    </div>
 
                     <button
                         type="submit"

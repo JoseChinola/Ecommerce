@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -7,12 +7,25 @@ import { IoClose } from 'react-icons/io5';
 
 const EditUserModal = ({ user, onClose, onUpdate }) => {
     const [formData, setFormData] = useState({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status,
+        _id: '',
+        name: '',
+        email: '',
+        role: '',
+        status: '',
     });
+
+    // Actualiza formData cuando el prop `user` cambia
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                _id: user._id || '',
+                name: user.name || '',
+                email: user.email || '',
+                role: user.role || '',
+                status: user.status || '',
+            });
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -41,7 +54,6 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
     return (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
             <div className='bg-white rounded-lg p-3 space-y-2 w-full max-w-md'>
-
                 <div className='py-2 flex justify-between items-center border bg-secundary rounded-lg px-2'>
                     <h2 className='font-extrabold text-primary-Green italic sm:text-lg sm:uppercase'>Editar Usuario</h2>
                     <button onClick={onClose} className="w-fit ml-auto hover:text-red-600 hidden sm:block">
@@ -76,7 +88,7 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
                         required
                     >
                         <option value='Admin'>Admin</option>
-                        <option value='User'>User</option>
+                        <option value='USER'>User</option>
                     </select>
                     <select
                         name='status'

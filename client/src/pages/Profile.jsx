@@ -10,12 +10,14 @@ import toast from 'react-hot-toast';
 import fetchUserDetails from '../utils/fetchUserDetails';
 import { setUserDetails } from '../store/userSlice';
 import { Navigate } from 'react-router-dom';
+import ChangePasswordLogin from '../components/ChangePasswordLogin';
 
 
 const Profile = () => {
     const user = useSelector(state => state.user)
     const dispatch = useDispatch()
     const [openEditAvatar, setOpenEditAvatar] = useState(false)
+    const [openChangePassword, setOpenChangePassword] = useState(false)
     const [userData, setUserData] = useState({
         name: user?.name || '',
         email: user?.email || '',
@@ -71,8 +73,17 @@ const Profile = () => {
     }
 
     return (
-        <div className='flex items-center justify-center rounded w-full min-h-[77vh] p-2'>
-            <div className='flex items-center justify-center border w-full max-w-lg flex-col bg-white p-6 rounded-xl shadow-lg'>
+        <div className='flex items-center justify-center rounded w-full'>
+            <div className='flex items-center justify-center border w-full max-w-lg flex-col bg-white p-6 rounded-xl shadow-lg gap-2'>
+                <div className='items-center flex justify-between w-full py-1 px-2 rounded-lg'>
+                    <h1 className='font-bold text-primary-Green uppercase'>Perfil</h1>
+
+                    <button className='border rounded-xl px-2 py-1 hover:bg-secundary hover:text-primary-Green'
+                        onClick={() => setOpenChangePassword(true)}
+                    >
+                        Cambiar Contraseña
+                    </button>
+                </div>
 
                 {/** Profile upload and display img */}
                 <div className='relative w-24 h-24 border flex items-center justify-center rounded-full overflow-hidden drop-shadow-sm'>
@@ -103,7 +114,7 @@ const Profile = () => {
                 }
 
                 {/** Name, mobile, email, change password*/}
-                <form className='my-1 grid gap-4 w-full' onSubmit={handleSubmit}>
+                <form className='grid gap-2 w-full' onSubmit={handleSubmit}>
                     <div className='grid'>
                         <label htmlFor="name" className='text-primary-Blue font-semibold'>Name</label>
                         <input
@@ -151,7 +162,9 @@ const Profile = () => {
                     </button>
                 </form>
             </div>
-
+            {openChangePassword && (
+                <ChangePasswordLogin email={userData.email} close={() => setOpenChangePassword(false)} />
+            )}
         </div>
     )
 }
