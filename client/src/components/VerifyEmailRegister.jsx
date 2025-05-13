@@ -1,16 +1,8 @@
-import React from 'react'
 import logomv from '../assets/logo.png'
 import { FaEnvelopeOpenText } from 'react-icons/fa'
-import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+
 
 const VerifyEmailRegister = () => {
-    const user = useSelector(state => state.user);
-
-    if (user || user._id) {
-        return <Navigate to="/" />;
-    }
-
 
     return (
         <section className="w-full min-h-[78vh] flex items-center justify-center px-4">
