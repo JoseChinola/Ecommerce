@@ -6,6 +6,8 @@ const Axios = axios.create({
     withCredentials: true
 })
 
+console.log('API baseURL is:', baseURL);
+
 //sending access token in the header
 Axios.interceptors.request.use(
     async (config) => {
