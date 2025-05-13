@@ -16,16 +16,6 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
   const subtotal = orderDetails.subTotalAmt || 0;
   const descuento = orderDetails.discount || 0;
 
-
-  const parseImage = (imgStr) => {
-    try {
-      const parsed = JSON.parse(imgStr);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  };
-
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-y-auto p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-3xl p-5 space-y-2">
@@ -65,9 +55,7 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
 
           <div className="flex gap-4 overflow-x-auto pb-2">
             {products.map((product, index) => {
-              const images = parseImage(product.image || '[]');
               const imageFallback = "/no-image.png";
-              console.log(product)
 
               return (
                 <div
@@ -77,9 +65,9 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
                   <h4 className="text-center font-semibold text-gray-800 mb-2">{product?.name}</h4>
 
                   <div className="flex justify-center items-center mb-3">
-                    {images.length > 1 ? (
+                    {product.image.length > 1 ? (
                       <div className="flex overflow-x-auto scrollbarCustom gap-2 w-36 h-32 overflow-y-hidden">
-                        {images.map((url, i) => (
+                        {product.image.map((url, i) => (
                           <img
                             key={i}
                             src={url || imageFallback}
@@ -91,7 +79,7 @@ const DetailsOrder = ({ isOpen, onClose, orderDetails }) => {
                       </div>
                     ) : (
                       <img
-                        src={images[0] || imageFallback}
+                        src={product.image[0] || imageFallback}
                         alt="product"
                         className="w-28 h-28 object-contain rounded-lg border shadow"
                       />

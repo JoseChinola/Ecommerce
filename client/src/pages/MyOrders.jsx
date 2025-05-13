@@ -25,14 +25,6 @@ const MyOrders = () => {
         setSelectedOrder(null);
     };
 
-    const parseImage = (imageString) => {
-        try {
-            return JSON.parse(imageString);
-        } catch {
-            return [];
-        }
-    };
-
     if (!orders || orders.length === 0) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -55,10 +47,10 @@ const MyOrders = () => {
                             <h2 className="text-base font-semibold text-gray-800">Pedido #{order.orderId}</h2>
                             <span
                                 className={`px-2 py-1 text-xs rounded-full text-center ${order.paymentStatus === 'Paid'
-                                        ? 'bg-green-100 text-green-700'
-                                        : order.paymentStatus === 'CASH ON DELIVERY'
-                                            ? 'bg-blue-100 text-blue-700'
-                                            : 'bg-yellow-100 text-yellow-700'
+                                    ? 'bg-green-100 text-green-700'
+                                    : order.paymentStatus === 'CASH ON DELIVERY'
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : 'bg-yellow-100 text-yellow-700'
                                     }`}
                             >
                                 {order.paymentStatus === 'Paid'
@@ -71,8 +63,7 @@ const MyOrders = () => {
 
                         <div className="space-y-3 mb-4">
                             {order.items?.slice(0, 1).map((item, i) => {
-                                const images = parseImage(item?.image || '[]');
-                                const thumb = images[0]?.trim() || '/no-image.png';
+                                const thumb = item?.image[0] || '/no-image.png';
 
                                 return (
                                     <div key={i} className="flex items-center">
