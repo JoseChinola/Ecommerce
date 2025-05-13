@@ -23,13 +23,12 @@ const app = express();
 app.use(cors({
     origin: (origin, callback) => {
         console.log('origin: ', origin)
-        console.log('callback: ', callback)
-        callback(null, origin); // permite cualquier origen dinámicamente
+        callback(null, origin);
     },
     credentials: true
 }));
 
-console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
+//console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
 app.use(express.json());
 app.use(cookieParser())
 app.use(morgan("dev"));
