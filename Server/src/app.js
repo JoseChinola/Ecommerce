@@ -20,25 +20,10 @@ import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
 import dashboardRouter from './routes/dashboard.routes.js';
 
 const app = express();
-app.use((req, res, next) => {
-    const allowedOrigins = [process.env.FRONTEND_URL]; // puedes poner más si es necesario
-    const origin = req.headers.origin;
-    console.log('Origin received:', origin);
-
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
-
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-    } else {
-        next();
-    }
-});
+app.use(cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true
+}))
 
 console.log('FRONTEND_URL ', process.env.FRONTEND_URL)
 app.use(express.json());
