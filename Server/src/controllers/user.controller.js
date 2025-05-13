@@ -410,6 +410,8 @@ export async function updateAdminUserDetails(req, res) {
 
         const { _id, name, email, role, status } = req.body
 
+        console.log('req-body', req.body)
+
         await userSchema.update(
             {
                 ...(name && { name: name }),

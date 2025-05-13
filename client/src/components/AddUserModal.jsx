@@ -54,7 +54,7 @@ const AddUserModal = ({ onClose }) => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4 bg-secundary py-4 px-4 rounded-lg">
-                    
+
                     {/* Nombre */}
                     <div className="relative">
                         <input
@@ -128,8 +128,8 @@ const AddUserModal = ({ onClose }) => {
                             required
                         >
                             <option value="">Selecciona rol</option>
-                            <option value="USER">USER</option>
-                            <option value="ADMIN">ADMIN</option>
+                            <option value='ADMIN'>Administrador</option>
+                            <option value='USER'>Usuario</option>
                         </select>
                         <IoPersonCircleOutline className="absolute left-3 top-2 text-gray-500" size={20} />
                     </div>

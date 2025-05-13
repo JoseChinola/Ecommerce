@@ -32,6 +32,7 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
         setFormData({ ...formData, [name]: value });
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -87,8 +88,9 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
                         className='w-full border rounded px-3 py-2'
                         required
                     >
-                        <option value='ADMIN'>Admin</option>
-                        <option value='USER'>User</option>
+                        <option value="">Selecciona rol</option>
+                        <option value='ADMIN'>Administrador</option>
+                        <option value='USER'>Usuario</option>
                     </select>
                     <select
                         name='status'
