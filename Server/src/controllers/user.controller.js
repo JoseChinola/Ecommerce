@@ -448,7 +448,6 @@ export async function deleteAdminUsers(req, res) {
     try {
         const userId = req.userId // auth middleware
         const { _id } = req.body
-        console.log('_id', _id)
 
         const user = await userSchema.findOne({ where: { _id: _id } })
         if (!user) {

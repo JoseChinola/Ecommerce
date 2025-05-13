@@ -290,8 +290,7 @@ export async function stripeWebhook(req, res) {
                     }
                 }
 
-                const deleted = await cartProductSchema.destroy({ where: { userId } });
-                console.log("Productos eliminados del carrito:", deleted);
+                await cartProductSchema.destroy({ where: { userId } });
                 break;
             }
 

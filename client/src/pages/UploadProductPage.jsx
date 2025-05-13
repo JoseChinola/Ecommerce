@@ -50,18 +50,12 @@ const UploadProductPage = ({ onClose, fetchProductData }) => {
 
   const handleUploadImage = async (e) => {
     const file = e.target.files[0]
-    console.log(file)
+
     if (!file) {
       return
     }
     setImageLoading(true)
     const response = await UploadImage(file)
-
-    if (!response?.data?.data?.url) {
-      console.error("La URL de la imagen no está disponible en la respuesta", response);
-      setImageLoading(false);
-      return;
-    }
 
     const { data: ImageResponse } = response
     const imageUrl = ImageResponse.data.url

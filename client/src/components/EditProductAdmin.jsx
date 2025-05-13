@@ -154,7 +154,6 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
             AxiosToastError(error);
         }
     };
-    console.log('props', props)
 
     return (
         <section className='fixed top-0 left-0 right-0 bottom-0 bg-neutral-800 z-50 bg-opacity-70 p-4'>

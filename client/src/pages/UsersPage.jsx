@@ -66,7 +66,6 @@ const UsersPage = () => {
 
     const handleDelete = async () => {
         try {
-            console.log('selectedUser ', selectedUser._id)
             const response = await Axios({
                 ...SummaryApi.delete_user_Admin,
                 data: { _id: selectedUser._id }
