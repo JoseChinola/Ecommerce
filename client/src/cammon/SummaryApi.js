@@ -218,6 +218,14 @@ const SummaryApi = {
         url: "/api/dashboard",
         method: "get"
     },
+    updateOrdersAdminStatus: {
+        url: "/api/order/order-status",
+        method: "patch"
+    },
+    getOrdersAllAdmin: {
+        url: "/api/order/all-orders",
+        method: "get"
+    }
 
 }
 

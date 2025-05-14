@@ -7,14 +7,12 @@ import OtpVerification from "../pages/OtpVerification";
 import ResetPassword from "../pages/ResetPassword";
 import Profile from "../pages/Profile";
 import Dashboard from "../layouts/Dashboard";
-import MyOrders from "../pages/MyOrders";
 import Address from "../pages/Address";
 import CategoryPage from "../pages/CategoryPage";
 import SubCategoryPage from "../pages/SubCategoryPage";
-import UploadProductPage from "../pages/UploadProductPage";
 import ProductAdmin from "../pages/ProductAdmin";
 import AdminPermissions from "../layouts/AdminPermissions";
-import { LoginRedirect, RegisterRedirect, VerifyEmailRedirect, VerifyEmailRegisterRedirect } from "../components/AuthRedirect";
+import { LoginRedirect, RegisterRedirect, ValidateUsersAdmin, VerifyEmailRedirect, VerifyEmailRegisterRedirect } from "../components/AuthRedirect";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
 import CartMobile from "../pages/CartMobile";
@@ -25,7 +23,6 @@ import Inventario from "../layouts/Inventario";
 import Warehouse from "../layouts/Warehouse";
 import InventoryMovements from "../pages/InventoryMovements";
 import UsersPage from "../pages/UsersPage";
-import VerifyEmailRegister from "../components/VerifyEmailRegister";
 
 
 const Router = createBrowserRouter([
@@ -88,7 +85,7 @@ const Router = createBrowserRouter([
             },
             {
                 path: "myorders",
-                element: <MyOrders />
+                element: <ValidateUsersAdmin />
             },
             {
                 path: "address",

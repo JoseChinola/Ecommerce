@@ -7,94 +7,87 @@ import warehouseSchema from "../models/warehouse.model.js";
 
 export const addInventoryController = async (req, res) => {
     try {
-        const userId = req.userId
+        const userId = req.userId;
         const { warehouseId, productId, stock } = req.body;
 
         if (!warehouseId || !productId || !stock) {
             return res.status(400).json({
-                message: "los canpous son obligatorios",
+                message: "Los campos son obligatorios",
                 error: true,
                 success: false,
             });
         }
 
-        const warehouse = await warehouseSchema.findOne({
-            where: {
-                _id: warehouseId,
-            },
-        });
-
+        const warehouse = await warehouseSchema.findOne({ where: { _id: warehouseId } });
         if (!warehouse) {
             return res.status(404).json({
-                message: "Almacen no Encontrado",
+                message: "Almacén no encontrado",
                 error: true,
                 success: false,
             });
         }
 
-        const product = await productSchema.findOne({
-            where: {
-                _id: productId,
-            },
-        });
-
+        const product = await productSchema.findOne({ where: { _id: productId } });
         if (!product) {
             return res.status(404).json({
-                message: "producto no encontrado",
+                message: "Producto no encontrado",
                 error: true,
                 success: false,
             });
         }
 
         const existingInventory = await inventorySchema.findOne({
-            where: {
-                warehouseId,
-                productId,
-            },
+            where: { warehouseId, productId },
         });
+
+        let updatedInventory;
 
         if (existingInventory) {
-            return res.status(400).json({
-                message: "inventario ya existe",
-                error: true,
-                success: false,
+            const newStock = Number(existingInventory.stock) + Number(stock);
+
+            await inventorySchema.update(
+                { stock: newStock },
+                { where: { _id: existingInventory._id } }
+            );
+
+            updatedInventory = await inventorySchema.findOne({ where: { _id: existingInventory._id } });
+
+        } else {
+            updatedInventory = await inventorySchema.create({
+                warehouseId,
+                userId,
+                productId,
+                stock,
+                description: "Entrada de producto al inventario",
             });
         }
-
-        const inventory = await inventorySchema.create({
-            warehouseId,
-            userId: userId,
-            productId,
-            stock,
-            description: 'Entrada de producto al inventario',
-        });
 
         await InventoryMovementSchema.create({
             warehouseId,
             productId,
-            userId: userId,
+            userId,
             quantity: stock,
             type: "entrada",
-            description: 'Entrada de producto al inventario',
+            description: "Entrada de producto al inventario",
             date: new Date(),
         });
 
         return res.json({
-            message: "Invetario creado con exito",
+            message: "Inventario actualizado con éxito",
             error: false,
             success: true,
-            data: inventory
-        })
+            data: updatedInventory,
+        });
+
     } catch (error) {
-        console.log("error: ", error);
+        console.error("error:", error);
         return res.status(500).json({
-            message: error.message || "Internal server error",
+            message: error.message || "Error interno del servidor",
             error: true,
             success: false,
         });
-
     }
-}
+};
 
 export const getInventoryController = async (req, res) => {
     try {
@@ -165,129 +158,115 @@ export const getInventoryController = async (req, res) => {
 export const updateInventoryController = async (req, res) => {
     try {
         const { _id, warehouseId, productId, stock } = req.body;
+        const userId = req.userId;
 
-        if (!_id || !warehouseId || !productId || !stock) {
+        if (!_id || !warehouseId || !productId || stock === undefined) {
             return res.status(400).json({
-                message: "los canpous son obligatorios",
+                message: "Los campos son obligatorios",
                 error: true,
                 success: false,
             });
         }
-        const warehouse = await warehouseSchema.findOne({
-            where: {
-                _id: warehouseId,
-            },
-        });
 
+        const parsedStock = Number(stock);
+        if (isNaN(parsedStock)) {
+            return res.status(400).json({
+                message: "El stock debe ser un número válido",
+                error: true,
+                success: false,
+            });
+        }
+
+        const warehouse = await warehouseSchema.findOne({ where: { _id: warehouseId } });
         if (!warehouse) {
             return res.status(404).json({
-                message: "Almacen no Encontrado",
+                message: "Almacén no encontrado",
                 error: true,
                 success: false,
             });
         }
 
-        const product = await productSchema.findOne({
-            where: {
-                _id: productId,
-            },
-        });
-
+        const product = await productSchema.findOne({ where: { _id: productId } });
         if (!product) {
             return res.status(404).json({
-                message: "producto no encontrado",
+                message: "Producto no encontrado",
                 error: true,
                 success: false,
             });
         }
 
         const stockInventory = await inventorySchema.findOne({
-            where: {
-                _id: _id,
-                warehouseId: warehouseId,
-                productId: productId,
-            },
+            where: { _id, warehouseId, productId },
         });
 
-
-        // Registrar movimiento solo si el nuevo stock es mayor al actual
-        // Registrar movimiento solo si el nuevo stock es diferente al actual
-        if (stock > stockInventory.stock) {
-            // Es una entrada
-            const cantidadEntrante = stock - stockInventory.stock;
-            await InventoryMovementSchema.create({
-                warehouseId,
-                productId,
-                userId: req.userId,
-                quantity: cantidadEntrante,
-                type: "entrada",
-                description: `Ajuste de Entrada: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, incremento: ${cantidadEntrante}`,
-                date: new Date(),
-            });
-        } else if (stock < stockInventory.stock) {
-            // Es una salida
-            const cantidadSaliente = stockInventory.stock - stock;
-            await InventoryMovementSchema.create({
-                warehouseId,
-                productId,
-                userId: req.userId,
-                quantity: cantidadSaliente,
-                type: "salida",
-                description: `Ajuste de Salida: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, decremento: ${cantidadSaliente}`,
-                date: new Date(),
+        if (!stockInventory) {
+            return res.status(404).json({
+                message: "Inventario no encontrado",
+                error: true,
+                success: false,
             });
         }
 
+        const currentStock = Number(stockInventory.stock);
+        let movementType = null;
+        let quantityDiff = 0;
+        let movementDescription = "";
 
-        let updatedInventory;
-
-        if (stock > stockInventory.stock) {
-            updatedInventory = await inventorySchema.update(
-                {
-                    warehouseId,
-                    productId,
-                    stock,
-                    description: `Ajuste de Entrada: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, incremento: ${stock - stockInventory.stock}`
-                },
-                {
-                    where: {
-                        _id,
-                    },
-                }
-            );
-
-        } else if (stock < stockInventory.stock) {
-            updatedInventory = await inventorySchema.update(
-                {
-                    warehouseId,
-                    productId,
-                    stock,
-                    description: `Ajuste de Salida: cantidad anterior: ${stockInventory.stock}, cantidad actualizada: ${stock}, decremento: ${stockInventory.stock - stock}`
-                },
-                {
-                    where: {
-                        _id,
-                    },
-                }
-            );
+        if (parsedStock > currentStock) {
+            movementType = "entrada";
+            quantityDiff = parsedStock - currentStock;
+            movementDescription = `Ajuste de Entrada: anterior ${currentStock}, nuevo ${parsedStock}, incremento ${quantityDiff}`;
+        } else if (parsedStock < currentStock) {
+            movementType = "salida";
+            quantityDiff = currentStock - parsedStock;
+            movementDescription = `Ajuste de Salida: anterior ${currentStock}, nuevo ${parsedStock}, decremento ${quantityDiff}`;
+        } else {
+            // No hay cambio
+            return res.json({
+                message: "El stock no cambió. No se realizaron ajustes.",
+                error: false,
+                success: true,
+                data: stockInventory,
+            });
         }
 
+        // Registrar movimiento
+        await InventoryMovementSchema.create({
+            warehouseId,
+            productId,
+            userId,
+            quantity: quantityDiff,
+            type: movementType,
+            description: movementDescription,
+            date: new Date(),
+        });
 
+        // Actualizar inventario
+        await inventorySchema.update(
+            {
+                stock: parsedStock,
+                description: movementDescription,
+            },
+            {
+                where: { _id },
+            }
+        );
 
+        const updatedInventory = await inventorySchema.findOne({ where: { _id } });
 
         return res.json({
-            message: "Inventario actualizado con exito",
+            message: "Inventario actualizado con éxito",
             error: false,
             success: true,
-            data: updatedInventory
+            data: updatedInventory,
         });
 
     } catch (error) {
         console.log("error: ", error);
         return res.status(500).json({
-            message: error.message || "Internal server error",
+            message: error.message || "Error interno del servidor",
             error: true,
             success: false,
         });
     }
-}
+};

@@ -328,7 +328,7 @@ export async function stripeWebhook(req, res) {
     }
 }
 
-
+// get rol user in login
 export async function getOrderDetailsController(req, res) {
     try {
         const userId = req.userId;
@@ -336,7 +336,7 @@ export async function getOrderDetailsController(req, res) {
         const orders = await orderSchema.findAll({
             where: { userId },
             order: [['createdAt', 'DESC']],
-            attributes: ['discount', 'orderId', 'paymentStatus', 'quantity', 'subTotalAmt', 'totalAmt', 'createdAt', 'product_details'],
+            attributes: ['discount', 'orderId', 'paymentStatus', 'quantity', 'subTotalAmt', 'totalAmt', 'createdAt', 'product_details', 'orderStatus',],
             include: [
                 {
                     model: addressSchema,
@@ -377,7 +377,7 @@ export async function getOrderDetailsController(req, res) {
             const discountAmount = (unitDiscount / 100) * subTotalAmt;
             const totalAmt = subTotalAmt - discountAmount;
 
-            
+
             const item = {
                 ...productDetails,
                 unit_price: unitPrice,
@@ -390,6 +390,7 @@ export async function getOrderDetailsController(req, res) {
             if (!groupedOrders[order.orderId]) {
                 groupedOrders[order.orderId] = {
                     orderId: order.orderId,
+                    orderStatus: order.orderStatus,
                     subTotalAmt: order.subTotalAmt,
                     discount: order.discount,
                     totalAmt: order.totalAmt,
@@ -420,6 +421,141 @@ export async function getOrderDetailsController(req, res) {
             message: error.message || "Internal Server Error",
             error: true,
             success: false
+        });
+    }
+}
+
+// gets rol admin 
+export async function getGroupedOrdersByUserController(req, res) {
+    try {
+        const orders = await orderSchema.findAll({
+            order: [['createdAt', 'DESC']],
+            attributes: [
+                'discount', 'orderId', 'paymentStatus', 'quantity', 'orderStatus',
+                'subTotalAmt', 'totalAmt', 'createdAt', 'product_details'
+            ],
+            include: [
+                {
+                    model: addressSchema,
+                    as: 'address',
+                    attributes: ['address_line', 'city', 'state', 'country', 'pincode', 'mobile'],
+                },
+                {
+                    model: userSchema,
+                    attributes: ['_id', 'name', 'email'],
+                }
+            ]
+        });
+
+        const groupedByUser = {};
+
+        orders.forEach(order => {
+            const userId = order.user._id;
+            if (!groupedByUser[userId]) {
+                groupedByUser[userId] = {
+                    user: {
+                        name: order.user.name,
+                        email: order.user.email
+                    },
+                    orders: {}
+                };
+            }
+
+            // Parse product details
+            let productDetails = order.product_details;
+            try {
+                if (typeof productDetails === 'string') {
+                    productDetails = JSON.parse(productDetails);
+                }
+                if (typeof productDetails.image === 'string') {
+                    productDetails.image = JSON.parse(productDetails.image);
+                }
+            } catch (e) {
+                console.error("Error parsing product_details:", e.message);
+                productDetails = {};
+            }
+
+            const quantity = order.quantity || 0;
+            const unitPrice = productDetails.unit_price || 0;
+            const unitDiscount = productDetails.unit_discount || 0;
+            const subTotalAmt = unitPrice * quantity;
+            const discountAmount = (unitDiscount / 100) * subTotalAmt;
+            const totalAmt = subTotalAmt - discountAmount;
+
+            const item = {
+                ...productDetails,
+                unit_price: unitPrice,
+                quantity,
+                unit_discount: unitDiscount,
+                subTotalAmt,
+                totalAmt
+            };
+
+            if (!groupedByUser[userId].orders[order.orderId]) {
+                groupedByUser[userId].orders[order.orderId] = {
+                    orderId: order.orderId,
+                    orderStatus: order.orderStatus,
+                    subTotalAmt: order.subTotalAmt,
+                    discount: order.discount,
+                    totalAmt: order.totalAmt,
+                    paymentStatus: order.paymentStatus,
+                    createdAt: order.createdAt,
+                    address: order.address,
+                    items: [item]
+                };
+            } else {
+                groupedByUser[userId].orders[order.orderId].items.push(item);
+            }
+        });
+
+        // Convertir a formato de array
+        const result = Object.values(groupedByUser).map(userGroup => ({
+            user: userGroup.user,
+            orders: Object.values(userGroup.orders)
+        }));
+
+        return res.json({
+            message: "Órdenes agrupadas por usuario",
+            success: true,
+            error: false,
+            data: result
+        });
+
+    } catch (error) {
+        console.error("Error grouping orders by user:", error);
+        return res.status(500).json({
+            message: error.message || "Internal Server Error",
+            error: true,
+            success: false
+        });
+    }
+}
+
+
+export async function updateOrderStatusController(req, res) {
+    const { orderId, orderStatus } = req.body
+
+    if (!orderId || !orderStatus) {
+        return res.status(400).json({ success: false, message: "orderId y orderStatus son requeridos." });
+    }
+
+
+    try {
+        // Buscar el pedido por ID usando Sequelize
+        const order = await orderSchema.findOne({ where: { orderId } })
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Pedido no encontrado." });
+        }
+        order.orderStatus = orderStatus;
+        await order.save();
+        return res.json({ success: true, message: "Estado del pedido actualizado.", data: order });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: "Error al actualizar el pedido.",
+            error: error.message
         });
     }
 }

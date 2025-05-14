@@ -11,6 +11,7 @@ import { handleAddAddress } from "../store/addressSlice";
 import { handleInventory } from "../store/inventorySlice";
 import { handleInventoryMovements } from "../store/inventoryMovements";
 import { setOrder } from "../store/orderSlice";
+import { setOrders } from "../store/ordersAdminSlice";
 
 
 const GlobalProvider = ({ children }) => {
@@ -186,6 +187,40 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+    const fetchUpdateOrdersItem = async (orderId, newStatus) => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.updateOrdersAdminStatus,
+                data: {
+                    orderId: orderId,
+                    orderStatus: newStatus
+                }
+            })
+
+            const { data: responseData } = response
+            if (responseData.success) {
+                toast.success(responseData.message);
+                fetchOrderItems()
+            }
+        } catch (error) {
+            AxiosToastError(error)
+        }
+    }
+
+    const fetchOrdersAdminItems = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getOrdersAllAdmin
+            });
+            const { data: resData } = response;
+            if (resData.success) {
+                dispatch(setOrders(resData.data));
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    }
+
 
     useEffect(() => {
         if (user?._id) {
@@ -195,9 +230,11 @@ const GlobalProvider = ({ children }) => {
             fetchInventario()
             fetchMovements()
             fetchOrderItems()
+            fetchOrdersAdminItems()
         }
 
     }, [user])
+
 
 
     return (
@@ -212,7 +249,9 @@ const GlobalProvider = ({ children }) => {
             notDiscountTotalPrice,
             fetchInventario,
             fetchMovements,
-            fetchOrderItems
+            fetchOrderItems,
+            fetchOrdersAdminItems,
+            fetchUpdateOrdersItem
         }}>
             {children}
         </GlobalContext.Provider>

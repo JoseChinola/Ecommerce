@@ -30,7 +30,7 @@ const InventoryMovements = () => {
 
     return (
         <section className="p-5 bg-white rounded-xl shadow-md">
-            <div className='bg-secundary rounded-lg flex items-center justify-between mb-8 flex-col sm:flex-row gap-3 p-4'>
+            <div className='bg-secundary rounded-lg flex items-center justify-between flex-col sm:flex-row gap-3 p-4'>
                 <h2 className="text-xl font-extrabold text-primary-Green">Movimientos de Inventario</h2>
                 <div className='h-10 w-full max-w-xs bg-white px-3 flex items-center gap-2 rounded-md border focus-within:border-green-500'>
                     <IoSearchOutline size={20} />

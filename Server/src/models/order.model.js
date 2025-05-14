@@ -54,6 +54,10 @@ const orderSchema = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: "",
     },
+    orderStatus: {
+      type: DataTypes.ENUM('Pendiente', 'Procesando', 'Completado', 'Cancelado', 'Reembolsado'),
+      defaultValue: 'Pendiente',
+    },
     deliveryAddress: {
       type: DataTypes.UUID,
       references: {
