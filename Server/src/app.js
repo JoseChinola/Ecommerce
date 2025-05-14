@@ -18,6 +18,9 @@ import inventoryRouter from './routes/inventory.routes.js';
 import "./models/associations.js";
 import inventoryMovementRouter from './routes/inventoryMovement.routes.js';
 import dashboardRouter from './routes/dashboard.routes.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger.js';
+
 
 const app = express();
 app.use(cors({
@@ -31,9 +34,16 @@ app.use(helmet({
     crossOriginResourcePolicy: false,
 }));
 
-app.get('/', (req, res) => {
-    res.send('<h1>Welcomen</h1>')
-})
+app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+    customSiteTitle: 'API DRAF SERVICES',
+    swaggerOptions: {
+        tagsSorter: (a, b) => {
+            const order = ['Dashboard', 'Usuarios', 'Productos', 'Carrito de Compras','Ordenes', 'Direcciones',
+                'Inventario', 'Movimiento de Inventario', 'Almacenes', 'Categorías', 'Subcategorías']
+            return order.indexOf(a) - order.indexOf(b)
+        }
+    }
+}))
 
 app.use('/api/user', userRouter)
 app.use('/api/category', categoryRouter)

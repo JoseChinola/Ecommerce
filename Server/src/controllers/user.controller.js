@@ -192,7 +192,6 @@ export async function resendVerificationEmail(req, res) {
     }
 }
 
-
 //Login controller 
 export async function loginController(req, res) {
     try {

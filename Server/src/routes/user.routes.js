@@ -29,9 +29,4 @@ userRouter.get('/user-details', auth, userDetailsController)
 userRouter.get('/users-get', auth, getsUsersController)
 userRouter.put('/update-user-admin', auth, admin, updateAdminUserDetails)
 
-
-
-
-
-
 export default userRouter;
