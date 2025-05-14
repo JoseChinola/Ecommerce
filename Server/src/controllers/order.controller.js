@@ -35,10 +35,27 @@ export async function CashOnDeleveryOrderController(req, res) {
         const orderId = `ORD-${nanoid(10)}`;
 
         const payload = list_items.map(item => {
+
+            let rawImages = item.productData.image;
+            let imagesArray = [];
+
+            // Intentar parsear solo si es string
+            if (typeof rawImages === 'string') {
+                try {
+                    imagesArray = JSON.parse(rawImages);
+                } catch (e) {
+                    console.error("Error al parsear imágenes:", e.message);
+                    imagesArray = [];
+                }
+            } else if (Array.isArray(rawImages)) {
+                imagesArray = rawImages; // Ya está en formato array
+            }
+
             const productDetails = {
                 name: item.productData.name,
-                image: item.productData.image,
+                image: imagesArray,
                 unit_price: item.productData.price,
+                unit_discount: item.productData.discount,
             };
 
             return {
@@ -56,7 +73,7 @@ export async function CashOnDeleveryOrderController(req, res) {
             };
         });
 
-        //Crear órdenes
+        // Crear órdenes
         const generatedOrder = await orderSchema.bulkCreate(payload);
 
         // Registrar movimientos en el inventario por cada ítem
@@ -206,7 +223,6 @@ const getOrderProductItems = async (lineItems, userId, session) => {
                 continue;
             }
 
-
             const orderId = `ORD-${nanoid(10)}`;
 
             const payload = {
@@ -215,7 +231,9 @@ const getOrderProductItems = async (lineItems, userId, session) => {
                 productId: product.metadata.productId,
                 product_details: JSON.stringify({
                     name: product.name,
-                    image: product.images
+                    image: product.images,
+                    unit_price: product.price,
+                    unit_discount: product.discount,
                 }),
                 quantity: item.quantity,
                 paymentId: session.payment_intent,
@@ -290,8 +308,7 @@ export async function stripeWebhook(req, res) {
                     }
                 }
 
-                const deleted = await cartProductSchema.destroy({ where: { userId } });
-                console.log("Productos eliminados del carrito:", deleted);
+                await cartProductSchema.destroy({ where: { userId } });
                 break;
             }
 
@@ -315,6 +332,7 @@ export async function stripeWebhook(req, res) {
 export async function getOrderDetailsController(req, res) {
     try {
         const userId = req.userId;
+
         const orders = await orderSchema.findAll({
             where: { userId },
             order: [['createdAt', 'DESC']],
@@ -334,16 +352,15 @@ export async function getOrderDetailsController(req, res) {
             ]
         });
 
-        // Mapear y parsear el product_details
-        const parsedOrders = orders.map(order => {
+        // Agrupación por orderId
+        const groupedOrders = {};
+
+        orders.forEach(order => {
             let productDetails = order.product_details;
 
-            // Si es string, lo parseamos
             if (typeof productDetails === 'string') {
                 try {
                     productDetails = JSON.parse(productDetails);
-
-                    // A veces la propiedad image todavía está como string de array, así que la parseamos también
                     if (typeof productDetails.image === 'string') {
                         productDetails.image = JSON.parse(productDetails.image);
                     }
@@ -353,20 +370,52 @@ export async function getOrderDetailsController(req, res) {
                 }
             }
 
-            return {
-                ...order.toJSON(), // Convertimos el modelo a objeto
-                product_details: productDetails
+            const quantity = order.quantity || 0;
+            const unitPrice = productDetails?.unit_price || 0;
+            const unitDiscount = productDetails.unit_discount;
+            const subTotalAmt = unitPrice * quantity;
+            const discountAmount = (unitDiscount / 100) * subTotalAmt;
+            const totalAmt = subTotalAmt - discountAmount;
+
+            
+            const item = {
+                ...productDetails,
+                unit_price: unitPrice,
+                quantity,
+                unit_discount: unitDiscount,
+                subTotalAmt,
+                totalAmt
             };
+
+            if (!groupedOrders[order.orderId]) {
+                groupedOrders[order.orderId] = {
+                    orderId: order.orderId,
+                    subTotalAmt: order.subTotalAmt,
+                    discount: order.discount,
+                    totalAmt: order.totalAmt,
+                    paymentStatus: order.paymentStatus,
+                    createdAt: order.createdAt,
+                    address: order.address,
+                    user: order.user,
+                    items: [item]
+                };
+            } else {
+                groupedOrders[order.orderId].items.push(item);
+            }
         });
 
+        // Convertimos el objeto a array
+        const result = Object.values(groupedOrders);
+
         return res.json({
-            message: "Lista de Ordenes",
+            message: "Órdenes agrupadas por ID",
             error: false,
             success: true,
-            data: parsedOrders
+            data: result
         });
+
     } catch (error) {
-        console.error("Error fetching orders:", error);
+        console.error("Error fetching grouped orders:", error);
         return res.status(500).json({
             message: error.message || "Internal Server Error",
             error: true,

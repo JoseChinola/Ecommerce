@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -9,17 +9,31 @@ import { FaUser, FaEnvelope, FaUserShield, FaToggleOn } from 'react-icons/fa';
 
 const EditUserModal = ({ user, onClose, onUpdate }) => {
     const [formData, setFormData] = useState({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        status: user.status,
+        _id: '',
+        name: '',
+        email: '',
+        role: '',
+        status: '',
     });
+
+    // Actualiza formData cuando el prop `user` cambia
+    useEffect(() => {
+        if (user) {
+            setFormData({
+                _id: user._id || '',
+                name: user.name || '',
+                email: user.email || '',
+                role: user.role || '',
+                status: user.status || '',
+            });
+        }
+    }, [user]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -43,7 +57,6 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
     return (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2'>
             <div className='bg-white rounded-lg p-3 space-y-2 w-full max-w-md'>
-
                 <div className='py-2 flex justify-between items-center border bg-secundary rounded-lg px-2'>
                     <h2 className='font-extrabold text-primary-Green italic sm:text-lg sm:uppercase'>Editar Usuario</h2>
                     <button onClick={onClose} className="w-fit ml-auto hover:text-red-600 hidden sm:block">
@@ -51,70 +64,47 @@ const EditUserModal = ({ user, onClose, onUpdate }) => {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className='space-y-2 bg-secundary py-2 px-2 rounded-lg'>
-                    <div className='border px-2 py-2 rounded-lg space-y-1'>
-                        <label htmlFor="name" className='font-bold text-primary-Green flex items-center gap-2'>
-                            <FaUser /> Nombre
-                        </label>
-                        <input
-                            type='text'
-                            name='name'
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder='Nombre'
-                            className='w-full border rounded-lg px-3 py-2'
-                            required
-                        />
-                    </div>
-
-                    <div className='border px-2 py-2 rounded-lg space-y-1'>
-                        <label htmlFor="email" className='font-bold text-primary-Green flex items-center gap-2'>
-                            <FaEnvelope /> Correo
-                        </label>
-                        <input
-                            type='email'
-                            name='email'
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder='Correo'
-                            className='w-full border rounded-lg px-3 py-2'
-                            required
-                        />
-                    </div>
-
-                    <div className='border px-2 py-2 rounded-lg space-y-1'>
-                        <label htmlFor="role" className='font-bold text-primary-Green flex items-center gap-2'>
-                            <FaUserShield /> Rol
-                        </label>
-                        <select
-                            name='role'
-                            value={formData.role}
-                            onChange={handleChange}
-                            className='w-full border rounded-lg px-3 py-2'
-                            required
-                        >
-                            <option value='Admin'>Admin</option>
-                            <option value='User'>User</option>
-                        </select>
-                    </div>
-
-                    <div className='border px-2 py-2 rounded-lg space-y-1'>
-                        <label htmlFor="status" className='font-bold text-primary-Green flex items-center gap-2'>
-                            <FaToggleOn /> Estatus
-                        </label>
-                        <select
-                            name='status'
-                            value={formData.status}
-                            onChange={handleChange}
-                            className='w-full border rounded-lg px-3 py-2'
-                            required
-                        >
-                            <option value='Active'>Activo</option>
-                            <option value='Inactive'>Inactivo</option>
-                            <option value='Suspended'>Suspendido</option>
-                        </select>
-                    </div>
-
+                <form onSubmit={handleSubmit} className='space-y-4 bg-secundary py-2 px-2 rounded-lg'>
+                    <input
+                        type='text'
+                        name='name'
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder='Nombre'
+                        className='w-full border rounded px-3 py-2'
+                        required
+                    />
+                    <input
+                        type='email'
+                        name='email'
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder='Correo'
+                        className='w-full border rounded px-3 py-2'
+                        required
+                    />
+                    <select
+                        name='role'
+                        value={formData.role}
+                        onChange={handleChange}
+                        className='w-full border rounded px-3 py-2'
+                        required
+                    >
+                        <option value="">Selecciona rol</option>
+                        <option value='ADMIN'>Administrador</option>
+                        <option value='USER'>Usuario</option>
+                    </select>
+                    <select
+                        name='status'
+                        value={formData.status}
+                        onChange={handleChange}
+                        className='w-full border rounded px-3 py-2'
+                        required
+                    >
+                        <option value='Active'>Activo</option>
+                        <option value='Inactive'>Inactivo</option>
+                        <option value='Suspended'>Suspendido</option>
+                    </select>
                     <button
                         type='submit'
                         className='px-4 py-2 bg-primary-Green text-white hover:bg-green-700 w-full rounded-lg'

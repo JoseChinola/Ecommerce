@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "D’RAF SERVICES Backend",
+  "name": "D’RAF SERVICES",
   "builds": [
     {
       "src": "src/index.js",

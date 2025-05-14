@@ -1,6 +1,6 @@
 import { Router } from "express";
 import auth from "../middleware/auth.js";
-import UploadImageController from "../controllers/uploadImage.controller.js";
+import UploadImageController from "../controllers/UploadImage.controller.js";
 import upload from "../middleware/multer.js";
 
 

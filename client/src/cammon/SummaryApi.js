@@ -25,6 +25,10 @@ const SummaryApi = {
         url: "/api/user/forgot-password",
         method: "put"
     },
+    delete_user_Admin: {
+        url: "/api/user/delete-user-admin",
+        method: "delete"
+    },
     forgot_password_otp_verification: {
         url: "/api/user/verify-forgot-password-otp",
         method: "put"

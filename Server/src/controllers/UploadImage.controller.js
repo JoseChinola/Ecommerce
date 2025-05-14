@@ -4,6 +4,7 @@ const UploadImageController = async (req, res) => {
     try {
         const file = req.file
 
+
         const uploadImage = await uploadImageClodinary(file)
 
         return res.json({

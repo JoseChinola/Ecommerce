@@ -14,6 +14,7 @@ export async function registerUserController(req, res) {
     try {
         const { name, email, password } = req.body;
 
+
         // Validar que todos los campos estén presentes
         if (!name || !email || !password) {
             return res.status(400).json({
@@ -28,7 +29,7 @@ export async function registerUserController(req, res) {
 
         if (existingUser) {
             return res.status(400).json({
-                message: "Email is already registered",
+                message: "El correo electrónico ya está registrado.",
                 error: true,
                 success: false
             });
@@ -64,7 +65,7 @@ export async function registerUserController(req, res) {
         } catch (emailError) {
             console.error("Error sending verification email:", emailError);
             return res.status(500).json({
-                message: "User registered, but email verification failed",
+                message: "Usuario registrado, pero la verificación de correo electrónico falló",
                 error: true,
                 success: false
             });
@@ -356,7 +357,6 @@ export async function uploadAvatar(req, res) {
     }
 }
 
-
 // udate user details 
 export async function updateUserDetails(req, res) {
     try {
@@ -409,14 +409,14 @@ export async function updateAdminUserDetails(req, res) {
 
         const { _id, name, email, role, status } = req.body
 
-
+        console.log('req-body', req.body)
 
         await userSchema.update(
             {
                 ...(name && { name: name }),
                 ...(email && { email: email }),
                 ...(status && { status: status }),
-                ...(role && { mobile: role })
+                ...(role && { role: role })
 
             },
             { where: { _id: _id } })
@@ -433,6 +433,7 @@ export async function updateAdminUserDetails(req, res) {
 
 
     } catch (error) {
+        console.log('error users update ', error)
         return res.status(500).json({
             message: error.message || "Internal server error",
             error: true,
@@ -441,6 +442,38 @@ export async function updateAdminUserDetails(req, res) {
     }
 }
 
+//delete users admin 
+export async function deleteAdminUsers(req, res) {
+    try {
+        const userId = req.userId // auth middleware
+        const { _id } = req.body
+
+        const user = await userSchema.findOne({ where: { _id: _id } })
+        if (!user) {
+            return res.status(401).json({
+                message: "Usuario no encontrado",
+                error: true,
+                success: false,
+            });
+        }
+        const userDelete = await userSchema.destroy({ where: { _id } })
+        res.json({
+            message: "Usuario eliminado",
+            data: userDelete,
+            error: false,
+            success: true
+        })
+
+    } catch (error) {
+        console.log('error users delete ', error)
+        return res.status(500).json({
+            message: error.message || "Internal server error",
+            error: true,
+            success: false,
+        });
+    }
+
+}
 
 //forgot password not login
 export async function forgotPasswordController(req, res) {
@@ -589,7 +622,7 @@ export async function resetPassord(req, res) {
 
         if (!email || !newPassword || !confirmPassword) {
             return res.status(500).json({
-                message: "Provide requeried fields email, new password, confirm passowrd",
+                message: "Proporcione los campos requeridos: correo electrónico, nueva contraseña, confirmar contraseña",
                 error: true,
                 success: false,
             });
@@ -599,7 +632,7 @@ export async function resetPassord(req, res) {
 
         if (!user) {
             return res.status(400).json({
-                message: "Email not available",
+                message: "Correo electrónico no disponible",
                 error: true,
                 success: false,
             });
@@ -607,7 +640,7 @@ export async function resetPassord(req, res) {
 
         if (newPassword !== confirmPassword) {
             return res.status(400).json({
-                message: "passowrd and confirm password must be same",
+                message: "La contraseña y la contraseña de confirmación deben ser las mismas",
                 error: true,
                 success: false
             })
@@ -625,7 +658,7 @@ export async function resetPassord(req, res) {
             { where: { _id: user._id } })
 
         return res.json({
-            message: "Password update successfully",
+            message: "Contraseña Actualizada",
             error: false,
             success: true
         })

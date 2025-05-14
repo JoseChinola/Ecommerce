@@ -56,8 +56,10 @@ const UploadProductPage = ({ onClose, fetchProductData }) => {
     }
     setImageLoading(true)
     const response = await UploadImage(file)
+
     const { data: ImageResponse } = response
     const imageUrl = ImageResponse.data.url
+
     setData((prev) => {
       return {
         ...prev,
@@ -83,7 +85,7 @@ const UploadProductPage = ({ onClose, fetchProductData }) => {
       categoryId: prev.categoryId.filter((_, i) => i !== index),
     }));
   };
-  
+
   const handleRemoveSubCategorySelected = (index) => {
     setData((prev) => ({
       ...prev,

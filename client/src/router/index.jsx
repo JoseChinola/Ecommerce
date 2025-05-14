@@ -14,7 +14,7 @@ import SubCategoryPage from "../pages/SubCategoryPage";
 import UploadProductPage from "../pages/UploadProductPage";
 import ProductAdmin from "../pages/ProductAdmin";
 import AdminPermissions from "../layouts/AdminPermissions";
-import { LoginRedirect, RegisterRedirect, VerifyEmailRedirect } from "../components/AuthRedirect";
+import { LoginRedirect, RegisterRedirect, VerifyEmailRedirect, VerifyEmailRegisterRedirect } from "../components/AuthRedirect";
 import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
 import CartMobile from "../pages/CartMobile";
@@ -50,8 +50,8 @@ const Router = createBrowserRouter([
                 element: <RegisterRedirect />
             },
             {
-                path: "verifyEmail-register",
-                element: <VerifyEmailRegister />
+                path: "verify-email-register",
+                element: <VerifyEmailRegisterRedirect />
             }
             ,
             {
@@ -144,7 +144,7 @@ const Router = createBrowserRouter([
                 element: <Cancel />
             },
             {
-                path: "/verify-email",
+                path: "verify-email",
                 element: <VerifyEmailRedirect />
             },
         ]

@@ -24,9 +24,9 @@ import swaggerSpec from './swagger.js';
 
 const app = express();
 app.use(cors({
+    origin: process.env.FRONTEND_URL,
     credentials: true,
-    origin: process.env.FRONTEND_URL
-}))
+}));
 app.use(express.json());
 app.use(cookieParser())
 app.use(morgan("dev"));
@@ -57,10 +57,6 @@ app.use("/api/store", storeRouter)
 app.use("/api/inventory", inventoryRouter)
 app.use("/api/inventory-movement", inventoryMovementRouter)
 app.use("/api", dashboardRouter)
-
-
-
-
 
 
 export default app;

@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import VerificarEmailPage from "../pages/VerifyEmailPage";
+import VerifyEmailRegister from "./VerifyEmailRegister";
 
 export const LoginRedirect = () => {
     const user = useSelector(state => state.user);
@@ -31,3 +32,14 @@ export const VerifyEmailRedirect = () => {
     }
     return <VerificarEmailPage />;
 };
+
+
+export const VerifyEmailRegisterRedirect = () => {
+    const user = useSelector(state => state.user);
+
+    if (user && user._id) {
+        return <Navigate to="/" />;
+    }
+
+    return <VerifyEmailRegister />
+}

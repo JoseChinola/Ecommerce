@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { IoClose, IoEye, IoEyeOff, IoLockClosed } from 'react-icons/io5';
+import {
+    IoClose,
+    IoEye,
+    IoEyeOff,
+    IoPersonOutline,
+    IoMailOutline,
+    IoPersonCircleOutline
+} from 'react-icons/io5';
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -11,10 +18,8 @@ const AddUserModal = ({ onClose }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [role, setRole] = useState('ADMIN');
+    const [role, setRole] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -49,11 +54,10 @@ const AddUserModal = ({ onClose }) => {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4 bg-secundary py-4 px-2 rounded-lg">
-                    <div className='relative'>
-                       
-                            <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                        
+                <form onSubmit={handleSubmit} className="space-y-4 bg-secundary py-4 px-4 rounded-lg">
+
+                    {/* Nombre */}
+                    <div className="relative">
                         <input
                             type="text"
                             placeholder="Nombre"
@@ -62,10 +66,11 @@ const AddUserModal = ({ onClose }) => {
                             className="w-full border rounded-lg px-10 py-2"
                             required
                         />
+                        <IoPersonOutline className="absolute left-3 top-3 text-gray-500" size={20} />
                     </div>
 
-                    <div className='relative'>                    
-                        <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    {/* Correo */}
+                    <div className="relative">
                         <input
                             type="email"
                             placeholder="Correo"
@@ -74,8 +79,10 @@ const AddUserModal = ({ onClose }) => {
                             className="w-full border rounded-lg px-10 py-2"
                             required
                         />
+                        <IoMailOutline className="absolute left-3 top-3 text-gray-500" size={20} />
                     </div>
 
+                    {/* Contraseña */}
                     <div className="relative">
                         <IoLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                         <input
@@ -83,7 +90,7 @@ const AddUserModal = ({ onClose }) => {
                             placeholder="Contraseña"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full border rounded-lg px-10 py-2" // Aumentar padding para íconos
+                            className="w-full border rounded-lg px-10 py-2"
                             required
                         />
                         <button
@@ -95,8 +102,8 @@ const AddUserModal = ({ onClose }) => {
                         </button>
                     </div>
 
-                    <div className="relative mt-1">
-                        <IoLockClosed className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    {/* Confirmar contraseña */}
+                    <div className="relative">
                         <input
                             type={showConfirmPassword ? 'text' : 'password'}
                             placeholder="Confirmar Contraseña"
@@ -114,18 +121,19 @@ const AddUserModal = ({ onClose }) => {
                         </button>
                     </div>
 
-                    <div className='border px-2 py-2 rounded-lg space-y-1'>
-                        <label htmlFor="role" className='font-bold text-primary-Green flex items-center gap-2'>
-                            <FaUserShield /> Rol
-                        </label>
+                    {/* Rol */}
+                    <div className="relative">
                         <select
                             value={role}
                             onChange={(e) => setRole(e.target.value)}
-                            className="w-full border rounded-lg px-2 py-2"
+                            className="w-full border rounded-lg px-10 py-2"
+                            required
                         >
-                            <option value="USER">USER</option>
-                            <option value="ADMIN">ADMIN</option>
+                            <option value="">Selecciona rol</option>
+                            <option value='ADMIN'>Administrador</option>
+                            <option value='USER'>Usuario</option>
                         </select>
+                        <IoPersonCircleOutline className="absolute left-3 top-2 text-gray-500" size={20} />
                     </div>
 
                     <button
