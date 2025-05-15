@@ -187,6 +187,20 @@ const GlobalProvider = ({ children }) => {
         }
     }
 
+     const fetchOrdersAdminItems = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.getOrdersAllAdmin
+            });
+            const { data: resData } = response;
+            if (resData.success) {
+                dispatch(setOrders(resData.data));
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    }
+
     const fetchUpdateOrdersItem = async (orderId, newStatus) => {
         try {
             const response = await Axios({
@@ -200,26 +214,15 @@ const GlobalProvider = ({ children }) => {
             const { data: responseData } = response
             if (responseData.success) {
                 toast.success(responseData.message);
-                fetchOrderItems()
+                fetchOrderItems();
+                fetchOrdersAdminItems(); 
             }
         } catch (error) {
             AxiosToastError(error)
         }
     }
 
-    const fetchOrdersAdminItems = async () => {
-        try {
-            const response = await Axios({
-                ...SummaryApi.getOrdersAllAdmin
-            });
-            const { data: resData } = response;
-            if (resData.success) {
-                dispatch(setOrders(resData.data));
-            }
-        } catch (error) {
-            AxiosToastError(error);
-        }
-    }
+   
 
 
     useEffect(() => {

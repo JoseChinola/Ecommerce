@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { IoSearchOutline } from 'react-icons/io5';
 import ReactPaginate from 'react-paginate';
 import OrderManagementModal from '../components/OrderManagementModal';
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
+import { useGlobalContext } from '../provider/useGlobalContext';
+import OrderSkeleton from '../components/OrderSkeleton';
 
 const AdminOrders = () => {
     const [searchTerm, setSearchTerm] = useState('');
@@ -12,13 +14,14 @@ const AdminOrders = () => {
     const [page, setPage] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const { fetchUpdateOrdersItem } = useGlobalContext()
 
     const { orders = [], loading = false, error = null } = useSelector((state) => state.ordersAll);
 
-    console.log('Orders', orders)
-
-    const openModal = (order) => {
+    const openModal = (order, user) => {
         setSelectedOrder(order);
+        setSelectedUser(user)
         setModalOpen(true);
     };
 
@@ -43,12 +46,19 @@ const AdminOrders = () => {
     const pageCount = Math.ceil(filteredUsersWithOrders.length / pageSize);
     const displayedUsers = filteredUsersWithOrders.slice(page * pageSize, (page + 1) * pageSize);
 
-    if (loading) return <p>Cargando pedidos…</p>;
+    if (loading) return (
+        <section className="space-y-6 p-5 rounded-lg">
+            {[...Array(2)].map((_, i) => (
+                <OrderSkeleton key={i} />
+            ))}
+        </section>
+    );
+
     if (error) return <p className="text-red-500">Error: {error}</p>;
 
     return (
-        <section className="bg-white p-6 rounded-lg shadow-md h-[76vh] overflow-auto">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-secundary rounded-lg px-2 py-2 mb-6">
+        <section className="bg-white p-5 rounded-lg shadow-md overflow-auto space-y-4 min-h-[75vh]">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-secundary rounded-lg px-2 py-2">
                 <h1 className="text-primary-Green text-lg sm:text-2xl font-extrabold italic flex items-center">
                     Gestión de Pedidos
                 </h1>
@@ -79,41 +89,58 @@ const AdminOrders = () => {
                 </select>
             </div>
 
+            {displayedUsers.length === 0 && (
+                <div className="bg-secundary px-1 py-1 rounded-lg shadow-md">
+                    <div className='text-center font-bold text-lg bg-gray-50 p-8 rounded-lg shadow text-secundary'>
+                        {searchTerm || statusFilter
+                            ? `No se encontraron pedidos con los filtros (${statusFilter}) aplicados.`
+                            : 'No se encontraron pedidos.'}
+                    </div>
+                </div>
+            )}
+
             {displayedUsers.map(({ user, orders }) => (
-                <div key={user.email} className="mb-6 bg-secundary rounded-lg p-4 shadow">
-                    <h2 className="font-bold text-lg mb-2 text-gray-800">
-                        {user.name} — <span className="text-sm text-gray-500">{user.email}</span>
+                <div key={user.email} className="bg-secundary rounded-lg px-2 py-2 shadow-md">
+                    <h2 className="font-bold text-lg mb-2 bg-white py-1.5 px-2 rounded-lg text-primary-Green w-fit">
+                        Cliente: {user.name} — <span className="text-sm font-bold text-primary-Green">{user.email}</span>
                     </h2>
 
                     <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white rounded-lg shadow">
-                            <thead>
-                                <tr>
-                                    {['ID', 'Fecha', 'Total', 'Pago', 'Estado', 'Acciones'].map((h) => (
-                                        <th key={h} className="px-4 py-2 bg-gray-100 font-medium text-left">{h}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((order) => (
-                                    <tr key={order.orderId} className="border-t hover:bg-gray-50">
-                                        <td className="px-4 py-2">{order.orderId}</td>
-                                        <td className="px-4 py-2">{moment(order.createdAt).format('DD/MM/YYYY')}</td>
-                                        <td className="px-4 py-2">{DisplayPriceDOP(order.totalAmt)}</td>
-                                        <td className="px-4 py-2">{order.paymentStatus}</td>
-                                        <td className="px-4 py-2">{order.orderStatus}</td>
-                                        <td className="px-4 py-2 space-x-2">
-                                            <button
-                                                onClick={() => openModal(order)}
-                                                className="px-2 py-1 bg-blue-600 text-white rounded"
-                                            >
-                                                Detalles
-                                            </button>
-                                        </td>
+                        <div className="overflow-x-auto bg-white p-2 rounded-lg">
+                            <table className="min-w-full rounded-lg shadow">
+                                <thead>
+                                    <tr>
+                                        {['ID Orden', 'Fecha', 'Total', 'Pago', 'Estado', 'Acciones'].map((h) => (
+                                            <th key={h} className="px-4 py-2 bg-gray-100 text-left font-bold">{h}</th>
+                                        ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    {orders.map((order) => (
+                                        <tr key={order.orderId} className="border-t hover:bg-gray-50">
+                                            <td className="px-4 py-2">{order.orderId}</td>
+                                            <td className="px-4 py-2">{moment(order.createdAt).format('DD/MM/YYYY')}</td>
+                                            <td className="px-4 py-2">{DisplayPriceDOP(order.totalAmt)}</td>
+                                            <td className="px-4 py-2">{order.paymentStatus === 'Paid'
+                                                ? 'Pagado'
+                                                : order.paymentStatus === 'CASH ON DELIVERY'
+                                                    ? 'Pago contra entrega'
+                                                    : 'Pendiente'}
+                                            </td>
+                                            <td className="px-4 py-2">{order.orderStatus}</td>
+                                            <td className="px-4 py-2 space-x-2">
+                                                <button
+                                                    onClick={() => openModal(order, user)}
+                                                    className="px-2 py-1 bg-blue-700 text-white rounded-lg hover:bg-blue-500"
+                                                >
+                                                    Detalles
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             ))}
@@ -134,9 +161,10 @@ const AdminOrders = () => {
 
             <OrderManagementModal
                 order={selectedOrder}
+                user={selectedUser}
                 isOpen={modalOpen}
                 onClose={closeModal}
-                onUpdateStatus={() => { }}
+                onUpdateStatus={(orderId, newStatus) => fetchUpdateOrdersItem(orderId, newStatus)}
                 onAssignTracking={() => { }}
                 onRefund={() => { }}
                 onCancel={() => { }}

@@ -491,24 +491,47 @@ export async function getGroupedOrdersByUserController(req, res) {
                 totalAmt
             };
 
-            if (!groupedByUser[userId].orders[order.orderId]) {
+            const existingOrder = groupedByUser[userId].orders[order.orderId];
+
+            if (!existingOrder) {
+                // Primera vez que vemos esta orden, la agregamos
                 groupedByUser[userId].orders[order.orderId] = {
                     orderId: order.orderId,
                     orderStatus: order.orderStatus,
-                    subTotalAmt: order.subTotalAmt,
-                    discount: order.discount,
-                    totalAmt: order.totalAmt,
+                    subTotalAmt: subTotalAmt,
+                    discount: order.discount || 0,
+                    totalAmt: totalAmt,
                     paymentStatus: order.paymentStatus,
                     createdAt: order.createdAt,
                     address: order.address,
                     items: [item]
                 };
             } else {
-                groupedByUser[userId].orders[order.orderId].items.push(item);
+                // Ya existe esta orden, acumulamos valores y agregamos items
+                existingOrder.subTotalAmt += subTotalAmt;
+                existingOrder.discount += order.discount || 0;
+                existingOrder.totalAmt += totalAmt;
+                existingOrder.items.push(item);
+
+                // Actualizar fecha si la actual es más antigua o más nueva según quieras
+                if (order.createdAt < existingOrder.createdAt) {
+                    existingOrder.createdAt = order.createdAt;
+                }
+
+                // Para estado, podrías priorizar el estado más avanzado (puedes personalizar lógica)
+                const statusPriority = ['Pendiente', 'Procesando', 'Enviado', 'Entregado'];
+                if (statusPriority.indexOf(order.orderStatus) > statusPriority.indexOf(existingOrder.orderStatus)) {
+                    existingOrder.orderStatus = order.orderStatus;
+                }
+
+                // Para paymentStatus podrías hacer lógica similar si quieres
+                if (order.paymentStatus !== existingOrder.paymentStatus) {
+                    existingOrder.paymentStatus = order.paymentStatus; // o lógica más fina si quieres
+                }
             }
         });
 
-        // Convertir a formato de array
+        // Convertir a formato array
         const result = Object.values(groupedByUser).map(userGroup => ({
             user: userGroup.user,
             orders: Object.values(userGroup.orders)
@@ -530,7 +553,6 @@ export async function getGroupedOrdersByUserController(req, res) {
         });
     }
 }
-
 
 export async function updateOrderStatusController(req, res) {
     const { orderId, orderStatus } = req.body
