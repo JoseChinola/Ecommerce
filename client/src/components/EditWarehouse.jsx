@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useForm } from "react-hook-form"
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -7,9 +7,10 @@ import toast from 'react-hot-toast';
 import { IoClose } from 'react-icons/io5';
 import Loading from './Loading';
 import { LuWarehouse } from 'react-icons/lu';
+import { FaLocationArrow } from 'react-icons/fa';
 
 const EditWarehouse = ({ close, fetchStore, data }) => {
-    const { register, handleSubmit, reset, } = useForm({
+    const { register, handleSubmit, reset } = useForm({
         defaultValues: {
             _id: data._id,
             name: data.name,
@@ -19,18 +20,16 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
     })
     const [loading, setLoading] = useState(false)
 
-    const onSubmit = async (data) => {
+    const onSubmit = useCallback(async (formData) => {
         try {
-
-
             setLoading(true)
             const response = await Axios({
                 ...SummaryApi.updateStore,
                 data: {
-                    _id: data._id,
-                    name: data.name,
-                    address: data.address,
-                    description: data.description
+                    _id: formData._id,
+                    name: formData.name,
+                    address: formData.address,
+                    description: formData.description
                 }
             })
 
@@ -48,7 +47,7 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [close, fetchStore, reset])
 
     return (
         <section className='bg-black fixed top-0 bottom-0 left-0 right-0 z-50 bg-opacity-70 flex items-center h-screen overflow-auto sm:p-4 p-2'>
@@ -79,7 +78,6 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                             <LuWarehouse className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
 
-
                         <div className='grid gap-1 relative'>
                             <label htmlFor="address">Dirrecion Almacén:</label>
                             <input
@@ -92,16 +90,14 @@ const EditWarehouse = ({ close, fetchStore, data }) => {
                             <FaLocationArrow className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
 
-
                         <div className='grid gap-1'>
                             <label htmlFor="description" className='font-bold text-primary-Green'>Description</label>
 
-                            <textarea type="text"
+                            <textarea
                                 id='description'
                                 placeholder='Enter product description'
                                 {...register('description', { required: true })}
                                 className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md resize-none'
-                                multiple
                                 rows={4}
                                 required
                             />

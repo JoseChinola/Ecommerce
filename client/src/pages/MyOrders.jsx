@@ -34,47 +34,51 @@ const MyOrders = () => {
     }
 
     return (
-        <div className="p-6 bg-gradient-to-r from-secundary to-blue-200 min-h-[77vh] rounded-xl">
+        <div className="px-4 py-3 bg-white min-h-[70vh] rounded-xl w-full">
             <h1 className="text-3xl font-bold text-blue-700 mb-6 text-center">Mis Pedidos</h1>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {orders.map((order, idx) => (
                     <div
                         key={order.orderId + idx}
-                        className="bg-white rounded-3xl shadow-xl border border-gray-200 hover:shadow-2xl hover:scale-105 transition duration-300 ease-in-out p-4 flex flex-col"
+                        className="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 border border-gray-200 flex flex-col"
                     >
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-base font-semibold text-gray-800">Pedido #{order.orderId}</h2>
+                        <div className="p-4 border-b border-gray-100 flex justify-between items-center">
+                            <div className=''>
+                                <h2 className="text-sm font-semibold text-gray-800">Pedido #{order.orderId}</h2>
+                                <p className="text-xs text-gray-500">Fecha: {moment(order.createdAt).format('DD/MM/YYYY')}</p>
+                            </div>
                             <span
-                                className={`px-2 py-1 text-xs rounded-full text-center ${order.paymentStatus === 'Paid'
-                                    ? 'bg-green-100 text-green-700'
-                                    : order.paymentStatus === 'CASH ON DELIVERY'
-                                        ? 'bg-blue-100 text-blue-700'
-                                        : 'bg-yellow-100 text-yellow-700'
+                                className={`px-2 py-2 text-xs font-medium rounded-full ${order.orderStatus === 'Completado'
+                                        ? 'bg-green-100 text-green-700'
+                                        : order.orderStatus === 'Procesando'
+                                            ? 'bg-blue-100 text-blue-700'
+                                            : order.orderStatus === 'Pendiente'
+                                                ? 'bg-yellow-100 text-yellow-700'
+                                                : order.orderStatus === 'Cancelado'
+                                                    ? 'bg-red-100 text-red-700'
+                                                    : order.orderStatus === 'Reembolsado'
+                                                        ? 'bg-gray-100 text-gray-700'
+                                                        : ''
                                     }`}
                             >
-                                {order.paymentStatus === 'Paid'
-                                    ? 'Pagado'
-                                    : order.paymentStatus === 'CASH ON DELIVERY'
-                                        ? 'Pago contra entrega'
-                                        : 'Pendiente'}
+                                {order.orderStatus}
                             </span>
                         </div>
 
-                        <div className="space-y-3 mb-4">
+                        <div className="p-4 space-y-3 flex-1">
                             {order.items?.slice(0, 1).map((item, i) => {
                                 const thumb = item?.image[0] || '/no-image.png';
-
                                 return (
                                     <div key={i} className="flex items-center">
                                         <img
                                             src={thumb}
                                             alt={item?.name || 'Producto'}
-                                            className="w-12 h-12 rounded-lg object-cover bg-gray-100 p-1"
+                                            className="w-14 h-14 rounded-lg object-cover bg-gray-100 p-1"
                                         />
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium line-clamp-1">{item?.name}</p>
-                                            <p className="text-xs text-gray-500">Cantidad: {item.quantity || 1}</p>
+                                        <div className="ml-4">
+                                            <p className="text-sm font-semibold text-gray-800 line-clamp-1">{item?.name}</p>
+                                            <p className="text-xs text-gray-500">Cantidad: {item.quantity}</p>
                                             <p className="text-xs text-gray-500">
                                                 Precio: {DisplayPriceDOP(item?.unit_price || 0)}
                                             </p>
@@ -82,7 +86,6 @@ const MyOrders = () => {
                                     </div>
                                 );
                             })}
-
                             {order.items?.length > 1 && (
                                 <p className="text-xs text-gray-500">
                                     + {order.items.length - 1} producto{order.items.length - 1 > 1 ? 's' : ''} más
@@ -90,23 +93,17 @@ const MyOrders = () => {
                             )}
                         </div>
 
-                        <div className="text-sm text-gray-500 mb-4">
-                            <p>
-                                <span className="font-semibold">Fecha:</span>{' '}
-                                {moment(order.createdAt).format('DD/MM/YYYY, hh:mm A')}
+                        <div className="px-4 pb-4">
+                            <p className="text-sm text-gray-600 mb-2">
+                                <span className="font-semibold">Total:</span> {DisplayPriceDOP(order.totalAmt)}
                             </p>
-                            <p>
-                                <span className="font-semibold">Total:</span>{' '}
-                                {DisplayPriceDOP(order.totalAmt)}
-                            </p>
+                            <button
+                                onClick={() => openModal(order)}
+                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                            >
+                                Ver detalles
+                            </button>
                         </div>
-
-                        <button
-                            onClick={() => openModal(order)}
-                            className="mt-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                        >
-                            Ver detalles
-                        </button>
                     </div>
                 ))}
             </div>
@@ -117,6 +114,7 @@ const MyOrders = () => {
                 orderDetails={selectedOrder}
             />
         </div>
+
     );
 };
 

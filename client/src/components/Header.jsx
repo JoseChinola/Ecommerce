@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import logomv from '../assets/logo.png'
 import Search from './Search'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaRegCircleUser } from "react-icons/fa6";
+import { IoNotificationsOutline } from "react-icons/io5";
 import useMobile from '../hooks/useMobile'
 import { GiShoppingCart } from "react-icons/gi"
 import { useSelector } from 'react-redux';
@@ -10,17 +11,19 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 import { useGlobalContext } from '../provider/useGlobalContext'
 import DisplayCartItem from './DisplayCartItem';
+import NotificationsList from './NotificationsList';
 
 
 const Header = ({ toggleAside }) => {
     const [isMobile] = useMobile()
     const location = useLocation()
     const navigate = useNavigate()
+    const notificationsRef = useRef(null);
     const user = useSelector((state) => state?.user)
     const cartItem = useSelector((state) => state?.cartItem.cart)
-    const { totalPrice, totalQty } = useGlobalContext()
+    const { totalPrice, totalQty, markRead, deleteNotifyUser } = useGlobalContext()
     const [openCartSection, setOpenCartSection] = useState(false)
-
+    const [openNotifications, setOpenNotifications] = useState(false);
 
 
     const isSearchPage = location.pathname === "/search"
@@ -31,7 +34,19 @@ const Header = ({ toggleAside }) => {
     const redirectToLoginPage = () => {
         navigate("/login")
     }
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+                setOpenNotifications(false);
+            }
+        };
 
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     if (isHidden) return <div className='xl:h-14 h-5'></div>;
 
@@ -115,6 +130,29 @@ const Header = ({ toggleAside }) => {
                                                         }
                                                     </div>
 
+                                                    {/* Notificaciones móviles */}
+                                                    <div className="relative mt-2">
+                                                        <button onClick={() => setOpenNotifications(!openNotifications)} className="relative group">
+                                                            <IoNotificationsOutline size={24} className="text-green-600" />
+                                                            {
+                                                                user?.notifications?.some(n => !n.read) && (
+                                                                    <span className="absolute top-0 right-0 bg-red-600 w-3 h-3 rounded-full animate-ping"></span>
+                                                                )
+                                                            }
+                                                        </button>
+
+                                                        {openNotifications && (
+                                                            <div
+                                                                ref={notificationsRef}
+                                                                className="absolute right-0 mt-2 w-72 max-h-96 overflow-y-auto bg-white shadow-md rounded-md z-50"
+                                                            >
+                                                                <NotificationsList markRead={markRead} />
+
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+
                                                     <button onClick={() => setOpenCartSection(true)} className="relative group flex max-[430px]:hidden">
                                                         {/* Carrito con icono */}
                                                         <div className={`relative ${totalQty ? "" : "animate-pulse"}`}>
@@ -164,7 +202,7 @@ const Header = ({ toggleAside }) => {
                                             <div className='relative'>
                                                 <Link to={"/profile"} className='flex select-none justify-center items-center cursor-pointer gap-1'>
                                                     {/* Contenedor de la imagen con tamaño fijo y centrado */}
-                                                    <div className='w-14 h-14 rounded-full outline-none flex justify-center items-center overflow-hidden'>
+                                                    <div className='w-11 h-11 rounded-full outline-none flex justify-center items-center overflow-hidden'>
                                                         {
                                                             user?.avatar ? (<img
                                                                 src={user?.avatar}
@@ -179,6 +217,27 @@ const Header = ({ toggleAside }) => {
                                                 </Link>
                                             </div>
 
+
+                                            {/* Notificaciones */}
+                                            <div className="relative">
+                                                <button onClick={() => setOpenNotifications(!openNotifications)} className="relative group">
+                                                    <IoNotificationsOutline size={25} className="text-green-600" />
+                                                    {
+                                                        user?.notifications?.some(n => !n.read) && (
+                                                            <span className="absolute top-0 right-0 bg-red-600 w-3 h-3 rounded-full animate-ping"></span>
+                                                        )
+                                                    }
+                                                </button>
+
+                                                {openNotifications && (
+                                                    <div
+                                                        ref={notificationsRef}
+                                                        className="absolute right-0 mt-2 w-80 max-h-80 overflow-y-auto scrollbarCustom bg-white shadow-md rounded-md z-50"
+                                                    >
+                                                        <NotificationsList markRead={markRead} deleteNotify={deleteNotifyUser} />
+                                                    </div>
+                                                )}
+                                            </div>
 
                                             {/** Cart  */}
                                             <button onClick={() => setOpenCartSection(true)} className="relative group flex">

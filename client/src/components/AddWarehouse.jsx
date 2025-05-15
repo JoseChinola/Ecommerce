@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useForm } from "react-hook-form"
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -10,13 +10,11 @@ import { LuWarehouse } from 'react-icons/lu';
 import { FaLocationArrow } from 'react-icons/fa';
 
 const AddWarehouse = ({ close, fetchStore }) => {
-    const { register, handleSubmit, reset, } = useForm()
+    const { register, handleSubmit, reset } = useForm()
     const [loading, setLoading] = useState(false)
 
-    const onSubmit = async (data) => {
+    const onSubmit = useCallback(async (data) => {
         try {
-            
-
             setLoading(true)
             const response = await Axios({
                 ...SummaryApi.createStore,
@@ -41,8 +39,7 @@ const AddWarehouse = ({ close, fetchStore }) => {
         } finally {
             setLoading(false)
         }
-    }
-
+    }, [close, fetchStore, reset])
 
     return (
         <section className='bg-black fixed top-0 bottom-0 left-0 right-0 z-50 bg-opacity-70 flex items-center h-screen overflow-auto sm:p-4 p-2'>
@@ -85,7 +82,6 @@ const AddWarehouse = ({ close, fetchStore }) => {
                             />
                             <FaLocationArrow className="absolute left-3 top-2/3 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
-
 
                         <div className='grid gap-1'>
                             <label htmlFor="description" className='font-medium'>Descripcion</label>

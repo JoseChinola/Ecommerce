@@ -149,10 +149,10 @@ const Inventario = () => {
             </div>
             {/* Modales */}
             {openAddInventory && (
-                <AddInventory close={() => setOpenAddInventory(false)} />
+                <AddInventory close={() => setOpenAddInventory(false)} inventoryList={inventoryList}/>
             )}
             {openEditInventory && (
-                <EditInventory close={() => setOpenEditInventory(false)} data={editData} />
+                <EditInventory close={() => setOpenEditInventory(false)} data={editData} inventoryList={inventoryList} />
             )}
             {ImageURL && (
                 <ViewImage url={ImageURL} close={() => setImageURL(false)} />

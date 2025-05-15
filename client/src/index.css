@@ -12,19 +12,67 @@ body {
     font-family: "Poppins", sans-serif;
     font-weight: 100;
     font-style: normal;
-    @apply bg-[#aeddd2] text-neutral-700 scroll-smooth
+    background-color: #aeddd2;
+    color: #404040;
+    scroll-behavior: smooth;
+}
+
+.custom-toast {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 0.95;
+        /* <-- aquí el cambio importante */
+        transform: translateY(0);
+    }
 }
 
 .scrollbar-none::-webkit-scrollbar {
     display: none;
 }
 
+/* Por defecto: truncar 1 línea */
+.notification-message {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* En pantallas >= 640px (sm y superior) */
+@media (min-width: 640px) {
+
+    /* Al hacer hover en el li, mostrar el texto completo */
+    li:hover .notification-message {
+        -webkit-line-clamp: unset;
+        line-clamp: 2;
+        overflow: visible;
+        white-space: normal;
+    }
+}
+
+/* En móviles (<640px) siempre mostrar completo */
+@media (max-width: 639px) {
+    .notification-message {
+        -webkit-line-clamp: unset;
+        line-clamp: 4;
+        overflow: visible;
+        white-space: normal;
+    }
+}
+
 .scrollbarCustom::-webkit-scrollbar {
     width: 7px;
-    @apply bg-slate-100
+    background-color: #f1f5f9;
 }
 
-.scrollbarCustom::-webkit-scrollbar-thumb{
-    @apply bg-blue-200 rounded-full
+.scrollbarCustom::-webkit-scrollbar-thumb {
+    background-color: #bfdbfe;
+    border-radius: 9999px;
 }
-

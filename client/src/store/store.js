@@ -17,7 +17,7 @@ export const store = configureStore({
         inventory: inventoryReducer,
         inventoryMovements: inventoryMovementsReducer,
         orders: orderReducer,
-        ordersAll: ordersReducer,
+        ordersAll: ordersReducer
     },
 })
 

@@ -13,7 +13,8 @@ const initialState = {
     address_details: [],
     shopping_cart: [],
     orderHistory: [],
-    role: ""
+    role: "",
+    notifications: []
 }
 
 
@@ -34,11 +35,24 @@ const userSlice = createSlice({
             state.shopping_cart = action.payload?.shopping_cart
             state.orderHistory = action.payload?.orderHistory
             state.role = action.payload?.role
+            state.notifications = action.payload?.notifications || [];
         },
         updatedAvatar: (state, action) => {
             state.avatar = action.payload
-        }
-        ,
+        },
+        setNotifications: (state, action) => {
+            state.notifications = action.payload;
+        },
+        markNotificationRead: (state, action) => {
+            const id = action.payload;
+            state.notifications = state.notifications.map(n =>
+                n._id === id ? { ...n, read: true } : n
+            );
+        },
+        deleteNotification: (state, action) => {
+            const id = action.payload;
+            state.notifications = state.notifications.filter(n => n._id !== id);
+        },
         logout: (state, action) => {
             state._id = ""
             state.name = ""
@@ -52,10 +66,12 @@ const userSlice = createSlice({
             state.shopping_cart = []
             state.orderHistory = []
             state.role = ""
+            state.notifications = []
+
         }
     }
 })
 
-export const { setUserDetails, logout, updatedAvatar } = userSlice.actions
+export const { setUserDetails, logout, updatedAvatar, markNotificationRead, setNotifications, deleteNotification } = userSlice.actions
 
 export default userSlice.reducer

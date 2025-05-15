@@ -3,7 +3,7 @@ import './App.css'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { Toaster } from 'react-hot-toast'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import fetchUserDetails from './utils/fetchUserDetails'
 import { setUserDetails } from './store/userSlice'
 import { setAllCategory, setAllSubCategory, setLoadingCategory } from './store/ProductSlice'
@@ -21,12 +21,12 @@ function App() {
   const user = useSelector((state) => state?.user)
   const [isAsideOpen, setIsAsideOpen] = useState(false)
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     const userData = await fetchUserDetails()
     dispatch(setUserDetails(userData?.data))
-  }
+  }, [dispatch])
 
-  const fetchCategory = async () => {
+  const fetchCategory = useCallback(async () => {
     try {
       dispatch(setLoadingCategory(true))
       const res = await Axios({ ...SummaryApi.getcategory })
@@ -39,9 +39,9 @@ function App() {
     } finally {
       dispatch(setLoadingCategory(false))
     }
-  }
+  }, [dispatch])
 
-  const fetchSubCategory = async () => {
+  const fetchSubCategory = useCallback(async () => {
     try {
       const res = await Axios({ ...SummaryApi.getSubCategory })
       const { data: resData } = res
@@ -51,15 +51,15 @@ function App() {
     } catch (error) {
       AxiosToastError(error)
     }
-  }
+  }, [dispatch])
 
   useEffect(() => {
     fetchUser()
     fetchCategory()
     fetchSubCategory()
-  }, [])
+  }, [fetchUser, fetchCategory, fetchSubCategory]);
 
-  const isUserLoggedIn = !!user?._id
+  const isUserLoggedIn = Boolean(user && user._id)
 
   return (
     <GlobalProvider>
@@ -77,7 +77,39 @@ function App() {
         </main>
       </div>
 
-      <Toaster />
+      <Toaster
+        position="top-right"
+        containerStyle={{
+          right: '30px',
+          top: '20px',
+        }}
+        toastOptions={{
+          className: 'custom-toast',
+          duration: 4000,
+          style: {
+            padding: '8px',
+            borderRadius: '8px',
+            fontSize: '16px',
+          },
+          success: {
+            style: {
+              background: '#f0fdf4', // bg-green-50
+              color: '#15803d',      // text-green-700
+              borderLeft: '4px solid #16a34a',
+            },
+          },
+          error: {
+            style: {
+              background: '#fef2f2',
+              color: '#b91c1c',
+              borderLeft: '4px solid #dc2626',
+            },
+          },
+        }}
+      />
+
+
+
       {location.pathname !== '/checkout' && <CartMobileLink />}
     </GlobalProvider>
   )

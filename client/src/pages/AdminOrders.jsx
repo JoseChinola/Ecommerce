@@ -84,8 +84,9 @@ const AdminOrders = () => {
                     <option value="">Todos los estados</option>
                     <option value="Pendiente">Pendiente</option>
                     <option value="Procesando">Procesando</option>
-                    <option value="Enviado">Enviado</option>
-                    <option value="Entregado">Entregado</option>
+                    <option value="Reembolsado">Reembolsado</option>
+                    <option value="Completado">Completado</option>
+                    <option value="Cancelado">Cancelado</option>
                 </select>
             </div>
 

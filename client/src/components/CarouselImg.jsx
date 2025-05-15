@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa";
 import AxiosToastError from "../utils/AxiosToastError";
 import Axios from "../utils/Axios";
@@ -18,7 +18,7 @@ const Carousel = () => {
     const minSwipeDistance = 50;
 
     // Fetch products with discount
-    const fetchProductData = async () => {
+    const fetchProductData = useCallback(async () => {
         try {
             setLoading(true);
             const resp = await Axios({
@@ -50,7 +50,7 @@ const Carousel = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     // Adjust items per slide on resize
     useEffect(() => {
@@ -65,39 +65,40 @@ const Carousel = () => {
 
     // Fetch carousel items once
     useEffect(() => {
-        // call fetchProductData without returning a promise
         fetchProductData();
-    }, []);
+    }, [fetchProductData]);
 
     // Auto scroll effect
+    const goToNext = useCallback(() => {
+        setCurrentIndex(prev => (prev + itemsPerSlide) % carouselItems.length);
+    }, [itemsPerSlide, carouselItems.length]);
+
+    const stopAutoScroll = useCallback(() => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+    }, []);
+
+    const startAutoScroll = useCallback(() => {
+        stopAutoScroll();
+        intervalRef.current = setInterval(goToNext, 4000);
+    }, [goToNext, stopAutoScroll]);
+
+    const goToPrevious = useCallback(() => {
+        stopAutoScroll();
+        setCurrentIndex(prev => (prev - itemsPerSlide + carouselItems.length) % carouselItems.length);
+        startAutoScroll();
+    }, [itemsPerSlide, carouselItems.length, stopAutoScroll, startAutoScroll]);
+
+    // Luego ya puedes usarlo en useEffect
     useEffect(() => {
         if (carouselItems.length > 0) {
             startAutoScroll();
             return () => stopAutoScroll();
         }
-    }, [carouselItems, itemsPerSlide]);
-
-    const startAutoScroll = () => {
-        stopAutoScroll();
-        intervalRef.current = setInterval(goToNext, 4000);
-    };
-
-    const stopAutoScroll = () => {
-        if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-
-    const goToNext = () => {
-        stopAutoScroll();
-        setCurrentIndex(prev => (prev + itemsPerSlide) % carouselItems.length);
-        startAutoScroll();
-    };
-
-    const goToPrevious = () => {
-        stopAutoScroll();
-        setCurrentIndex(prev => (prev - itemsPerSlide + carouselItems.length) % carouselItems.length);
-        startAutoScroll();
-    };
-
+    }, [carouselItems, itemsPerSlide, startAutoScroll, stopAutoScroll]);
+    
     // Touch handlers
     const onTouchStart = e => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
     const onTouchMove = e => setTouchEnd(e.targetTouches[0].clientX);

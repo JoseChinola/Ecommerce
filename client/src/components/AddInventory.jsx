@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -17,18 +17,10 @@ const AddInventory = ({ close }) => {
     const [selectedProduct, setSelectedProduct] = useState(null);
     const { fetchInventario, fetchMovements } = useGlobalContext()
 
-
-    useEffect(() => {
-        fetchProductData()
-        fetchStore()
-    }, [])
-
-    const fetchStore = async () => {
-
+   const fetchStore = useCallback(async () => {
         try {
             const response = await Axios({
                 ...SummaryApi.getStore
-
             })
 
             const { data: resData } = response
@@ -38,29 +30,9 @@ const AddInventory = ({ close }) => {
         } catch (error) {
             AxiosToastError(error)
         }
-    }
+    }, [])
 
-    const handleProductChange = (e) => {
-        const productId = e.target.value;
-        const product = productData.find(p => p._id === productId);
-        if (product) {
-            // Parsea el campo image
-            let parsedImages = [];
-            try {
-                parsedImages = JSON.parse(product.image);
-            } catch (err) {
-                console.error('Error al parsear la imagen del producto', err);
-            }
-            setSelectedProduct({
-                ...product,
-                imageParsed: parsedImages[0] || '', // Solo tomamos la primera imagen
-            });
-        } else {
-            setSelectedProduct(null);
-        }
-    };
-
-    const fetchProductData = async () => {
+    const fetchProductData = useCallback(async () => {
         try {
             setLoading(true)
             const resp = await Axios({
@@ -82,8 +54,34 @@ const AddInventory = ({ close }) => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
 
+    useEffect(() => {
+        fetchProductData()
+        fetchStore()
+    }, [fetchProductData, fetchStore])
+
+    
+
+    const handleProductChange = (e) => {
+        const productId = e.target.value;
+        const product = productData.find(p => p._id === productId);
+        if (product) {
+            // Parsea el campo image
+            let parsedImages = [];
+            try {
+                parsedImages = JSON.parse(product.image);
+            } catch (err) {
+                console.error('Error al parsear la imagen del producto', err);
+            }
+            setSelectedProduct({
+                ...product,
+                imageParsed: parsedImages[0] || '', // Solo tomamos la primera imagen
+            });
+        } else {
+            setSelectedProduct(null);
+        }
+    };
 
     const onSubmit = async (data) => {
         try {

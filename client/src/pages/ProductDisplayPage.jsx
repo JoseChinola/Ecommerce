@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import SummaryApi from '../cammon/SummaryApi'
 import Axios from '../utils/Axios'
@@ -32,7 +32,9 @@ const ProductDisplayPage = () => {
     const productParts = params?.product?.split("-")
     const productId = productParts?.slice(-5).join("-") || null
 
-    const fetchProductDetails = async () => {
+    const fetchProductDetails = useCallback(async () => {
+        if (!productId) return
+
         try {
             setLoading(true)
             const response = await Axios({
@@ -43,15 +45,19 @@ const ProductDisplayPage = () => {
             const { data: resData } = response
 
             if (resData.success) {
-                // Asegurar que more_details siempre sea un objeto válido
-                const moreDetails = typeof resData.data?.more_details === "string"
-                    ? JSON.parse(resData.data.more_details)
-                    : resData.data?.more_details || {}
+                const rawDetails = resData.data
+                const moreDetails = typeof rawDetails?.more_details === "string"
+                    ? JSON.parse(rawDetails.more_details || '{}')
+                    : rawDetails.more_details || {}
 
-                const images = resData.data?.image ? JSON.parse(JSON.parse(resData.data.image)) : []
+                let images = []
+                try {
+                    images = rawDetails?.image ? JSON.parse(JSON.parse(rawDetails.image)) : []
+                } catch (err) {
+                    console.warn('Error parsing images', err)
+                }
 
-                // Guardar todo en el estado
-                setData({ ...resData.data, more_details: moreDetails })
+                setData({ ...rawDetails, more_details: moreDetails })
                 setImageData(images)
             }
         } catch (error) {
@@ -59,11 +65,11 @@ const ProductDisplayPage = () => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [productId])
 
     useEffect(() => {
         fetchProductDetails()
-    }, [params])
+    }, [fetchProductDetails])
 
     if (loading) return <ProductSkeleton />
 

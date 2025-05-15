@@ -6,6 +6,7 @@ import { nanoid } from 'nanoid';
 import userSchema from "../models/user.model.js";
 import inventorySchema from "../models/Inventory.model.js";
 import addressSchema from "../models/address.model.js";
+import notificationSchema from "../models/notifications.model.js";
 
 
 
@@ -561,7 +562,6 @@ export async function updateOrderStatusController(req, res) {
         return res.status(400).json({ success: false, message: "orderId y orderStatus son requeridos." });
     }
 
-
     try {
         // Buscar el pedido por ID usando Sequelize
         const order = await orderSchema.findOne({ where: { orderId } })
@@ -571,7 +571,16 @@ export async function updateOrderStatusController(req, res) {
         }
         order.orderStatus = orderStatus;
         await order.save();
-        return res.json({ success: true, message: "Estado del pedido actualizado.", data: order });
+
+        // ✅ Crea la notificación
+        await notificationSchema.create({
+            userId: order.userId,
+            title: "Pedido actualizado",
+            message: `Tu pedido #${order.orderId} ha cambiado a "${order.orderStatus}".`,
+            type: "order",
+        });
+
+        return res.json({ success: true, message: "Orden actualizada y notificación enviada", data: order });
     } catch (error) {
         console.error(error);
         return res.status(500).json({

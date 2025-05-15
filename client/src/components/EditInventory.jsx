@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import Axios from '../utils/Axios';
 import SummaryApi from '../cammon/SummaryApi';
@@ -25,31 +25,44 @@ const EditInventory = ({ close, data }) => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const { fetchInventario, fetchMovements } = useGlobalContext();
 
-  // 1) Carga productos y almacenes al montar
-  useEffect(() => {
-    async function loadLists() {
-      try {
-        setLoading(true);
-        const [prodResp, storeResp] = await Promise.all([
-          Axios({ ...SummaryApi.getProduct, data: { page: 1, limit: 100, search: '' } }),
-          Axios({ ...SummaryApi.getStore })
-        ]);
-        if (prodResp.data.success) setProductData(prodResp.data.data);
-        if (storeResp.data.success) setWarehouseData(storeResp.data.data);
-      } catch (err) {
-        AxiosToastError(err);
-      } finally {
-        setLoading(false);
-      }
+  const loadLists = useCallback(async () => {
+    try {
+      setLoading(true);
+      const [prodResp, storeResp] = await Promise.all([
+        Axios({ ...SummaryApi.getProduct, data: { page: 1, limit: 100, search: '' } }),
+        Axios({ ...SummaryApi.getStore })
+      ]);
+      if (prodResp.data.success) setProductData(prodResp.data.data);
+      if (storeResp.data.success) setWarehouseData(storeResp.data.data);
+    } catch (err) {
+      AxiosToastError(err);
+    } finally {
+      setLoading(false);
     }
-    loadLists();
   }, []);
 
-  // 2) Cuando cambian data, productData o warehouseData, resetea el formulario
+  useEffect(() => {
+    loadLists();
+  }, [loadLists]);
+
+  const updateSelectedProduct = useCallback((productId) => {
+    const prod = productData.find(p => p._id === productId);
+    if (prod) {
+      let imgs = [];
+      try {
+        imgs = JSON.parse(prod.image);
+      } catch (e) {
+        console.error('Error parsing product images:', e);
+      }
+      setSelectedProduct({ ...prod, imageParsed: imgs[0] || '' });
+    } else {
+      setSelectedProduct(null);
+    }
+  }, [productData]);
+
   useEffect(() => {
     if (!data || !productData.length || !warehouseData.length) return;
 
-    // reset de react-hook-form
     reset({
       _id: data._id,
       warehouseId: data.warehouseId,
@@ -57,26 +70,12 @@ const EditInventory = ({ close, data }) => {
       stock: data.stock
     });
 
-    // actualiza selectedProduct para mostrar precio e imagen
-    const prod = productData.find(p => p._id === data.productId);
-    if (prod) {
-      let imgs = [];
-      try { imgs = JSON.parse(prod.image); } catch { }
-      setSelectedProduct({ ...prod, imageParsed: imgs[0] || '' });
-    }
-  }, [data, productData, warehouseData]);
+    updateSelectedProduct(data.productId);
+  }, [data, productData, warehouseData, reset, updateSelectedProduct]);
 
-  const handleProductChange = (e) => {
-    const pid = e.target.value;
-    const prod = productData.find(p => p._id === pid);
-    if (prod) {
-      let imgs = [];
-      try { imgs = JSON.parse(prod.image); } catch { }
-      setSelectedProduct({ ...prod, imageParsed: imgs[0] || '' });
-    } else {
-      setSelectedProduct(null);
-    }
-  };
+  const handleProductChange = useCallback((e) => {
+    updateSelectedProduct(e.target.value);
+  }, [updateSelectedProduct]);
 
   const onSubmit = async (formData) => {
     try {
@@ -93,9 +92,9 @@ const EditInventory = ({ close, data }) => {
       if (resp.data.success) {
         toast.success(resp.data.message);
         close?.();
-        reset();               // limpia formulario
-        fetchInventario();     // refetch en lista padre
-        fetchMovements();     // refetch en lista padre
+        reset();
+        fetchInventario();
+        fetchMovements();
       }
     } catch (err) {
       AxiosToastError(err);

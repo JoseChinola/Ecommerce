@@ -138,9 +138,10 @@ const OrderManagementModal = ({
               onChange={e => setNewStatus(e.target.value)}
             >
               <option value="Pendiente">Pendiente</option>
-              <option value="En proceso">En proceso</option>
-              <option value="Enviado">Enviado</option>
-              <option value="Entregado">Entregado</option>
+              <option value="Procesando">Procesando</option>
+              <option value="Completado">Completado</option>
+              <option value="Reembolsado">Reembolsado</option>
+              <option value="Cancelado">Cancelado</option>
             </select>
             <button
               onClick={() => {

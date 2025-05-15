@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Axios from '../utils/Axios'
@@ -19,7 +19,7 @@ const ProductListPage = () => {
     const allSubCategories = useSelector(state => state.product.allSubCategory)
     const [filteredSubCategories, setFilteredSubCategories] = useState([])
 
-    const productCache = useRef({}) // ✅ Cache local
+    const productCache = useRef({})
 
     const getIdFromSlug = (str) => {
         const parts = str?.split('-') || []
@@ -36,12 +36,11 @@ const ProductListPage = () => {
     const categoryName = getNameFromSlug(params?.category)
     const subCategoryName = getNameFromSlug(params?.subCategory)
 
-    const fetchProductData = async () => {
+    const fetchProductData = useCallback(async () => {
         if (!categoryId || !subCategoryId || categoryId === 'null' || subCategoryId === 'null') return
 
         const cacheKey = `${subCategoryId}-page-${page}`
 
-        // ✅ Si ya está en cache, usarlo
         if (productCache.current[cacheKey]) {
             setProducts(productCache.current[cacheKey].data)
             setTotalCount(productCache.current[cacheKey].totalCount)
@@ -68,7 +67,6 @@ const ProductListPage = () => {
                 setProducts(newProducts)
                 setTotalCount(resData.data.totalCount)
 
-                // ✅ Guardar en cache
                 productCache.current[cacheKey] = {
                     data: newProducts,
                     totalCount: resData.data.totalCount
@@ -79,12 +77,12 @@ const ProductListPage = () => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [categoryId, subCategoryId, page, products])
 
     useEffect(() => {
         setPage(1)
         fetchProductData()
-    }, [params])
+    }, [params, fetchProductData])
 
     useEffect(() => {
         const subCategories = allSubCategories.filter(s => s.category === categoryId)

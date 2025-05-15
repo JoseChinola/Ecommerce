@@ -65,6 +65,18 @@ const SummaryApi = {
         url: "/api/user/update-user-admin",
         method: "put"
     },
+    getNotifyUser: {
+        url: "/api/user/user-notify",
+        method: "get"
+    },
+    markAsReadUser: {
+        url: "/api/user/notify-read",
+        method: "put"
+    },
+    deleteNotifyUser: {
+        url: "/api/user/delete-notify",
+        method: "delete"
+    },
     addCategory: {
         url: "/api/category/add-category",
         method: "post"

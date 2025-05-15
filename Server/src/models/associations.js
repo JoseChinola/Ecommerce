@@ -4,6 +4,8 @@ import inventorySchema from './Inventory.model.js';
 import InventoryMovementSchema from './inventoryMovementSchema.js';
 import userSchema from './user.model.js';
 import orderSchema from './order.model.js';
+import NotificationSchema from './notifications.model.js';
+import notificationSchema from './notifications.model.js';
 
 
 // 1. asociaciones de producto a inventario
@@ -27,8 +29,6 @@ warehouseSchema.hasMany(inventorySchema, {
   foreignKey: 'warehouseId',
   as: 'inventories'
 });
-
-
 
 
 // 3. asociaciones de inventario a almacén y producto
@@ -57,5 +57,15 @@ InventoryMovementSchema.belongsTo(userSchema, {
 orderSchema.belongsTo(userSchema, { foreignKey: 'userId' });
 
 
+//User notificacion 
+notificationSchema.belongsTo(userSchema, {
+  foreignKey: 'userId',
+  as: 'userInfo',
+})
+
+userSchema.hasMany(notificationSchema, {
+  foreignKey: 'userId',
+  as: 'notifications',
+});
 
 console.log('🤝 Relaciones configuradas');

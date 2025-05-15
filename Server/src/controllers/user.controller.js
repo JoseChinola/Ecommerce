@@ -8,6 +8,7 @@ import uploadImageClodinary from "../utils/uploadImageClodinary.js";
 import generatedOtp from "../utils/generatedOtp.js";
 import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
 import jwt from 'jsonwebtoken'
+import notificationSchema from "../models/notifications.model.js";
 
 
 export async function registerUserController(req, res) {
@@ -776,4 +777,75 @@ export async function getsUsersController(req, res) {
         });
     }
 
+}
+
+// get User Notifications 
+export const getUserNotifications = async (req, res) => {
+    const userId = req.userId;
+
+    try {
+        const notifications = await notificationSchema.findAll({
+            where: { userId },
+            order: [['createdAt', 'DESC']]
+        });
+
+        return res.json({
+            data: notifications,
+            error: false,
+            success: true
+        })
+    } catch (error) {
+        console.log('error get Notification ', error.message)
+        return res.status(500).json({ error: "Error obteniendo notificaciones" });
+    }
+};
+
+export const markAsRead = async (req, res) => {
+    const { _id } = req.body;
+
+    try {
+        const notification = await notificationSchema.findOne({ where: { _id } });
+
+        if (!notification) {
+            return res.status(404).json({ error: "No encontrada" });
+        }
+
+        notification.read = true;
+        await notification.save();
+
+        return res.json({
+            message: "Notificación marcada como leída",
+            error: false,
+            success: true
+        });
+    } catch (error) {
+        console.error("Error marcando notificación como leída:", error);
+        return res.status(500).json({ error: "Error actualizando notificación" });
+    }
+};
+
+export const deleteNotification = async (req, res) => {
+    const { _id } = req.body;
+
+    try {
+        const notification = await notificationSchema.findOne({ where: { _id } });
+
+        if (!notification) {
+            return res.status(404).json({ error: "No encontrada" });
+        }
+
+        const notifYDelete = await notification.destroy({ where: { _id } })
+
+        res.json({
+            message: "Noficacion eliminada",
+            data: notifYDelete,
+            error: false,
+            success: true
+        })
+
+      
+    } catch (error) {
+        console.error("Error eleminando notificación como leída:", error);
+        return res.status(500).json({ error: "Error eliminando notificación" });
+    }
 }
