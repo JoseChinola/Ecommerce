@@ -4,12 +4,17 @@ import DetailsOrder from '../components/DetailsOrder';
 import { Navigate } from 'react-router-dom';
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
 import moment from 'moment';
+import { useGlobalContext } from '../provider/useGlobalContext';
+import CancelOrderModal from '../components/CancelOrderModal';
 
 const MyOrders = () => {
     const orders = useSelector((state) => state?.orders?.order);
     const user = useSelector((state) => state.user);
     const [modalOpen, setModalOpen] = useState(false);
+    const [modalCancelOpen, setModalCancelOpen] = useState(false);
+    const [orderToCancel, setOrderToCancel] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const { fetchCancelOrder } = useGlobalContext();
 
     if (!user || !user._id) {
         return <Navigate to="/" />;
@@ -25,6 +30,22 @@ const MyOrders = () => {
         setSelectedOrder(null);
     };
 
+    const openCancelModal = (order) => {
+        setOrderToCancel(order);
+        setModalCancelOpen(true);
+    };
+
+    const closeCancelModal = () => {
+        setOrderToCancel(null);
+        setModalCancelOpen(false);
+    };
+
+    const confirmCancelOrder = () => {
+        if (!orderToCancel) return;
+        fetchCancelOrder(orderToCancel.orderId);
+        closeCancelModal();
+    };
+
     if (!orders || orders.length === 0) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -32,6 +53,8 @@ const MyOrders = () => {
             </div>
         );
     }
+
+
 
     return (
         <div className="px-4 py-3 bg-white min-h-[70vh] rounded-xl w-full">
@@ -50,16 +73,16 @@ const MyOrders = () => {
                             </div>
                             <span
                                 className={`px-2 py-2 text-xs font-medium rounded-full ${order.orderStatus === 'Completado'
-                                        ? 'bg-green-100 text-green-700'
-                                        : order.orderStatus === 'Procesando'
-                                            ? 'bg-blue-100 text-blue-700'
-                                            : order.orderStatus === 'Pendiente'
-                                                ? 'bg-yellow-100 text-yellow-700'
-                                                : order.orderStatus === 'Cancelado'
-                                                    ? 'bg-red-100 text-red-700'
-                                                    : order.orderStatus === 'Reembolsado'
-                                                        ? 'bg-gray-100 text-gray-700'
-                                                        : ''
+                                    ? 'bg-green-100 text-green-700'
+                                    : order.orderStatus === 'Procesando'
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : order.orderStatus === 'Pendiente'
+                                            ? 'bg-yellow-100 text-yellow-700'
+                                            : order.orderStatus === 'Cancelada'
+                                                ? 'bg-red-100 text-red-700'
+                                                : order.orderStatus === 'Reembolsado'
+                                                    ? 'bg-gray-100 text-gray-700'
+                                                    : ''
                                     }`}
                             >
                                 {order.orderStatus}
@@ -93,20 +116,40 @@ const MyOrders = () => {
                             )}
                         </div>
 
-                        <div className="px-4 pb-4">
-                            <p className="text-sm text-gray-600 mb-2">
+                        <div className="px-4 pb-4 space-y-2">
+                            <p className="text-sm text-gray-600">
                                 <span className="font-semibold">Total:</span> {DisplayPriceDOP(order.totalAmt)}
                             </p>
-                            <button
-                                onClick={() => openModal(order)}
-                                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                            >
-                                Ver detalles
-                            </button>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={() => openModal(order)}
+                                    className="flex-1 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+                                >
+                                    Detalles
+                                </button>
+
+                                {order.orderStatus === 'Pendiente' && moment().diff(moment(order.createdAt), 'days') < 2 && (
+                                    <button
+                                        onClick={() => openCancelModal(order)}
+                                        className="flex-1 py-2 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+                                    >
+                                        Cancelar
+                                    </button>
+                                )}
+                            </div>
+
+
                         </div>
                     </div>
                 ))}
             </div>
+
+            <CancelOrderModal
+                isOpen={modalCancelOpen}
+                onClose={closeCancelModal}
+                onConfirm={confirmCancelOrder}
+            />
 
             <DetailsOrder
                 isOpen={modalOpen}

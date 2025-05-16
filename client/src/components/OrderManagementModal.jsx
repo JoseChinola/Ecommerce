@@ -11,7 +11,6 @@ const OrderManagementModal = ({
   onClose,
   onUpdateStatus,
   onRefund,
-  onCancel,
   onAddNote
 }) => {
   const [newStatus, setNewStatus] = useState('');
@@ -22,7 +21,7 @@ const OrderManagementModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 overflow-y-auto p-4">
-      <div className="bg-secundary rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 relative space-y-3">
+      <div className="bg-secundary rounded-lg shadow-xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-4 relative space-y-3 scrollbarCustom">
 
         <div className="flex justify-between items-center border-b bg-white rounded-lg px-3 py-2 shadow-sm">
           <h2 className="text-2xl font-bold italic text-primary-Green">
@@ -44,37 +43,40 @@ const OrderManagementModal = ({
           <h3 className="text-lg font-semibold mb-3 border-b pb-2 text-gray-700">
             Productos
           </h3>
-          <div className="space-y-4 max-h-72 overflow-y-auto pr-2">
-            {order.items.map((item, i) => (
+
+          <div className="flex flex-wrap gap-4 max-h-72 overflow-y-auto scrollbarCustom px-2">
+            {order.items.map((item, index) => (
               <div
-                key={i}
-                className="flex items-center space-x-5 p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                key={item.id || index}
+                className="flex w-full sm:w-[48%] md:w-[40%] lg:w-[40%] xl:w-[48%]
+                   flex-col sm:flex-row items-center justify-center gap-4
+                   p-3 border rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
+                {/* Imagen */}
                 <img
                   src={item.image[0]}
                   onClick={() => setImageURL(item.image[0])}
                   alt={item.name}
-                  className="w-16 h-16 rounded-md object-cover"
+                  className="w-20 h-20 rounded-md object-cover"
                 />
-                <div className="flex-1">
+
+                {/* Detalles */}
+                <div className="flex flex-col justify-center text-center sm:text-left">
                   <p className="font-medium text-gray-900">{item.name}</p>
                   <p className="text-sm text-gray-600">Cantidad: {item.quantity}</p>
                   <p className="text-sm text-gray-600">
-                    Precio unitario: {DisplayPriceDOP(item.unit_price)}
+                    Precio: {DisplayPriceDOP(item.unit_price)}
                   </p>
                   <p className="text-sm text-gray-600">
-                    Descuento unitario: {item.unit_discount}
+                    Descuento: {item.unit_discount}
                   </p>
-                </div>
-                <div className="flex flex-col">
-                  <span className='text-right font-semibol text-sm text-gray-600'>SubTotal: {DisplayPriceDOP(order.subTotalAmt)}</span>
-                  <span className='text-right font-semibold text-sm text-gray-600'>Descuento: {DisplayPriceDOP(order.discount)}</span>
-                  <span className='text-right font-semibold text-sm text-gray-600'>Total: {DisplayPriceDOP(order.totalAmt)}</span>
                 </div>
               </div>
             ))}
           </div>
         </section>
+
+
 
         {/* Info del pedido y cliente */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 rounded-lg">
@@ -82,7 +84,7 @@ const OrderManagementModal = ({
           <div className="border rounded-lg p-5 bg-gray-50 shadow-sm">
             <h4 className="font-semibold mb-3 text-gray-800">Cliente</h4>
             <p className="mb-1">
-              <span className="font-medium">Nombre:</span> {user?.name}
+              <span className="font-medium">Nombre:</span> {user?.fullName}
             </p>
             <p className="mb-1">
               <span className="font-medium">Email:</span> {user?.email}
@@ -109,26 +111,39 @@ const OrderManagementModal = ({
         </section>
 
         {/* Totales y estado */}
-        <section className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 bg-white rounded-lg px-2 py-2">
-          <div className="text-lg font-semibold text-gray-800">
-            Total: {DisplayPriceDOP(order.totalAmt)}
+        <section className="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 mb-8 bg-white rounded-lg px-4 py-4 shadow-sm">
+          {/* Bloque: Totales */}
+          <div className="w-full md:w-1/2 space-y-1 text-center md:text-left">
+            <p className="text-gray-700">
+              <span className="font-semibold">Subtotal:</span> {DisplayPriceDOP(order.subTotalAmt)}
+            </p>
+            <p className="text-gray-700">
+              <span className="font-semibold">Descuento:</span> {DisplayPriceDOP(order.discount)}
+            </p>
+            <p className="font-bold text-gray-900">
+              Total: {DisplayPriceDOP(order.totalAmt)}
+            </p>
           </div>
-          <div className="text-gray-700">
-            <p>
-              <span className="font-medium">Pago:</span> {order.paymentStatus === 'Paid'
+
+          {/* Bloque: Estado y Pago */}
+          <div className="w-full md:w-1/2 space-y-1 text-center md:text-right">
+            <p className="text-base text-gray-700">
+              <span className="font-semibold">Pago:</span>{' '}
+              {order.paymentStatus === 'Paid'
                 ? 'Pagado'
                 : order.paymentStatus === 'CASH ON DELIVERY'
                   ? 'Pago contra entrega'
                   : 'Pendiente'}
             </p>
-            <p>
-              <span className="font-medium">Estado:</span> {order.orderStatus}
+            <p className="text-base text-gray-700">
+              <span className="font-semibold">Estado:</span> {order.orderStatus}
             </p>
           </div>
         </section>
 
+
         {/* Controles */}
-        <section className="space-y-6 bg-white rounded-lg px-2 py-2 shadow-sm">
+        <section className="space-y-6 bg-white rounded-lg px-5 py-4 shadow-sm">
           {/* Estado */}
           <div className="flex flex-col md:flex-row items-center gap-3">
             <label className="font-semibold whitespace-nowrap md:w-36">Estado del pedido:</label>
@@ -139,16 +154,15 @@ const OrderManagementModal = ({
             >
               <option value="Pendiente">Pendiente</option>
               <option value="Procesando">Procesando</option>
-              <option value="Completado">Completado</option>
-              <option value="Reembolsado">Reembolsado</option>
-              <option value="Cancelado">Cancelado</option>
+              <option value="Completado">Completado</option>              
             </select>
+
             <button
               onClick={() => {
                 onUpdateStatus(order.orderId, newStatus);
                 onClose();
               }}
-              className="bg-green-600 hover:bg-green-700 transition text-white px-5 py-2 rounded-md shadow-md"
+              className="bg-green-600 hover:bg-green-700 transition text-white px-4 py-2 rounded-lg shadow-md"
             >
               Actualizar
             </button>
@@ -158,16 +172,11 @@ const OrderManagementModal = ({
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => onRefund(order.orderId)}
-              className="bg-red-600 hover:bg-red-700 transition text-white px-6 py-2 rounded-md shadow-md flex-grow md:flex-grow-0"
+              className="bg-red-600 hover:bg-red-700 transition text-white px-4 py-2 rounded-lg shadow-md flex-grow md:flex-grow-0"
             >
               Reembolso
-            </button>
-            <button
-              onClick={() => onCancel(order.orderId)}
-              className="bg-gray-700 hover:bg-gray-800 transition text-white px-6 py-2 rounded-md shadow-md flex-grow md:flex-grow-0"
-            >
-              Cancelar
-            </button>
+            </button>          
+           
           </div>
 
           {/* Nota interna */}

@@ -46,6 +46,12 @@ const Asidebar = ({ isOpen, closeAside }) => {
             }`
     }
 
+    const handleNavClick = () => {
+        if (window.innerWidth < 768) {
+            closeAside();
+        }
+    };
+
     return (
         <>
             <div
@@ -76,7 +82,7 @@ const Asidebar = ({ isOpen, closeAside }) => {
                         </div>
                         <h5 className='text-sm flex items-center justify-center text-[#1b406c] italic'>
                             <span className='uppercase flex flex-col justify-center items-center'>
-                                {user?.name || user?.mobile}
+                                {user?.fullName || user?.mobile}
                                 {user?.role === 'ADMIN' && (
                                     <span className='capitalize text-sm text-red-500'>(Admin)</span>
                                 )}
@@ -88,11 +94,11 @@ const Asidebar = ({ isOpen, closeAside }) => {
 
                     <div className='text-sm grid gap-1 select-none px-4'>
                         {isAdmin(user.role) && (
-                            <NavLink to="/dashboard" className={({ isActive }) => getLinkClass(isActive)}>
+                            <NavLink onClick={handleNavClick} to="/dashboard" className={({ isActive }) => getLinkClass(isActive)}>
                                 <MdOutlineDashboard size={18} /> Dashboard
                             </NavLink>
                         )}
-                        <NavLink to="/" className={({ isActive }) => getLinkClass(isActive)}>
+                        <NavLink onClick={handleNavClick} to="/" className={({ isActive }) => getLinkClass(isActive)}>
                             <MdHome size={18} /> Inicio
                         </NavLink>
 
@@ -110,25 +116,25 @@ const Asidebar = ({ isOpen, closeAside }) => {
 
                                 {openInventoryMenu && (
                                     <div className="ml-4 mt-1 flex flex-col gap-1">
-                                        <NavLink to="/warehouse" className={({ isActive }) => getLinkClass(isActive)}>
+                                        <NavLink onClick={handleNavClick} to="/warehouse" className={({ isActive }) => getLinkClass(isActive)}>
                                             <FaWarehouse /> Almacén
                                         </NavLink>
-                                        <NavLink to="/inventory" className={({ isActive }) => getLinkClass(isActive)}>
+                                        <NavLink onClick={handleNavClick} to="/inventory" className={({ isActive }) => getLinkClass(isActive)}>
                                             <MdInventory /> Inventario
                                         </NavLink>
-                                        <NavLink to="/inventory-movements" className={({ isActive }) => getLinkClass(isActive)}>
+                                        <NavLink onClick={handleNavClick} to="/inventory-movements" className={({ isActive }) => getLinkClass(isActive)}>
                                             <GiArchiveRegister /> Movimientos
                                         </NavLink>
-                                        <NavLink to="/category" className={({ isActive }) => getLinkClass(isActive)}>
+                                        <NavLink onClick={handleNavClick} to="/category" className={({ isActive }) => getLinkClass(isActive)}>
                                             <MdCategory /> Categorías
                                         </NavLink>
-                                        <NavLink to="/subcategory" className={({ isActive }) => getLinkClass(isActive)}>
+                                        <NavLink onClick={handleNavClick} to="/subcategory" className={({ isActive }) => getLinkClass(isActive)}>
                                             <PiSubtractFill /> Subcategoría
-                                        </NavLink>                                       
-                                        <NavLink to="/product" className={({ isActive }) => getLinkClass(isActive)}>
+                                        </NavLink>
+                                        <NavLink onClick={handleNavClick} to="/product" className={({ isActive }) => getLinkClass(isActive)}>
                                             <AiFillProduct /> Productos
                                         </NavLink>
-                                        <NavLink to="/users" className={({ isActive }) => getLinkClass(isActive)}>
+                                        <NavLink onClick={handleNavClick} to="/users" className={({ isActive }) => getLinkClass(isActive)}>
                                             <AiFillProduct /> Users
                                         </NavLink>
                                     </div>
@@ -136,19 +142,19 @@ const Asidebar = ({ isOpen, closeAside }) => {
                             </div>
                         )}
 
-                        <NavLink to="/profile" className={({ isActive }) => getLinkClass(isActive)}>
+                        <NavLink onClick={handleNavClick} to="/profile" className={({ isActive }) => getLinkClass(isActive)}>
                             <FaUser size={18} /> Perfil
                         </NavLink>
 
-                        <NavLink to="/myorders" className={({ isActive }) => getLinkClass(isActive)}>
-                            <TbTruckDelivery size={18} /> Mis pedidos
+                        <NavLink onClick={handleNavClick} to="/myorders" className={({ isActive }) => getLinkClass(isActive)}>
+                            <TbTruckDelivery size={18} /> {user?.role === 'ADMIN' ? 'Ordenes' : 'Mis pedidos'}
                         </NavLink>
 
-                        <NavLink to="/checkout" className={({ isActive }) => getLinkClass(isActive)}>
+                        <NavLink onClick={handleNavClick} to="/checkout" className={({ isActive }) => getLinkClass(isActive)}>
                             <MdPayments size={18} /> Payment
                         </NavLink>
 
-                        <NavLink to="/address" className={({ isActive }) => getLinkClass(isActive)}>
+                        <NavLink onClick={handleNavClick} to="/address" className={({ isActive }) => getLinkClass(isActive)}>
                             <FaRegAddressCard size={18} /> Dirección
                         </NavLink>
 

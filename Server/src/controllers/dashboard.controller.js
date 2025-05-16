@@ -9,8 +9,18 @@ import categorySchema from '../models/category.model.js';
 export const getDashboardController = async (req, res) => {
     try {
         // 1) Stats básicos
-        const totalSales = await orderSchema.sum('totalAmt');
-        const totalOrders = await orderSchema.count();
+        const totalSales = await orderSchema.sum('totalAmt', {
+            where: {
+                orderStatus: { [Op.ne]: 'Cancelada' },
+                paymentStatus: 'Paid'
+            }
+        });
+        const totalOrders = await orderSchema.count({
+            where: {
+                orderStatus: { [Op.ne]: 'Cancelada' },
+                paymentStatus: 'Paid'
+            }
+        });
         const totalClients = await userSchema.count({ where: { role: { [Op.ne]: 'ADMIN' } } });
 
         const totalProducts = await productSchema.count();
@@ -35,7 +45,9 @@ export const getDashboardController = async (req, res) => {
             where: {
                 createdAt: {
                     [Op.between]: [new Date('2025-01-01'), new Date('2025-12-31')]
-                }
+                },
+                orderStatus: { [Op.ne]: 'Cancelada' },
+                paymentStatus: 'Paid'
             },
             group: [Sequelize.fn('MONTH', Sequelize.col('createdAt'))],
             order: [[Sequelize.fn('MONTH', Sequelize.col('createdAt')), 'ASC']],
@@ -53,6 +65,9 @@ export const getDashboardController = async (req, res) => {
         const timeline = await orderSchema.findAll({
             attributes: ['orderId', 'totalAmt', 'paymentStatus', 'createdAt'],
             order: [['createdAt', 'DESC']],
+            where: {
+                orderStatus: { [Op.ne]: 'Cancelada' }
+            },
             raw: true
         });
 
@@ -63,6 +78,10 @@ export const getDashboardController = async (req, res) => {
                 'productId',
                 [Sequelize.fn('COUNT', Sequelize.col('productId')), 'salesCount']
             ],
+            where: {
+                orderStatus: { [Op.ne]: 'Cancelada' },
+                paymentStatus: 'Paid'
+            },
             group: ['productId'],
             order: [[Sequelize.literal('salesCount'), 'DESC']],
             limit: 5,
@@ -113,7 +132,13 @@ export const getDashboardController = async (req, res) => {
                     required: true
                 }]
             }],
-            where: { createdAt: { [Op.between]: [new Date("2025-01-01"), new Date("2025-12-31")] } },
+            where: {
+                createdAt: {
+                    [Op.between]: [new Date("2025-01-01"), new Date("2025-12-31")]
+                },
+                orderStatus: { [Op.ne]: 'Cancelada' },
+                paymentStatus: 'Paid'
+            },
             group: [
                 Sequelize.literal("DATEPART(WEEK, [order].[createdAt])"),
                 Sequelize.col("product.categories._id"),    // Agrupar por _id
@@ -142,14 +167,14 @@ export const getDashboardController = async (req, res) => {
                 o[catName] = iconKeyMap[catName] || catName.toLowerCase(); // Usar el valor de iconKeyMap o el nombre en minúsculas
                 return o;
             }, {});
-        
+
             return {
                 name: week,
                 ...cats,  // Agregar las ventas por categoría
                 icons     // Agregar los iconos para las categorías
             };
         });
-        
+
         // Montamos la respuesta
         return res.json({
             message: "Datos del panel recuperados correctamente",

@@ -246,7 +246,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                         <div className='px-2 py-1 rounded-lg flex flex-col sm:flex-row items-center justify-between gap-4 bg-secundary'>
                             <div className='grid gap-1 w-full'>
                                 <label htmlFor="" className='font-bold text-primary-Green'>Categoría</label>
-                                <div className='flex flex-wrap'>
+                                <div className='flex flex-wrap space-y-1'>
                                     <select
                                         className='bg-blue-50 border w-full p-2 rounded-md'
                                         value={selectCategory}
@@ -269,11 +269,11 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                         ))}
                                     </select>
 
-                                    <div className='flex flex-wrap gap-3'>
+                                    <div className='flex flex-wrap gap-2'>
                                         {data.categoryId.map((categoryId, index) => {
                                             const category = allCategory.find(c => c._id === categoryId);
                                             return category ? (
-                                                <div key={categoryId + index} className='text-sm flex items-center rounded p-1 gap-1 bg-blue-50 mt-2'>
+                                                <div key={categoryId + index} className='text-sm flex items-center rounded py-1 px-1 gap-1 bg-blue-50'>
                                                     <p>{category.name}</p>
                                                     <div>
                                                         <IoClose
@@ -291,7 +291,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
 
                             <div className='grid gap-1 w-full'>
                                 <label htmlFor="" className='font-bold text-primary-Green'>Sub Categoría</label>
-                                <div className='flex flex-wrap gap-2'>
+                                <div className='flex flex-wrap space-y-1'>
                                     <select
                                         className='bg-blue-50 border w-full p-2 rounded-md'
                                         value={selectSubCategory}
@@ -314,11 +314,11 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                         ))}
                                     </select>
 
-                                    <div className='flex flex-wrap gap-3'>
+                                    <div className='flex flex-wrap gap-2'>
                                         {data.subCategoryId.map((subCategoryId, index) => {
                                             const subCategory = allSubCategory.find(c => c._id === subCategoryId);
                                             return subCategory ? (
-                                                <div key={subCategoryId + index} className='text-sm flex items-center rounded p-1 gap-1 bg-blue-50 mt-2'>
+                                                <div key={subCategoryId + index} className='text-sm flex items-center rounded px-1 py-1 gap-1 bg-blue-50'>
                                                     <p>{subCategory.name}</p>
                                                     <div>
                                                         <IoClose
@@ -406,7 +406,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                             <label className='font-bold text-primary-Green capitalize' htmlFor={k}>{k}</label>
 
                                             <textarea type="text"
-                                                id={k}                                                                                           
+                                                id={k}
                                                 value={data?.more_details[k]}
                                                 onChange={(e) => {
                                                     const value = e.target.value;
@@ -422,26 +422,8 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                                                 }}
                                                 className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md resize-none'
                                                 rows={3}
-                                                
-                                            />
 
-                                            {/* <input type="text"
-                                                id={k}
-                                                value={data?.more_details[k]}
-                                                onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    setData((preve) => {
-                                                        return {
-                                                            ...preve,
-                                                            more_details: {
-                                                                ...preve.more_details,
-                                                                [k]: value
-                                                            }
-                                                        }
-                                                    });
-                                                }}
-                                                className='bg-blue-50 p-2 outline-none border border-blue-200 focus-within:border-primary-Green rounded-md'
-                                            /> */}
+                                            />
                                         </div>
                                     );
                                 })
@@ -457,7 +439,7 @@ const EditProductAdmin = ({ close, data: props, fetchData }) => {
                             className='bg-primary-Green text-white hover:bg-white py-1 
                 px-3 text-center font-semibold border 
                 border-primary-Green hover:text-primary-Green rounded cursor-pointer w-full'>
-                            Update Product
+                            Actualizar
                         </button>
                     </form>
                 </div>

@@ -33,7 +33,7 @@ export async function CashOnDeleveryOrderController(req, res) {
         }
 
 
-        const orderId = `ORD-${nanoid(10)}`;
+        const orderId = `ORD-${nanoid(7)}`;
 
         const payload = list_items.map(item => {
 
@@ -109,6 +109,32 @@ export async function CashOnDeleveryOrderController(req, res) {
         await cartProductSchema.destroy({
             where: { userId }
         });
+
+        // Crear una notificación para el usuario
+        await notificationSchema.create({
+            userId,
+            title: "¡Pedido recibido!",
+            message: `Tu pedido ${orderId} ha sido registrado exitosamente.`,
+            read: false,
+            type: "order",
+        });
+
+        // Crear notificaciones para los administradores
+        const adminUsers = await userSchema.findAll({
+            where: { role: 'ADMIN' },
+            attributes: ['_id'] // o 'id' según tu modelo
+        });
+
+        const adminNotifications = adminUsers.map(admin => ({
+            userId: admin._id,
+            title: "Nueva orden recibida",
+            message: `Se ha creado un nuevo pedido con el ID ${orderId}.`,
+            read: false,
+            type: "order",
+        }));
+
+        await notificationSchema.bulkCreate(adminNotifications);
+
 
         return res.json({
             message: "Pedido creado",
@@ -212,7 +238,7 @@ export async function paymentController(req, res) {
 }
 
 
-const getOrderProductItems = async (lineItems, userId, session) => {
+const getOrderProductItems = async (lineItems, userId, session, orderId) => {
     const productList = [];
 
     if (lineItems?.data?.length) {
@@ -223,8 +249,6 @@ const getOrderProductItems = async (lineItems, userId, session) => {
                 console.warn(`⚠️ Producto ${product.id} no tiene metadata.productId`);
                 continue;
             }
-
-            const orderId = `ORD-${nanoid(10)}`;
 
             const payload = {
                 userId: userId,
@@ -268,8 +292,8 @@ export async function stripeWebhook(req, res) {
 
 
                 // Extraemos los precios
-
-                const orderproduct = await getOrderProductItems(lineItems, userId, session);
+                const orderId = `ORD-${nanoid(7)}`;
+                const orderproduct = await getOrderProductItems(lineItems, userId, session, orderId);
 
 
                 const order = await orderSchema.bulkCreate(orderproduct);
@@ -309,7 +333,34 @@ export async function stripeWebhook(req, res) {
                     }
                 }
 
+
+                // Limpiar carrito
                 await cartProductSchema.destroy({ where: { userId } });
+
+                // Crear notificación para el usuario
+                await notificationSchema.create({
+                    userId,
+                    title: "¡Pedido recibido!",
+                    message: `Tu pedido ${orderId} ha sido registrado exitosamente.`,
+                    read: false,
+                    type: "order",
+                });
+
+                // Crear notificaciones para administradores
+                const adminUsers = await userSchema.findAll({
+                    where: { role: 'ADMIN' },
+                    attributes: ['_id']
+                });
+
+                const adminNotifications = adminUsers.map(admin => ({
+                    userId: admin._id,
+                    title: "Nueva orden recibida",
+                    message: `Se ha creado un nuevo pedido con el ID ${orderId}.`,
+                    read: false,
+                    type: "order",
+                }));
+
+                await notificationSchema.bulkCreate(adminNotifications);
                 break;
             }
 
@@ -378,7 +429,6 @@ export async function getOrderDetailsController(req, res) {
             const discountAmount = (unitDiscount / 100) * subTotalAmt;
             const totalAmt = subTotalAmt - discountAmount;
 
-
             const item = {
                 ...productDetails,
                 unit_price: unitPrice,
@@ -443,7 +493,7 @@ export async function getGroupedOrdersByUserController(req, res) {
                 },
                 {
                     model: userSchema,
-                    attributes: ['_id', 'name', 'email'],
+                    attributes: ['_id', 'name', 'lastName', 'email'],
                 }
             ]
         });
@@ -455,7 +505,7 @@ export async function getGroupedOrdersByUserController(req, res) {
             if (!groupedByUser[userId]) {
                 groupedByUser[userId] = {
                     user: {
-                        name: order.user.name,
+                        fullName: `${order.user.name} ${order.user.lastName || ""}`.trim(),
                         email: order.user.email
                     },
                     orders: {}
@@ -556,37 +606,191 @@ export async function getGroupedOrdersByUserController(req, res) {
 }
 
 export async function updateOrderStatusController(req, res) {
-    const { orderId, orderStatus } = req.body
+    const { orderId, orderStatus } = req.body;
 
     if (!orderId || !orderStatus) {
-        return res.status(400).json({ success: false, message: "orderId y orderStatus son requeridos." });
+        return res.status(400).json({
+            success: false,
+            message: "orderId y orderStatus son requeridos."
+        });
     }
 
     try {
         // Buscar el pedido por ID usando Sequelize
-        const order = await orderSchema.findOne({ where: { orderId } })
+        const order = await orderSchema.findOne({ where: { orderId } });
 
         if (!order) {
-            return res.status(404).json({ success: false, message: "Pedido no encontrado." });
+            return res.status(404).json({
+                success: false,
+                message: "Pedido no encontrado."
+            });
         }
+
+        // Validar estados no modificables
+        const nonUpdatableStatuses = ["Cancelada", "Completado"];
+        if (nonUpdatableStatuses.includes(order.orderStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: `No se puede actualizar una orden que ya fue ${order.orderStatus}.`
+            });
+        }
+
+        // Actualizar el estado
         order.orderStatus = orderStatus;
         await order.save();
 
-        // ✅ Crea la notificación
+        // Crear la notificación
         await notificationSchema.create({
             userId: order.userId,
             title: "Pedido actualizado",
             message: `Tu pedido #${order.orderId} ha cambiado a "${order.orderStatus}".`,
-            type: "order",
+            type: "order"
         });
 
-        return res.json({ success: true, message: "Orden actualizada y notificación enviada", data: order });
+        return res.json({
+            success: true,
+            message: "Orden actualizada y notificación enviada",
+            data: order
+        });
+
     } catch (error) {
-        console.error(error);
+        console.error("Error al actualizar pedido:", error);
         return res.status(500).json({
             success: false,
             message: "Error al actualizar el pedido.",
             error: error.message
+        });
+    }
+}
+
+
+export async function cancelOrderController(req, res) {
+    try {
+        const userId = req.userId;
+        const { orderId } = req.body;
+
+        if (!orderId) {
+            return res.status(400).json({
+                message: "Falta el ID de la orden",
+                error: true,
+                success: false
+            });
+        }
+
+        // Buscar todas las filas relacionadas a ese orderId
+        const orders = await orderSchema.findAll({ where: { orderId } });
+
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({
+                message: "Orden no encontrada",
+                error: true,
+                success: false
+            });
+        }
+
+        const user = await userSchema.findOne({ where: { _id: userId }, attributes: ['role'] });
+        const userRole = user?.role || 'USER';
+
+        const TWO_DAYS_IN_MS = 2 * 24 * 60 * 60 * 1000;
+        const now = new Date();
+
+        // Validar permisos y estado de cada fila (orden por producto)
+        for (const order of orders) {
+            if (order.userId !== userId && userRole !== "ADMIN") {
+                return res.status(403).json({
+                    message: "No tienes permiso para cancelar esta orden",
+                    error: true,
+                    success: false
+                });
+            }
+
+            // ⛔ Validación de estado de orden
+            if (["Cancelada", "Completado"].includes(order.orderStatus)) {
+                return res.status(400).json({
+                    message: `La orden no puede ser cancelada porque ya está "${order.orderStatus}".`,
+                    error: true,
+                    success: false
+                });
+            }
+
+            if (!["pendiente", "CASH ON DELIVERY"].includes(order.paymentStatus)) {
+                return res.status(400).json({
+                    message: "Esta orden no puede ser cancelada en su estado actual",
+                    error: true,
+                    success: false
+                });
+            }
+
+            // Si es CASH ON DELIVERY, verificar si han pasado más de 2 días
+            const orderAge = now - new Date(order.createdAt);
+            if (order.paymentStatus === "CASH ON DELIVERY" && orderAge > TWO_DAYS_IN_MS && userRole !== "ADMIN") {
+                return res.status(400).json({
+                    message: `La orden ${orderId} ya no puede ser cancelada porque han pasado más de 2 días desde su creación.`,
+                    error: true,
+                    success: false
+                });
+            }
+        }
+
+
+        // Cancelar todas las filas (productos) de la orden
+        for (const order of orders) {
+            order.orderStatus = "Cancelada";
+            await order.save();
+
+            // Revertir inventario
+            const existingInventory = await inventorySchema.findOne({
+                where: { productId: order.productId }
+            });
+
+            if (existingInventory) {
+                existingInventory.stock += order.quantity;
+                await existingInventory.save();
+
+                await InventoryMovementSchema.create({
+                    warehouseId: existingInventory.warehouseId,
+                    productId: order.productId,
+                    userId,
+                    quantity: order.quantity,
+                    type: "entrada",
+                    description: `Reversión por cancelación de orden ${orderId}`,
+                    date: new Date(),
+                });
+            }
+        }
+
+        // Notificar al usuario
+        await notificationSchema.create({
+            userId,
+            title: "Orden cancelada",
+            message: `Tu orden ${orderId} fue cancelada exitosamente.`,
+            read: false,
+            type: "order",
+        });
+
+        // Notificar a los admins
+        const adminUsers = await userSchema.findAll({ where: { role: 'ADMIN' }, attributes: ['_id'] });
+        const adminNotifications = adminUsers.map(admin => ({
+            userId: admin._id,
+            title: "Orden cancelada",
+            message: `La orden ${orderId} fue cancelada por el usuario ${userId}.`,
+            read: false,
+            type: "order",
+        }));
+        await notificationSchema.bulkCreate(adminNotifications);
+
+        return res.json({
+            message: "Orden cancelada correctamente",
+            error: false,
+            success: true,
+        });
+
+    } catch (error) {
+        console.error("Error cancelando la orden:", error);
+        return res.status(500).json({
+            message: "Error interno al cancelar la orden",
+            error: true,
+            success: false,
         });
     }
 }

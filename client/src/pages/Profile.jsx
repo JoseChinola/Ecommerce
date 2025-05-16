@@ -20,6 +20,7 @@ const Profile = () => {
     const [openChangePassword, setOpenChangePassword] = useState(false)
     const [userData, setUserData] = useState({
         name: user?.name || '',
+        lastName: user?.lastName || '',
         email: user?.email || '',
         mobile: user?.mobile || ''
     })
@@ -32,6 +33,7 @@ const Profile = () => {
             name: user?.name || '',
             email: user?.email || '',
             mobile: user?.mobile || '',
+            lastName: user?.lastName || '',
         }))
     }, [user])
 
@@ -75,15 +77,6 @@ const Profile = () => {
     return (
         <div className='flex items-center justify-center rounded w-full'>
             <div className='flex items-center justify-center border w-full max-w-lg flex-col bg-white p-6 rounded-xl shadow-lg gap-2'>
-                <div className='items-center flex justify-between w-full py-1 px-2 rounded-lg'>
-                    <h1 className='font-bold text-primary-Green uppercase'>Perfil</h1>
-
-                    <button className='border rounded-xl px-2 py-1 hover:bg-secundary hover:text-primary-Green'
-                        onClick={() => setOpenChangePassword(true)}
-                    >
-                        Cambiar Contraseña
-                    </button>
-                </div>
 
                 {/** Profile upload and display img */}
                 <div className='relative w-24 h-24 border flex items-center justify-center rounded-full overflow-hidden drop-shadow-sm'>
@@ -114,14 +107,14 @@ const Profile = () => {
                 }
 
                 {/** Name, mobile, email, change password*/}
-                <form className='grid gap-2 w-full' onSubmit={handleSubmit}>
+                <form className='grid gap-1.5 w-full' onSubmit={handleSubmit}>
                     <div className='grid'>
-                        <label htmlFor="name" className='text-primary-Blue font-semibold'>Name</label>
+                        <label htmlFor="name" className='text-primary-Blue font-semibold'>Nombre</label>
                         <input
                             type='text'
                             id='name'
-                            placeholder='Enter your name'
-                            className='p-2 bg-blue-50 outline-none text-primary-Blue border focus-within:border-blue-500 rounded'
+                            placeholder='Ingresa tu nombre'
+                            className='p-2 bg-blue-50 outline-none text-primary-Blue border focus-within:border-blue-500 rounded-md'
                             value={userData.name}
                             name='name'
                             onChange={handleOnchage}
@@ -130,12 +123,26 @@ const Profile = () => {
                     </div>
 
                     <div className='grid'>
-                        <label htmlFor="email" className='text-primary-Blue font-semibold'>Email</label>
+                        <label htmlFor="lastName" className='text-primary-Blue font-semibold'>Apellido</label>
+                        <input
+                            type='text'
+                            id='lastName'
+                            placeholder='Ingresa tu apellido'
+                            className='p-2 bg-blue-50 outline-none text-primary-Blue border focus-within:border-blue-500 rounded-md'
+                            value={userData.lastName}
+                            name='lastName'
+                            onChange={handleOnchage}
+                            required
+                        />
+                    </div>
+
+                    <div className='grid'>
+                        <label htmlFor="email" className='text-primary-Blue font-semibold'>Correo</label>
                         <input
                             type='email'
                             id='email'
-                            placeholder='Enter your email'
-                            className='p-2 bg-blue-50 outline-none text-primary-Blue border focus-within:border-blue-500 rounded'
+                            placeholder='Ingresa tu correo'
+                            className='p-2 bg-blue-50 outline-none text-primary-Blue border focus-within:border-blue-500 rounded-md'
                             value={userData.email}
                             name='email'
                             readOnly
@@ -144,21 +151,28 @@ const Profile = () => {
                         />
                     </div>
                     <div className='grid'>
-                        <label htmlFor="mobile" className='text-primary-Blue font-semibold'>Mobile</label>
+                        <label htmlFor="mobile" className='text-primary-Blue font-semibold'>No. Movil</label>
                         <input
                             type='text'
                             id='mobile'
-                            placeholder='Enter your mobile'
-                            className='p-2 bg-blue-50 outline-none border text-primary-Blue focus-within:border-blue-500 rounded'
+                            placeholder='Ingresa tu No. Movil'
+                            className='p-2 bg-blue-50 outline-none border text-primary-Blue focus-within:border-blue-500 rounded-md'
                             value={userData.mobile}
                             name='mobile'
                             onChange={handleOnchage}
                             required
                         />
                     </div>
+                    <div className='flex items-end justify-end'>
+                        <button className='rounded-xl px-2 py-1 hover:bg-secundary hover:text-primary-Green'
+                            onClick={() => setOpenChangePassword(true)}
+                        >
+                            Cambiar Contraseña
+                        </button>
+                    </div>
 
-                    <button className='border font-semibold p-2 rounded hover:bg-primary-Green hover:text-white'>
-                        {loading ? "Loanding..." : "Submit"}
+                    <button className='border font-semibold p-2 rounded-lg hover:bg-primary-Green hover:text-white'>
+                        {loading ? "Cargando..." : "Actualizar"}
                     </button>
                 </form>
             </div>

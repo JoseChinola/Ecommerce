@@ -1,10 +1,12 @@
 import { useSelector } from "react-redux";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { useNavigate } from "react-router-dom";
 
 
 const NotificationsList = ({ markRead, deleteNotify }) => {
     const notifications = useSelector(state => state.user.notifications);
-
+    const userRole = useSelector(state => state.user.role);
+    const navigate = useNavigate();
 
     return (
         <div className="px-3 py-2 max-w-sm mx-auto">
@@ -48,9 +50,18 @@ const NotificationsList = ({ markRead, deleteNotify }) => {
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         markRead(notif._id);
+                                        if (userRole === 'ADMIN') {
+                                            navigate('/myorders');
+                                        }
                                     }}
-                                    className="mt-2 self-start inline-flex items-center px-2.5 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 transition"
-                                    aria-label={`Marcar la notificación ${notif.title} como leída`}
+                                    className={`self-start inline-flex items-center px-2.5 py-1 text-xs font-medium text-white rounded
+                                    ${userRole === 'admin' ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500' : 'bg-green-600 hover:bg-green-700 focus:ring-green-500'}
+                                    focus:outline-none focus:ring-2 focus:ring-offset-1 transition`}
+                                    aria-label={
+                                        userRole === 'ADMIN'
+                                            ? `Ir a mis órdenes y marcar la notificación ${notif.title} como leída`
+                                            : `Marcar la notificación ${notif.title} como leída`
+                                    }
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -61,9 +72,10 @@ const NotificationsList = ({ markRead, deleteNotify }) => {
                                     >
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
-                                    Marcar
+                                    {userRole === 'ADMIN' ? 'Ver órdenes' : 'Marcar'}
                                 </button>
                             )}
+
                         </li>
                     ))}
                 </ul>

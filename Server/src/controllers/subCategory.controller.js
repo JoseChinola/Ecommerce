@@ -10,7 +10,7 @@ export const AddSubCategoryController = async (req, res) => {
         // Validar que category sea un array y tenga al menos un elemento
         if (!name || !image || !Array.isArray(category) || category.length === 0) {
             return res.status(400).json({
-                message: "Provide name, image, and at least one category",
+                message: "Proporcionar nombre, imagen y al menos una categoría.",
                 error: true,
                 success: false
             });
@@ -19,7 +19,7 @@ export const AddSubCategoryController = async (req, res) => {
         const categoryId = category[0]?._id;
         if (!categoryId) {
             return res.status(400).json({
-                message: "Invalid category ID",
+                message: "ID de categoría no válida",
                 error: true,
                 success: false
             });
@@ -34,14 +34,14 @@ export const AddSubCategoryController = async (req, res) => {
 
         if (!addSubCategory) {
             return res.status(500).json({
-                message: "Not Created",
+                message: "No creado",
                 error: true,
                 success: false
             })
         }
 
         return res.json({
-            message: "Sub Category Created",
+            message: "Subcategoría creada",
             data: addSubCategory,
             success: true,
             error: false
@@ -93,7 +93,7 @@ export const updateSubCategoryController = async (req, res) => {
 
         if (!checkSub) {
             return res.status(400).json({
-                message: "subcategory not found",
+                message: "subcategoría no encontrada",
                 error: true,
                 success: false
             });
@@ -102,7 +102,7 @@ export const updateSubCategoryController = async (req, res) => {
         const categoryId = category[0]?._id;
         if (!categoryId) {
             return res.status(400).json({
-                message: "Invalid category ID",
+                message: "ID de categoría no válida",
                 error: true,
                 success: false
             });
@@ -115,7 +115,7 @@ export const updateSubCategoryController = async (req, res) => {
         }, { where: { _id: _id } });
 
         return res.json({
-            message: "Updated Successfully",
+            message: "Actualizado con éxito",
             data: updateSubCategory,
             error: false,
             success: true
@@ -139,7 +139,7 @@ export const deleteSubCategoryController = async (req, res) => {
             where: { _id: _id }
         })
         return res.json({
-            message: "Delete successfully",
+            message: "Eliminada con éxito",
             data: deleteSubCategory,
             error: false,
             success: true

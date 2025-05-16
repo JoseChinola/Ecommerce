@@ -105,11 +105,11 @@ const ProductAdmin = () => {
                     </button>
                 </div>
 
-                <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary space-y-2'>
+                <div className='px-2 py-3 lg:p-2 mt-3 rounded-md bg-secundary space-y-2 w-full'>
                     <p className="text-lg text-end font-bold text-primary-Green">
                         Total de Productos: {totalProducts}
                     </p>
-                    <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>
+                    <div className='flex flex-wrap gap-4'>
                         {loading ? (
                             Array.from({ length: 12 }).map((_, index) => (
                                 <div

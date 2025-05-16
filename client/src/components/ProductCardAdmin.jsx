@@ -33,47 +33,50 @@ const ProductCardAdmin = ({ data, fetchData }) => {
   };
 
   return (
-    <div className="flex flex-col border p-2 sm:p-2 rounded-xl shadow bg-white select-none transition-all w-full max-w-[220px] sm:max-w-[220px] md:max-w-[230px] lg:max-w-[250px]">
+    <section className="group flex flex-col bg-white border p-2 sm:p-2 rounded-xl shadow select-none transition-all w-full max-w-[220px] relative">
       {/* Imagen */}
-      <div className="aspect-auto rounded flex items-center justify-center overflow-hidden">
+      <div className="rounded flex items-center justify-center overflow-hidden">
         {images[0] ? (
-          <img src={images[0]} alt={data.name} className="w-full h-full object-contain aspect-square" />
+          <img
+            src={images[0]}
+            alt={data.name}
+            className="w-full h-full object-contain aspect-square"
+          />
         ) : (
           <div className="text-gray-400 text-center text-sm">Sin imagen</div>
         )}
       </div>
 
-      {/* Contenido */}
-      <div className="px-2 py-1 flex flex-col justify-between flex-1 gap-2">
-        <h2 className="text-base md:text-base line-clamp-2 font-semibold text-gray-800 break-words">
-          {data.name}
-        </h2>
+      {/* Nombre del producto */}
+      <h2 className="line-clamp-2 font-semibold text-gray-800 break-words text-center">
+        {data.name}
+      </h2>
 
-        <div className="flex items-center  justify-between gap-2 ">
-          <div>
-            <span className="font-bold">Creado:</span>{' '}
-            {moment(data.createdAt).format('DD/MM/YYYY')}
-          </div>
-          <div>
-            <span className="font-bold">Actualizado:</span>{' '}
-            {moment(data.updatedAt).format('DD/MM/YYYY')}
-          </div>
+      {/* Botones de acción (solo aparecen al hacer hover) */}
+      <div className="px-5 items-center justify-between w-full absolute bottom-2 left-0 right-0 flex gap-3 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out">
+        <button
+          onClick={() => setEditOpen(true)}
+          className="bg-blue-100 transition-all duration-300 ease-in-out py-1.5 border rounded-md px-4 hover:scale-105 text-neutral-700 font-semibold hover:text-white hover:bg-green-500"
+        >
+          <AiOutlineEdit />
+        </button>
+        <button
+          onClick={() => setOpenDelete(true)}
+          className="bg-red-200 transition-all duration-300 ease-in-out hover:scale-105 text-neutral-700 border rounded-md py-1.5 px-4 hover:text-white font-semibold hover:bg-red-500"
+        >
+          <RiDeleteBinLine />
+        </button>
+      </div>
+
+      {/* Fechas */}
+      <div className="px-2 py-2 flex flex-col justify-between flex-1 gap-1 text-sm">
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-bold">Creado:</span>
+          <span>{moment(data.createdAt).format('DD/MM/YYYY')}</span>
         </div>
-
-        {/* Botones de acción */}
-        <div className="mt-4 flex flex-col md:flex-row gap-2">
-          <button
-            onClick={() => setEditOpen(true)}
-            className="w-full md:w-auto flex-1 flex items-center justify-center py-2 border-green-500 rounded-lg text-green-500 hover:bg-green-500 hover:text-white transition-colors text-lg"
-          >
-            <AiOutlineEdit />
-          </button>
-          <button
-            onClick={() => setOpenDelete(true)}
-            className="w-full md:w-auto flex-1 flex items-center justify-center py-2 border-red-500 rounded-lg text-red-500 hover:bg-red-500 hover:text-white transition-colors text-lg"
-          >
-            <RiDeleteBinLine />
-          </button>
+        <div className="flex items-center justify-between gap-2">
+          <span className="font-bold">Actualizado:</span>
+          <span>{moment(data.updatedAt).format('DD/MM/YYYY')}</span>
         </div>
       </div>
 
@@ -88,7 +91,8 @@ const ProductCardAdmin = ({ data, fetchData }) => {
           confirm={handleDelete}
         />
       )}
-    </div>
+    </section>
+
   );
 };
 

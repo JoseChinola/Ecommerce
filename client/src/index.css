@@ -74,5 +74,5 @@ body {
 
 .scrollbarCustom::-webkit-scrollbar-thumb {
     background-color: #bfdbfe;
-    border-radius: 9999px;
+    border-radius: 10px;
 }

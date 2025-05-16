@@ -13,13 +13,13 @@ import notificationSchema from "../models/notifications.model.js";
 
 export async function registerUserController(req, res) {
     try {
-        const { name, email, password } = req.body;
+        const { name, lastName, email, password } = req.body;
 
 
         // Validar que todos los campos estén presentes
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !lastName) {
             return res.status(400).json({
-                message: "Provide name, email, and password",
+                message: "Provide name, email, lastName, and password",
                 error: true,
                 success: false
             });
@@ -43,6 +43,7 @@ export async function registerUserController(req, res) {
         // Crear nuevo usuario
         const newUser = await userSchema.create({
             name,
+            lastName,
             email,
             password: hashPassword,
             verifyEmail: false
@@ -55,7 +56,7 @@ export async function registerUserController(req, res) {
 
         try {
             // Enviar email de verificación
-            const verify = await sendEmail({
+            await sendEmail({
                 sendTo: email,
                 subject: "Verify your email - D’RAF SERVICES",
                 html: verifyEmailTemplate({
@@ -202,18 +203,19 @@ export async function loginController(req, res) {
         // Verificar si se envió email y password
         if (!email || !password) {
             return res.status(400).json({
-                message: "Email and password are required",
+                message: "El correo y la contraseña son obligatorios.",
                 error: true,
                 success: false
             });
         }
+
 
         // Buscar usuario en la base de datos
         const user = await userSchema.findOne({ where: { email } });
 
         if (!user) {
             return res.status(400).json({
-                message: "User not registered",
+                message: "Usuario no registrado.",
                 error: true,
                 success: false
             });
@@ -221,8 +223,8 @@ export async function loginController(req, res) {
 
         // Verificar si el usuario está activo
         if (user.status !== "Active") {
-            return res.status(400).json({
-                message: "Contact to Admin",
+            return res.status(403).json({
+                message: "Tu cuenta está inactiva. Contacta al administrador.",
                 error: true,
                 success: false
             });
@@ -240,7 +242,7 @@ export async function loginController(req, res) {
         const checkPassword = await bcrypt.compare(password, user.password);
         if (!checkPassword) {
             return res.status(400).json({
-                message: "Check your password",
+                message: "Contraseña incorrecta.",
                 error: true,
                 success: false
             });
@@ -250,13 +252,10 @@ export async function loginController(req, res) {
         const accessToken = await generateAccessToken(user._id);
         const refreshToken = await generateRefreshToken(user._id);
 
-        const update = await userSchema.update(
-            {
-                last_login_date: new Date()
-            },
-            {
-                where: { _id: user?._id }
-            })
+        await userSchema.update(
+            { last_login_date: new Date() },
+            { where: { _id: user._id } }
+        );
 
 
         // Configuración de cookies
@@ -269,8 +268,10 @@ export async function loginController(req, res) {
         res.cookie("accessToken", accessToken, cookiesOption);
         res.cookie("refreshToken", refreshToken, cookiesOption);
 
+        const fullName = `${user.name} ${user.lastName || ""}`.trim();
+
         return res.json({
-            message: "Login successfully",
+            message: `¡Bienvenido/a, ${fullName} ! Nos alegra contar contigo nuevamente!`,
             error: false,
             success: true,
             data: {
@@ -308,7 +309,7 @@ export async function logoutController(req, res) {
 
 
         return res.json({
-            message: "Logout success",
+            message: "Sesión cerrada correctamente. ¡Te esperamos pronto!",
             error: false,
             success: true
         })
@@ -363,7 +364,7 @@ export async function updateUserDetails(req, res) {
     try {
         const userId = req.userId // auth middleware
 
-        const { name, email, mobile, password } = req.body
+        const { name, lastName, email, mobile, password } = req.body
 
         let hashPassword = "";
 
@@ -372,12 +373,12 @@ export async function updateUserDetails(req, res) {
             const salt = await bcrypt.genSalt(10);
             hashPassword = await bcrypt.hash(password, salt);
         }
-        const updateUser = await userSchema.update(
+        await userSchema.update(
             {
                 ...(name && { name: name }),
                 ...(email && { email: email }),
                 ...(mobile && { mobile: mobile }),
-                ...(mobile && { mobile: mobile }),
+                ...(lastName && { lastName: lastName }),
                 ...(password && { password: hashPassword })
 
             },
@@ -740,9 +741,23 @@ export async function userDetailsController(req, res) {
                 attributes: { exclude: ['password', 'refresh_token'] }
             });
 
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+                error: true,
+                success: false
+            });
+        }
+
+        // Crear fullName combinando name + lastName
+        const fullName = `${user.name} ${user.lastName || ''}`.trim();
+
         return res.json({
-            message: "User details",
-            data: user,
+            message: "Detalles del usuario obtenidos correctamente.",
+            data: {
+                ...user.toJSON(),
+                fullName
+            },
             error: false,
             success: true
         })
@@ -759,7 +774,7 @@ export async function getsUsersController(req, res) {
     try {
 
         const user = await userSchema.findAll({
-            attributes: ['_id', 'name', 'email', 'role', 'mobile', 'verify_email', 'status', 'createdAt']
+            attributes: ['_id', 'name', 'lastName', 'email', 'role', 'mobile', 'verify_email', 'status', 'createdAt']
         })
 
 
@@ -801,6 +816,7 @@ export const getUserNotifications = async (req, res) => {
 };
 
 export const markAsRead = async (req, res) => {
+    const userId = req.userId;
     const { _id } = req.body;
 
     try {
@@ -813,11 +829,23 @@ export const markAsRead = async (req, res) => {
         notification.read = true;
         await notification.save();
 
-        return res.json({
-            message: "Notificación marcada como leída",
-            error: false,
-            success: true
-        });
+       
+        const userRole = await userSchema.findOne({ where: { _id: userId } })
+
+        if (userRole.role === 'ADMIN') {
+            return res.json({
+                message: '',
+                error: false,
+                success: true
+            });
+        } else {
+            return res.json({
+                message: "Has marcado la notificación como leída. ¡Gracias!",
+                error: false,
+                success: true
+            });
+        }
+
     } catch (error) {
         console.error("Error marcando notificación como leída:", error);
         return res.status(500).json({ error: "Error actualizando notificación" });
@@ -843,7 +871,7 @@ export const deleteNotification = async (req, res) => {
             success: true
         })
 
-      
+
     } catch (error) {
         console.error("Error eleminando notificación como leída:", error);
         return res.status(500).json({ error: "Error eliminando notificación" });

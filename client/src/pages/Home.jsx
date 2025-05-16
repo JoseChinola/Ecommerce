@@ -94,8 +94,9 @@ const Home = () => {
                     <div className='w-full h-32 overflow-hidden'>
                       <img
                         src={cat?.image}
-                        alt={cat?.name}
-                        className='w-full h-full object-contain'
+                        alt={cat?.name}                        
+                        height={100}
+                        className='w-full h-full object-cover'
                       />
                     </div>
                     <h6 className='text-xs text-center bg-blue-100 py-1 px-1 text-blue-500 font-bold w-full overflow-hidden text-ellipsis whitespace-nowrap'>

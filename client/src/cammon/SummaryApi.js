@@ -193,6 +193,10 @@ const SummaryApi = {
         url: "/api/order/order-list",
         method: "get"
     },
+    cancelOrderItem: {
+        url: "/api/order/cancel-order",
+        method: "put"
+    },
     createStore: {
         url: "/api/store/create",
         method: "post"

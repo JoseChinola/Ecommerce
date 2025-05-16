@@ -4,7 +4,8 @@ import {
     FaRedo,
     FaPlus,
     FaExclamationTriangle,
-    FaMinus
+    FaMinus,
+    FaTimesCircle
 } from 'react-icons/fa';
 import moment from 'moment'; // Asegúrate de instalarlo: npm install moment
 import { DisplayPriceDOP } from '../utils/DisplayPriceDOP';
@@ -15,6 +16,7 @@ const iconMapping = {
     'FaPlus': <FaPlus />,
     'FaExclamationTriangle': <FaExclamationTriangle />,
     'FaMinus': <FaMinus />,
+    'FaTimesCircle': <FaTimesCircle />,
 };
 
 // Mapeo de estados de pago a iconos, colores, descripciones, etc.
@@ -42,17 +44,29 @@ const paymentStatusMapping = {
         color: 'bg-red-400',
         amountColor: 'text-red-400',
         description: 'Reembolso a',
+    },
+    Cancelada: {
+        iconName: 'FaTimesCircle',
+        color: 'bg-red-900',
+        amountColor: 'text-red-900',
+        description: 'Orden cancelada',
     }
 };
 
 // Siempre devuelve un array, aunque `transactions` sea undefined
 const transformTransactions = (transactions = []) => {
     return transactions.map((item) => {
-        const status = paymentStatusMapping[item.paymentStatus] || paymentStatusMapping['Paid'];
+        // Usa paymentStatus o si está cancelada, fuerza el estado a "Cancelada"
+        const statusKey = item.orderStatus === 'Cancelada' ? 'Cancelada' : item.paymentStatus;
+        const status = paymentStatusMapping[statusKey] || paymentStatusMapping['Paid'];
+
+        // Si está cancelada, el monto puede mostrarse como 0 o negativo (opcional)
+        const amount = item.orderStatus === 'Cancelada' ? 0 : item.totalAmt;
+
         return {
             id: item.orderId,
             description: status.description,
-            amount: item.totalAmt,
+            amount: amount,
             iconName: status.iconName,
             color: status.color,
             amountColor: status.amountColor,
@@ -60,6 +74,7 @@ const transformTransactions = (transactions = []) => {
         };
     });
 };
+
 
 const Timeline = ({ data }) => {
     const [showAll, setShowAll] = useState(false);

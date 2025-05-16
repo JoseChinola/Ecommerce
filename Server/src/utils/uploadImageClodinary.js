@@ -3,6 +3,8 @@ import { v2 as cloudinary } from 'cloudinary';
 import dotenv from 'dotenv'
 dotenv.config()
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
 cloudinary.config({
     cloud_name: process.env.CLODINARY_CLOUD_NAME,
     api_key: process.env.CLODINARY_API_KEY,

@@ -54,6 +54,11 @@ const orderSchema = sequelize.define(
       type: DataTypes.STRING,
       defaultValue: "",
     },
+    paymentMethod: {
+      type: DataTypes.ENUM('CashOnDelivery', 'CreditCard', 'Paypal', 'Other'),
+      allowNull: false,
+      defaultValue: 'CashOnDelivery',
+    },
     orderStatus: {
       type: DataTypes.ENUM('Pendiente', 'Procesando', 'Completado', 'Cancelado', 'Reembolsado'),
       defaultValue: 'Pendiente',

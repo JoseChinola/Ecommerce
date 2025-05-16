@@ -1,7 +1,6 @@
 import categorySchema from "../models/category.model.js";
 import productSchema from "../models/product.model.js";
 import subCategorySchema from "../models/subCategory.model.js";
-import { Op } from "sequelize";
 
 export const AddCategoryController = async (req, res) => {
     try {
@@ -76,7 +75,7 @@ export const updateCategoryController = async (req, res) => {
         }, { where: { _id: _id } })
 
         return res.json({
-            message: "Update Category",
+            message: "Actualizar categoría",
             success: true,
             error: false,
             data: update
@@ -94,27 +93,29 @@ export const updateCategoryController = async (req, res) => {
 export const deleteCategoryController = async (req, res) => {
     try {
         const { _id } = req.body;
+        console.log('_id', _id)
 
         // Verificar si existen subcategorías asociadas a la categoría
         const checkSubCategory = await subCategorySchema.count({
             where: {
-                category: {
-                    [Op.in]: [_id]  // ✅ Contar cuántas subcategorías existen
-                }
+                category: _id
             }
         });
 
+
         const checkProduct = await productSchema.count({
-            where: {
-                categoryId: {
-                    [Op.in]: [_id]
-                }
-            }
+            include: [{
+                model: categorySchema,
+                as: 'categories',
+                where: { _id: _id }
+            }]
         });
+
+
 
         if (checkSubCategory > 0 || checkProduct > 0) {
             return res.status(400).json({
-                message: "Category is already use can't delete.",
+                message: "La categoría ya está en uso y no se puede eliminar.",
                 error: true,
                 success: false,
             });
@@ -128,14 +129,14 @@ export const deleteCategoryController = async (req, res) => {
 
         if (!deletedCategory) {
             return res.status(404).json({
-                message: "Categoría not found.",
+                message: "Categoría no encontrada.",
                 error: true,
                 success: false,
             });
         }
 
         return res.json({
-            message: "Delete category successfully",
+            message: "Categoría eliminada",
             data: deletedCategory,
             error: false,
             success: true,

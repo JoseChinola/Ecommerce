@@ -79,10 +79,10 @@ const EditCategory = ({ close, fetchData, data: categoryData }) => {
 
     return (
         <section className='bg-black fixed top-0 bottom-0 left-0 right-0 z-50 bg-opacity-70 flex justify-center items-center h-screen overflow-auto sm:p-4 p-2'>
-            <div className='bg-white rounded-md max-w-4xl w-full  p-6'>
+            <div className='bg-white rounded-lg max-w-lg w-full p-4 space-y-4'>
 
-                <div className='flex items-center justify-between bg-blue-50 p-2 rounded-md'>
-                    <h1 className='font-bold uppercase italic'>Update Category </h1>
+                <div className='flex items-center justify-between bg-blue-50 p-2 rounded-lg'>
+                    <h1 className='font-bold uppercase italic'>Actualizar Categoria </h1>
                     <button onClick={close} className='w-fit block ml-auto hover:text-red-600'>
                         <IoClose size={30} />
                     </button>
@@ -91,12 +91,12 @@ const EditCategory = ({ close, fetchData, data: categoryData }) => {
                 <form className='my-3 grid gap-2' onSubmit={handleSubmit}>
                     <div className='grid gap-1'>
                         <label id='categoryName' htmlFor="">
-                            Name
+                            Nombre
                         </label>
                         <input
                             type='text'
                             id='categoryName'
-                            placeholder='Enter your name'
+                            placeholder='Ingresa nombre de categoria'
                             value={data.name}
                             name='name'
                             onChange={handleOnchage}
@@ -130,7 +130,7 @@ const EditCategory = ({ close, fetchData, data: categoryData }) => {
                                          ${!data.name ? "bg-gray-400 text-white " : "cursor-pointer border border-green-600 hover:bg-primary-Green hover:text-white"}
                                       flex items-center justify-center gap-2 text-gray-500  rounded-sm px-4 py-2 select-none 
                                       `}>
-                                    <FaCamera size={20} /> Upload
+                                    <FaCamera size={20} /> Subir
                                 </div>
                                 <input
                                     disabled={!data.name}
@@ -144,11 +144,11 @@ const EditCategory = ({ close, fetchData, data: categoryData }) => {
                     </div>
 
                     <button className={`
-                              ${data.name && data.image ? "bg-blue-600 hover:bg-blue-500 hover:text-white" : "bg-gray-300"} 
+                              ${data.name && data.image ? "hover:bg-blue-500 hover:text-white" : "bg-gray-300"} 
                               py-2 font-semibold rounded 
                               `}
                     >
-                        {loading ? <Loading /> : "Update Category"}
+                        {loading ? <Loading /> : "Actualizar"}
                     </button>
                 </form>
             </div >

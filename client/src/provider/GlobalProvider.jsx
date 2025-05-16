@@ -21,6 +21,7 @@ const GlobalProvider = ({ children }) => {
     const [totalQty, setTotalQty] = useState(0);
     const cartItem = useSelector((state) => state?.cartItem.cart);
     const user = useSelector(state => state?.user);
+    const userRole = useSelector(state => state.user.role);
 
     // estado para controlar la llamada a notificaciones
     const [fetchedNotify, setFetchedNotify] = useState(false);
@@ -131,7 +132,6 @@ const GlobalProvider = ({ children }) => {
         }
     }, [dispatch]);
 
-
     const fetchMovements = useCallback(async () => {
         try {
             const response = await Axios({ ...SummaryApi.getInventoryMovement });
@@ -206,7 +206,7 @@ const GlobalProvider = ({ children }) => {
             const { data: resData } = response;
             if (resData.success) {
                 dispatch(markNotificationRead(id));
-                toast.success("Notificación marcada como leída");
+                toast.success(resData.message);
             }
         } catch (error) {
             AxiosToastError(error);
@@ -228,6 +228,25 @@ const GlobalProvider = ({ children }) => {
             AxiosToastError(error);
         }
     }, [dispatch]);
+
+    const fetchCancelOrder = useCallback(async (id) => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.cancelOrderItem,
+                data: { orderId: id },
+            });
+            const { data: resData } = response;
+            if (resData.success) {
+                toast.success(resData.message);
+                fetchOrderItems();
+                if (userRole === 'ADMIN') {
+                    fetchOrdersAdminItems();
+                }
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    }, [fetchOrderItems, fetchOrdersAdminItems, userRole])
 
     useEffect(() => {
         if (user?._id && !fetchedNotify) {
@@ -279,6 +298,7 @@ const GlobalProvider = ({ children }) => {
                 markRead,
                 handleLogout,
                 deleteNotifyUser,
+                fetchCancelOrder
             }}
         >
             {children}

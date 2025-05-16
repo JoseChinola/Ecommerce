@@ -93,7 +93,7 @@ const Header = ({ toggleAside }) => {
 
                                 <h2 className='text-md select-none lg:italic lg:text-lg lg:flex flex-col lg:text-left text-primary-Green text-center uppercase font-extrabold'>
                                     D’RAF SERVICES
-                                    <span className='hidden xl:block text-sm italic font-medium animate-bounce'>
+                                    <span className='hidden xl:block text-sm italic font-medium'>
                                         SERVIRTE ES NUESTRO COMPROMISO
                                     </span>
                                 </h2>

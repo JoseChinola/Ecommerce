@@ -73,10 +73,10 @@ const UploadCategoryModel = ({ close, fetchData }) => {
 
     return (
         <section className='fixed top-0 bottom-0 left-0 right-0 p-2 rounded z-50 bg-neutral-800 bg-opacity-70 flex items-center justify-center'>
-            <div className='bg-white rounded-md max-w-4xl w-full  p-6'>
+            <div className='bg-white rounded-md max-w-xl w-full p-6 space-y-2'>
 
                 <div className='flex items-center justify-between bg-blue-50 p-2 rounded-md'>
-                    <h1 className='font-semibold uppercase'>Category </h1>
+                    <h1 className='font-semibold uppercase'>Categoria </h1>
                     <button onClick={close} className='w-fit block ml-auto hover:text-red-600'>
                         <IoClose size={30} />
                     </button>
@@ -85,12 +85,12 @@ const UploadCategoryModel = ({ close, fetchData }) => {
                 <form className='my-3 grid gap-2' onSubmit={handleSubmit}>
                     <div className='grid gap-1'>
                         <label id='categoryName' htmlFor="">
-                            Name
+                            Nombre
                         </label>
                         <input
                             type='text'
                             id='categoryName'
-                            placeholder='Enter your name'
+                            placeholder='Ingresa nombre de categoria'
                             value={data.name}
                             name='name'
                             onChange={handleOnchage}
@@ -124,7 +124,7 @@ const UploadCategoryModel = ({ close, fetchData }) => {
                                    ${!data.name ? "bg-gray-400 text-white " : "cursor-pointer border border-green-600 hover:bg-primary-Green hover:text-white"}
                                 flex items-center justify-center gap-2 text-gray-500  rounded-md px-4 py-2 select-none 
                                 `}>
-                                    <FaCamera size={20} /> Upload
+                                    <FaCamera size={20} /> Subir
                                 </div>
                                 <input
                                     disabled={!data.name}
@@ -142,7 +142,7 @@ const UploadCategoryModel = ({ close, fetchData }) => {
                         py-2 font-semibold rounded 
                         `}
                     >
-                        {loading ? "Loading..." : "Add Category"}
+                        {loading ? "Loading..." : "Añadir categoria"}
                     </button>
                 </form>
             </div >

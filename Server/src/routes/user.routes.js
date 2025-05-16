@@ -14,6 +14,7 @@ import auth from "../middleware/auth.js";
 import { admin } from '../middleware/Admin.js'
 import upload from "../middleware/multer.js";
 
+
 const userRouter = Router()
 
 userRouter.post('/register', registerUserController)
@@ -32,7 +33,7 @@ userRouter.get('/users-get', auth, getsUsersController)
 userRouter.put('/update-user-admin', auth, admin, updateAdminUserDetails)
 userRouter.delete('/delete-user-admin', auth, admin, deleteAdminUsers)
 userRouter.get('/user-notify', auth, getUserNotifications)
-userRouter.put('/notify-read', markAsRead)
+userRouter.put('/notify-read', auth, markAsRead)
 userRouter.delete('/delete-notify', auth, deleteNotification)
 
 export default userRouter;
