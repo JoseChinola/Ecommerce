@@ -29,8 +29,8 @@ const Asidebar = ({ isOpen, closeAside }) => {
             const res = await Axios({ ...SummaryApi.logout })
             if (res.data.success) {
                 dispatch(logout())
-                localStorage.removeItem("accessToken")
-                localStorage.removeItem("refreshToken")
+                    localStorage.removeItem("accessToken")
+                    localStorage.removeItem("refreshToken")
                 toast.success(res.data.message)
                 navigate("/")
             }

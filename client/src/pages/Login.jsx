@@ -71,7 +71,6 @@ const Login = () => {
         e.preventDefault();
 
         try {
-            console.log(data)
             // Llama al backend para hacer login
             const res = await Axios({
                 ...SummaryApi.login,

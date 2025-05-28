@@ -19,7 +19,7 @@ const Warehouse = () => {
   const [data, setData] = useState([]);
   const [editData, setEditData] = useState({});
   const [openDelete, setOpenDelete] = useState(false);
-  const [deleteWarehouseId, setDeleteWarehouseId] = useState(''); // cambiar a string para el _id
+  const [deleteWarehouseId, setDeleteWarehouseId] = useState('');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(""); // estado para búsqueda
@@ -30,7 +30,7 @@ const Warehouse = () => {
       const { data: resData } = response;
       if (resData.success) {
         setData(resData.data);
-        setCurrentPage(1); // Reiniciar a página 1 cuando se actualiza
+        setCurrentPage(1);
       }
     } catch (error) {
       AxiosToastError(error);

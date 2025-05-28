@@ -4,7 +4,6 @@ import addressSchema from "./address.model.js";
 import orderSchema from "./order.model.js";
 import cartProductSchema from "./cartProduct.model.js";
 
-
 // Definir el modelo de usuario
 const userSchema = sequelize.define('users', {
     _id: {

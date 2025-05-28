@@ -73,6 +73,8 @@ const UsersPage = () => {
     }
   };
 
+
+  console.log('users ', users)
   return (
     <section className='bg-white p-4 rounded-lg shadow min-h-[75vh]'>
       <div className='bg-secundary py-2 rounded-lg px-4 flex flex-col sm:flex-row justify-between items-center gap-4 mb-5'>
@@ -121,7 +123,9 @@ const UsersPage = () => {
               currentUsers.map((user, index) => (
                 <tr key={user._id || index} className='hover:bg-gray-50'>
                   <td className='px-4 py-2 border'>{startIndex + index + 1}</td>
-                  <td className='px-4 py-2 border'>{user.name ?? '—'}</td>
+                  <td className='px-4 py-2 border'>
+                    {(user.name && user.lastName) ? `${user.name} ${user.lastName}` : `${user.name}`}
+                  </td>
                   <td className='px-4 py-2 border'>{user.email ?? '—'}</td>
                   <td className='px-4 py-2 border'>{user.verify_email ? 'Sí' : 'No'}</td>
                   <td className='px-4 py-2 border'>{user.role ?? '—'}</td>
