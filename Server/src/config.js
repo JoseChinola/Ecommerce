@@ -7,7 +7,7 @@ export const {
     DB_PASSWORD = "Esmerali-123456",
     DB_NAME = "ShopMix",
     EMAIL_USER = "ttestmateo@gmail.com",
-    EMAIL_PASS = "jdhm ubic uemw ffcy",
+    EMAIL_PASS = "nhuu qkpt cdne eivt",
     CLODINARY_CLOUD_NAME = "dg0wzl8i2",
     CLODINARY_API_KEY = "739648333859378",
     CLODINARY_API_SECRET_KEY = "JqKlEnVIMwInMheDjGGpGfWErsE",
