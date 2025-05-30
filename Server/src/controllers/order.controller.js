@@ -7,6 +7,8 @@ import userSchema from "../models/user.model.js";
 import inventorySchema from "../models/Inventory.model.js";
 import addressSchema from "../models/address.model.js";
 import notificationSchema from "../models/notifications.model.js";
+import cashOnDeliveryEmailTemplate from "../templates/cashOnDeliveryEmailTemplate.js";
+import sendEmail from "../config/sendEmail.js";
 
 
 
@@ -106,9 +108,9 @@ export async function CashOnDeleveryOrderController(req, res) {
         }
 
         // Limpiar el carrito
-        await cartProductSchema.destroy({
-            where: { userId }
-        });
+        // await cartProductSchema.destroy({
+        //     where: { userId }
+        // });
 
         // Crear una notificación para el usuario
         await notificationSchema.create({
@@ -135,6 +137,37 @@ export async function CashOnDeleveryOrderController(req, res) {
 
         await notificationSchema.bulkCreate(adminNotifications);
 
+        const user = await userSchema.findOne({
+            where: { _id: userId },
+            attributes: ['name', 'email']
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+                error: true,
+                success: false
+            });
+        }
+        console.log('user email ', user.email)
+
+        try {
+            const sent = await sendEmail({
+                sendTo: user.email,
+                subject: `Confirmación de tu pedido ${orderId} - Shopmix`,
+                html: cashOnDeliveryEmailTemplate({
+                    name: user.name,
+                    orderId,
+                    list_items,
+                    totalAmt
+                })
+            });
+
+            console.log('send ', sent)
+        } catch (emailError) {
+            console.error("Error al enviar el correo de confirmación de pedido:", emailError);
+            // No cancelamos el pedido, solo informamos en consola
+        }
 
         return res.json({
             message: "Pedido creado",
