@@ -16,6 +16,7 @@ import AxiosToastError from '../utils/AxiosToastError';
 const Register = () => {
     const [data, setData] = useState({
         name: "",
+        lastName: "",
         email: "",
         password: "",
         confirmPassword: ""
@@ -77,34 +78,51 @@ const Register = () => {
                 <div onClick={redirectToHomePage} className='flex justify-center items-center flex-row cursor-pointer'>
                     <h2 to={"/"} className="flex flex-col items-center gap-1 justify-center focus:ring-blue-500 font-semibold text-gray-900 w-full">
                         <img className="w-20 h-20" src={logomv} alt="logo" />
-                        <span className="text-gray-500 font-bold text-sm md:text-xl flex items-center flex-col gap-2">
+                        <span className="text-gray-500 font-bold text-sm md:text-xl flex items-center flex-col gap-1">
                             Bienvenido <Link to={"/"} className="text-primary-Green font-bold text-sm md:text-xl">D’RAF SERVICES</Link>
                         </span>
                     </h2>
                 </div>
 
-                <form action="" className='flex flex-col gap-3' onSubmit={handleSubmit}>
+                <form action="" className='flex flex-col gap-3 mt-4' onSubmit={handleSubmit}>
+                    <div className='grid grid-cols-2 gap-5'>
+                        {/* name input */}
+                        <div className='grid gap-1'>
+                            <label htmlFor="name" className='font-semibold'>Nombre: </label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    dir='name'
+                                    autoFocus
+                                    className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                    name='name'
+                                    value={data.name}
+                                    onChange={handleChange}
+                                    placeholder='introduce tu nombre'
+                                />
+                                <FaRegUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            </div>
 
-
-                    {/* name input */}
-                    <div className='grid gap-1'>
-                        <label htmlFor="name" className='font-semibold'>Nombre: </label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                dir='name'
-                                autoFocus
-                                className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
-                                name='name'
-                                value={data.name}
-                                onChange={handleChange}
-                                placeholder='introduce tu nombre'
-                            />
-                            <FaRegUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
                         </div>
 
-                    </div>
+                        <div className='grid gap-1'>
+                            <label htmlFor="lastName" className='font-semibold'>Apellido: </label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    dir='lastName'
+                                    autoFocus
+                                    className="bg-blue-50 p-2 pl-10 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 peer"
+                                    name='lastName'
+                                    value={data.lastName}
+                                    onChange={handleChange}
+                                    placeholder='introduce tu nombre'
+                                />
+                                <FaRegUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 peer-focus:text-blue-500" />
+                            </div>
 
+                        </div>
+                    </div>
                     {/* email input */}
                     <div className='grid gap-1'>
                         <label htmlFor="email" className='font-semibold'>Correo: </label>

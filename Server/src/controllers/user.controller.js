@@ -55,13 +55,15 @@ export async function registerUserController(req, res) {
         // URL de verificación de email
         const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${newUser._id}`;
 
+        const fullName = [name, lastName].filter(Boolean).join(' ');
+
         try {
             // Enviar email de verificación
-            await sendEmailrResed({
+            await sendEmail({
                 sendTo: email,
                 subject: "Verify your email - D’RAF SERVICES",
                 html: verifyEmailTemplate({
-                    name,
+                    name: fullName,
                     url: verifyEmailUrl
                 })
             });
@@ -172,7 +174,7 @@ export async function resendVerificationEmail(req, res) {
 
         const verifyEmailUrl = `${process.env.FRONTEND_URL}`
 
-        await sendEmailrResed({
+        await sendEmail({
             sendTo: user.email,
             subject: "Verifica tu correo - D’RAF SERVICES",
             html: verifyEmailTemplate({
@@ -459,7 +461,12 @@ export async function deleteAdminUsers(req, res) {
                 success: false,
             });
         }
+
+        // Delete all notifications for this user
+        await notificationSchema.destroy({ where: { userId: _id } });
+
         const userDelete = await userSchema.destroy({ where: { _id } })
+
         res.json({
             message: "Usuario eliminado",
             data: userDelete,
@@ -497,7 +504,7 @@ export async function forgotPasswordController(req, res) {
 
 
         const otp = generatedOtp()
-        const expireTime = new Date(Date.now() + 60 * 60 * 1000);    
+        const expireTime = new Date(Date.now() + 60 * 60 * 1000);
         const updated = await userSchema.update(
             {
                 forgot_password_otp: otp,
@@ -507,7 +514,7 @@ export async function forgotPasswordController(req, res) {
 
 
 
-        const emailll = await sendEmailrResed({
+        const emailll = await sendEmail({
             sendTo: email,
             subject: "Forgot password from ShopMix",
             html: forgotPasswordTemplate({
@@ -607,7 +614,6 @@ export async function verifyForgotPasswordOtp(req, res) {
         });
     }
 }
-
 
 // reset the password
 export async function resetPassord(req, res) {

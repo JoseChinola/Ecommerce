@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer'
+import dotenv from 'dotenv';
+dotenv.config();
 
 // Configurar el transporte de correo
 const transporter = nodemailer.createTransport({
