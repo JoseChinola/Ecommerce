@@ -1,4 +1,5 @@
 import sendEmail from "../config/sendEmail.js";
+import sendEmailrResed from "../config/sendEmailResed.js";
 import userSchema from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import verifyEmailTemplate from "../templates/verifyEmailTemplate.js";
@@ -54,13 +55,15 @@ export async function registerUserController(req, res) {
         // URL de verificación de email
         const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${newUser._id}`;
 
+        const fullName = [name, lastName].filter(Boolean).join(' ');
+
         try {
             // Enviar email de verificación
             await sendEmail({
                 sendTo: email,
                 subject: "Verify your email - D’RAF SERVICES",
                 html: verifyEmailTemplate({
-                    name,
+                    name: fullName,
                     url: verifyEmailUrl
                 })
             });
@@ -458,7 +461,12 @@ export async function deleteAdminUsers(req, res) {
                 success: false,
             });
         }
+
+        // Delete all notifications for this user
+        await notificationSchema.destroy({ where: { userId: _id } });
+
         const userDelete = await userSchema.destroy({ where: { _id } })
+
         res.json({
             message: "Usuario eliminado",
             data: userDelete,
@@ -496,8 +504,7 @@ export async function forgotPasswordController(req, res) {
 
 
         const otp = generatedOtp()
-        const expireTime = new Date(Date.now() + 60 * 60 * 1000).toISOString()
-
+        const expireTime = new Date(Date.now() + 60 * 60 * 1000);
         const updated = await userSchema.update(
             {
                 forgot_password_otp: otp,
@@ -542,7 +549,7 @@ export async function forgotPasswordController(req, res) {
 //forgot password not login
 export async function verifyForgotPasswordOtp(req, res) {
     try {
-        const { email, otp } = req.body
+        const { email, otp } = req.body;
 
         if (!email || !otp) {
             return res.status(400).json({
@@ -562,51 +569,42 @@ export async function verifyForgotPasswordOtp(req, res) {
             });
         }
 
-        const expireTime = new Date(Date.now() + 60 * 60 * 1000).toISOString()
-
-        const updated = await userSchema.update(
-            {
-                forgot_password_otp: otp,
-                forgot_password_expiry: expireTime
-            },
-            {
-                where: { _id: user._id }
-            })
+        const currentTime = new Date();
+        const expiryTime = new Date(user.forgot_password_expiry);
 
 
-        const currentTime = new Date()
-
-        if (user.forgot_password_expiry < currentTime) {
+        if (expiryTime < currentTime) {
             return res.status(400).json({
                 message: "Otp is expired",
                 error: true,
-                success: false
-            })
+                success: false,
+            });
         }
 
         if (otp !== user.forgot_password_otp) {
             return res.status(400).json({
                 message: "Invalid otp",
                 error: true,
-                success: false
-            })
+                success: false,
+            });
         }
 
-        const updateUser = await userSchema.update(
+        // Limpia OTP y expiración porque el OTP fue verificado exitosamente
+        await userSchema.update(
             {
                 forgot_password_otp: "",
-                forgot_password_expiry: ""
+                forgot_password_expiry: null,
             },
             {
-                where: { _id: user?._id }
-            })
+                where: { _id: user._id },
+            }
+        );
 
         return res.json({
             message: "verify otp successfully",
             error: false,
             success: true,
-        })
-
+        });
 
     } catch (error) {
         return res.status(500).json({
@@ -829,7 +827,7 @@ export const markAsRead = async (req, res) => {
         notification.read = true;
         await notification.save();
 
-       
+
         const userRole = await userSchema.findOne({ where: { _id: userId } })
 
         if (userRole.role === 'ADMIN') {

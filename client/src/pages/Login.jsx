@@ -167,7 +167,7 @@ const Login = () => {
                                 <div className='relative'>
                                     <label htmlFor="email"
                                         className="block mb-1 text-base font-semibold">
-                                        Email
+                                        Correo
                                     </label>
                                     <input
                                         type="email"
@@ -185,7 +185,7 @@ const Login = () => {
                                 </div>
                                 <div className="relative">
                                     <label htmlFor="password" className="block mb-1 text-base font-semibold ">
-                                        Password
+                                        Contraseña
                                     </label>
 
                                     {/* Contenedor del input y los íconos */}
@@ -232,13 +232,13 @@ const Login = () => {
                                         <div className="ml-3 text-sm">
                                             <label htmlFor="remember"
                                                 className={`${rememberMe ? "text-gray-600" : "text-gray-300"}  font-semibold`}>
-                                                Remember me
+                                                Recuerdame
                                             </label>
                                         </div>
                                     </div>
                                     <Link to={"/forgot-password"} className="text-sm font-medium text-primary-600 
                                 hover:underline hover:text-blue-700">
-                                        Forgot password?
+                                        ¿Has olvidado tu contraseña?
                                     </Link>
                                 </div>
 
@@ -247,7 +247,7 @@ const Login = () => {
                                 </button>
 
                                 <p className="text-sm font-medium italic tracking-wide text-black flex flex-col md:flex-row">
-                                    Don’t have account? <Link to={"/register"} className="font-semibold ml-1 text-base hover:underline hover:text-blue-600 text-blue-800">Register</Link>
+                                    ¿No tienes cuenta? <Link to={"/register"} className="font-semibold ml-1 text-base hover:underline hover:text-blue-600 text-blue-800">Register</Link>
                                 </p>
                             </form>
                         ) : (

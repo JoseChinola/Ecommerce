@@ -97,22 +97,22 @@ const ResetPassword = () => {
 
 
     return (
-        <section className="w-full container mx-auto px-3 mb-5 mt-5">
+        <section className="w-full container mx-auto px-3">
             <div className="flex flex-col items-center justify-center mx-auto mr-">
                 <div className="w-full bg-white rounded-lg shadow-md md:mt-0 sm:max-w-md xl:p-0 dark:border-gray-700">
-                    <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    <div className="p-6 space-y-4 md:space-y-2 sm:p-8">
                         <div className='p-0 m-0'>
                             <button onClick={redirectToHomePage} className='flex bg-neutral-400  text-neutral-300 p-1 rounded hover:text-white hover:bg-blue-700'>
                                 <FaArrowLeft size={18} />
                                 <span className='pl-1 text-xs lg:text-sm'>
-                                    Back home
+                                    Pagina Inicio
                                 </span>
                             </button>
                         </div>
                         <h2 className="flex flex-col items-center justify-center focus:ring-blue-500 text-2xl font-semibold text-gray-900 w-full">
                             <img className="w-24 h-16" src={logomv} alt="logo" />
-                            <span className="text-gray-500 font-bold pl-1 text-2xl">
-                                Bienvenido a <span className="text-primary-green font-bold pl-1 text-2xl">Restablecer contraseña</span>
+                            <span className="text-gray-500 font-bold pl-1 text-2xl text-center">
+                                Restablecer contraseña
                             </span>
                         </h2>
 
@@ -145,7 +145,7 @@ const ResetPassword = () => {
                                     onClick={() => setShowPassword(prev => !prev)}
                                     className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-500 cursor-pointer peer-focus:text-blue-500"
                                 >
-                                    {showPassword ? <FaRegEye size={22} /> : <FaRegEyeSlash size={22} />}
+                                    {showPassword ? <FaRegEyeSlash size={22} /> : <FaRegEye size={22} />}
                                 </div>
                             </div>
 
@@ -176,7 +176,7 @@ const ResetPassword = () => {
                                     onClick={() => setShowPasswordConfirm(prev => !prev)}
                                     className="absolute right-3 top-2/3 transform -translate-y-1/2 text-gray-500 cursor-pointer peer-focus:text-blue-500"
                                 >
-                                    {showPasswordConfirm ? <FaRegEye size={22} /> : <FaRegEyeSlash size={22} />}
+                                    {showPasswordConfirm ? <FaRegEyeSlash size={22} /> : <FaRegEye size={22} />}
                                 </div>
                             </div>
                             <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"} w-full text-white py-2 rounded font-semibold mt-2 tracking-wide`}>

@@ -34,7 +34,7 @@ const OtpVerification = () => {
                     email: location?.state?.email
                 }
             })
-            
+
 
             if (res.data.error) {
                 toast.error(res.data.message)
@@ -70,14 +70,14 @@ const OtpVerification = () => {
                             <button onClick={redirectToHomePage} className='flex bg-neutral-400  text-neutral-300 p-1 rounded hover:text-white hover:bg-blue-700'>
                                 <FaArrowLeft size={18} />
                                 <span className='pl-1 text-xs lg:text-sm'>
-                                    Back home
+                                    Pagina Inicio
                                 </span>
                             </button>
                         </div>
                         <h2 className="flex flex-col items-center justify-center focus:ring-blue-500 text-2xl font-semibold text-gray-900 w-full">
                             <img className="w-24 h-16" src={logomv} alt="logo" />
                             <span className="text-gray-500 font-bold pl-1 text-2xl">
-                                Welcome to <span className="text-primary-green font-bold pl-1 text-2xl">Verify OTP</span>
+                                Bienvenido a <span className="text-primary-green font-bold pl-1 text-2xl"> Verificar OTP</span>
                             </span>
                         </h2>
 
@@ -86,7 +86,7 @@ const OtpVerification = () => {
                             <div className=' relative flex flex-col'>
                                 <label htmlFor="otp"
                                     className="block mb-1 text-base font-semibold">
-                                    Enter Your OTP:
+                                    Ingrese su OTP:
                                 </label>
 
 
@@ -121,12 +121,12 @@ const OtpVerification = () => {
                             </div>
 
                             <button disabled={!valideValue} className={`${valideValue ? "bg-green-800 hover:bg-green-600" : "bg-gray-500"} w-full text-white py-2 rounded font-semibold mt-2 tracking-wide`}>
-                                Verify OTP
+                                Verificar OTP
                             </button>
                         </form>
 
                         <p className="text-sm font-medium tracking-wide text-black mt-1">
-                            Already have account? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
+                            ¿Ya tienes cuenta? <Link to={"/login"} className="font-semibold italic text-base hover:underline hover:text-blue-600 text-blue-800">Login</Link>
                         </p>
                     </div>
                 </div>
