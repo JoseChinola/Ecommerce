@@ -7,12 +7,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencias
 node_modules
+client/node_modules
+server/node_modules
+
+# Compilados y distribuciones
 dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Configuraciones del editor
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -23,10 +28,7 @@ dist-ssr
 *.sln
 *.sw?
 
-
-# manual changes
-client/node_modules
-server/node_modules
+# Archivos de entorno (ENV)
 .env
-.client/.env
-server/.env
+./client/.env
+./server/.env

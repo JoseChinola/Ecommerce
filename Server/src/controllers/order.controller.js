@@ -7,6 +7,9 @@ import userSchema from "../models/user.model.js";
 import inventorySchema from "../models/Inventory.model.js";
 import addressSchema from "../models/address.model.js";
 import notificationSchema from "../models/notifications.model.js";
+import cashOnDeliveryEmailTemplate from "../templates/cashOnDeliveryEmailTemplate.js";
+import sendEmail from "../config/sendEmail.js";
+import orderNotificationTemplate from "../templates/orderNotificationTemplate.js";
 
 
 
@@ -105,7 +108,7 @@ export async function CashOnDeleveryOrderController(req, res) {
             }
         }
 
-        // Limpiar el carrito
+        //Limpiar el carrito
         await cartProductSchema.destroy({
             where: { userId }
         });
@@ -135,6 +138,34 @@ export async function CashOnDeleveryOrderController(req, res) {
 
         await notificationSchema.bulkCreate(adminNotifications);
 
+        const user = await userSchema.findOne({
+            where: { _id: userId },
+            attributes: ['name', 'email']
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+                error: true,
+                success: false
+            });
+        }
+
+        try {
+            await sendEmail({
+                sendTo: user.email,
+                subject: `Confirmación de tu pedido ${orderId} - Shopmix`,
+                html: cashOnDeliveryEmailTemplate({
+                    name: user.name,
+                    orderId,
+                    list_items,
+                    totalAmt
+                })
+            });
+        } catch (emailError) {
+            console.error("Error al enviar el correo de confirmación de pedido:", emailError);
+            // No cancelamos el pedido, solo informamos en consola
+        }
 
         return res.json({
             message: "Pedido creado",
@@ -361,6 +392,34 @@ export async function stripeWebhook(req, res) {
                 }));
 
                 await notificationSchema.bulkCreate(adminNotifications);
+
+                if (!user) {
+                    return res.status(404).json({
+                        message: "Usuario no encontrado",
+                        error: true,
+                        success: false
+                    });
+                }
+
+                try {
+                    await sendEmail({
+                        sendTo: user.email,
+                        subject: `Confirmación de tu pedido ${orderId} - Shopmix`,
+                        html: cashOnDeliveryEmailTemplate({
+                            name: user.name,
+                            orderId,
+                            list_items: orderProducts.map(op => ({
+                                productData: JSON.parse(op.product_details),
+                                quantity: op.quantity
+                            })),
+                            totalAmt: orderProducts[0]?.totalAmt || 0
+                        })
+                    });
+
+                } catch (emailError) {
+                    console.error("Error al enviar el correo de confirmación de pedido:", emailError);
+                    // No cancelamos el pedido, solo informamos en consola
+                }
                 break;
             }
 
@@ -606,6 +665,7 @@ export async function getGroupedOrdersByUserController(req, res) {
 }
 
 export async function updateOrderStatusController(req, res) {
+
     const { orderId, orderStatus } = req.body;
 
     if (!orderId || !orderStatus) {
@@ -646,6 +706,24 @@ export async function updateOrderStatusController(req, res) {
             message: `Tu pedido #${order.orderId} ha cambiado a "${order.orderStatus}".`,
             type: "order"
         });
+
+        const user = await userSchema.findOne({
+            where: { _id: order.userId },
+            attributes: ['name', 'email']
+        });
+
+        await sendEmail({
+            sendTo: user.email,
+            subject: `Actualización de tu pedido ${orderId}`,
+            html: orderNotificationTemplate({
+                title: "Pedido actualizado",
+                name: user.name,
+                message: `Tu pedido #${orderId} ha cambiado a "${orderStatus}".`,
+                orderId,
+                orderStatus
+            })
+        });
+
 
         return res.json({
             success: true,
@@ -688,7 +766,7 @@ export async function cancelOrderController(req, res) {
             });
         }
 
-        const user = await userSchema.findOne({ where: { _id: userId }, attributes: ['role'] });
+        const user = await userSchema.findOne({ where: { _id: userId }, attributes: ['role', 'email', 'name'] });
         const userRole = user?.role || 'USER';
 
         const TWO_DAYS_IN_MS = 2 * 24 * 60 * 60 * 1000;
@@ -778,6 +856,18 @@ export async function cancelOrderController(req, res) {
             type: "order",
         }));
         await notificationSchema.bulkCreate(adminNotifications);
+
+        await sendEmail({
+            sendTo: user.email,
+            subject: `Tu pedido ${orderId} ha sido cancelado`,
+            html: orderNotificationTemplate({
+                title: "Orden cancelada",
+                name: user.name,
+                message: `Tu pedido #${orderId} fue cancelado exitosamente.`,
+                orderId,
+                orderStatus: "Cancelada"
+            })
+        });
 
         return res.json({
             message: "Orden cancelada correctamente",

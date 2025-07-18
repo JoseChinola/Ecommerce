@@ -14,7 +14,7 @@ export const createProductController = async (req, res) => {
         const imageToSave = Array.isArray(image) && image.length > 0 ? JSON.stringify(image) : "[]";
 
         // Verifica si los valores son válidos antes de guardar en la base de datos
-        if (!name || imageToSave === "[]" || !unit || !price || !description) {
+        if (!name  || !unit || !price || !description) {
             return res.status(400).json({
                 message: "Todos los campos son requeridos",
                 error: true,

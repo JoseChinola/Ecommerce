@@ -207,24 +207,26 @@ const AdminOrders = () => {
                     </div>
                 )}
 
-                <CancelOrderModal
-                    isOpen={modalCancelOpen}
-                    onClose={closeCancelModal}
-                    onConfirm={confirmCancelOrder}
-                />
 
-                <OrderManagementModal
-                    order={selectedOrder}
-                    user={selectedUser}
-                    isOpen={modalOpen}
-                    onClose={closeModal}
-                    onUpdateStatus={(orderId, newStatus) => fetchUpdateOrdersItem(orderId, newStatus)}
-                    onAssignTracking={() => { }}
-                    onRefund={() => { }}
-                    onCancel={() => { }}
-                    onAddNote={() => { }}
-                />
             </div>
+
+            <CancelOrderModal
+                isOpen={modalCancelOpen}
+                onClose={closeCancelModal}
+                onConfirm={confirmCancelOrder}
+            />
+
+            <OrderManagementModal
+                order={selectedOrder}
+                user={selectedUser}
+                isOpen={modalOpen}
+                onClose={closeModal}
+                onUpdateStatus={(orderId, newStatus) => fetchUpdateOrdersItem(orderId, newStatus)}
+                onAssignTracking={() => { }}
+                onRefund={() => { }}
+                onCancel={() => { }}
+                onAddNote={() => { }}
+            />
         </section>
     );
 };

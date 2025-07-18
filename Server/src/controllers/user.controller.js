@@ -2,12 +2,12 @@ import sendEmail from "../config/sendEmail.js";
 import sendEmailrResed from "../config/sendEmailResed.js";
 import userSchema from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import verifyEmailTemplate from "../utils/verifyEmailTemplate.js";
+import verifyEmailTemplate from "../templates/verifyEmailTemplate.js";
 import generateAccessToken from "../utils/generateAccessToken.js";
 import generateRefreshToken from "../utils/generateRefreshToken.js";
 import uploadImageClodinary from "../utils/uploadImageClodinary.js";
 import generatedOtp from "../utils/generatedOtp.js";
-import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
+import forgotPasswordTemplate from "../templates/forgotPasswordTemplate.js";
 import jwt from 'jsonwebtoken'
 import notificationSchema from "../models/notifications.model.js";
 
