@@ -44,12 +44,22 @@ npm install
 
 ### **Configuración del Backend**
 ```
-PORT=5000
-DB_USER=tu_usuario
-DB_PASSWORD=tu_password
-DB_HOST=localhost
-DB_DATABASE=tu_basededatos
-JWT_SECRET=tu_secreto
+FRONTEND_URL=http://localhost:5173
+PORT=3000
+RESEND_API_KEY=your_resend_key_here
+SECRETE_KEY_ACCESS_TOKEN=your_access_token_key_here
+SECRETE_KEY_REFRESH_TOKEN=your_refresh_token_key_here
+STRIPE_SECRET_KEY=your_stripe_secret_here
+STRIPE_ENDPOINT_WEBHOOK_SECRET_KEY=your_webhook_secret_here
+DB_USER=your_db_user
+DBA_HOST=localhost
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+EMAIL_USER=your_email
+EMAIL_PASS=your_email_password
+CLODINARY_CLOUD_NAME=your_cloud_name
+CLODINARY_API_KEY=your_api_key
+CLODINARY_API_SECRET_KEY=your_api_secret
 ```
 
 ### **Iniciar el servidor**
